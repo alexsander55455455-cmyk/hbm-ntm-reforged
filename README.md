@@ -1,5 +1,11 @@
 # HBM NTM Reforged
 
+<p align="center">
+  <a href="https://discord.gg/BgrqdWEK">
+    <img src="https://img.shields.io/discord/901451468282941470?color=5865f2&label=Discord&style=flat&logo=discord&logoColor=white" alt="Discord">
+  </a>
+</p>
+
 HBM NTM Reforged is an unofficial Minecraft Forge 1.12.2 port and continuation of HBM's Nuclear Tech Mod.
 
 This project is focused on preserving, restoring, and continuing the HBM NTM experience for Minecraft 1.12.2, including machines, weapons, blocks, items, resources, world generation, and mechanics from the original mod and Extended Edition where possible.
