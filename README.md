@@ -37,14 +37,6 @@ Bugs, crashes, missing content, unfinished mechanics, and balance issues are exp
 - Work toward a complete and polished 1.12.2 version
 - Prepare the project for a future port to newer Minecraft versions
 
-Artifact naming format:
-
-`HBM-NTM-Reforged-X.X.X-alpha-1.12.2.jar`
-
-Example:
-
-`HBM-NTM-Reforged-0.8.0-alpha-1.12.2.jar`
-
 ## Future plans
 
 After the 1.12.2 version is completed, the next goal is to begin work on a newer Minecraft version, possibly 1.20+.
