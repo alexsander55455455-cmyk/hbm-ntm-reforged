@@ -37,12 +37,6 @@ Bugs, crashes, missing content, unfinished mechanics, and balance issues are exp
 - Work toward a complete and polished 1.12.2 version
 - Prepare the project for a future port to newer Minecraft versions
 
-## Current version
-
-Current public version:
-
-`0.8.0-alpha`
-
 Artifact naming format:
 
 `HBM-NTM-Reforged-X.X.X-alpha-1.12.2.jar`
