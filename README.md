@@ -1,6 +1,14 @@
 <h1 align="center">HBM NTM Reforged</h1>
 
 <p align="center">
+  <a href="README.md">English</a> /
+  <a href="README_ru.md">Русский</a> /
+  <a href="README_zh.md">简体中文</a> /
+  <a href="README_kr.md">한국어</a> /
+  <a href="README_ua.md">Українська</a>
+</p>
+
+<p align="center">
   <a href="https://discord.gg/BgrqdWEK">
     <img src="https://img.shields.io/discord/901451468282941470?color=5865f2&label=Discord&style=flat&logo=discord&logoColor=white" alt="Discord">
   </a>
@@ -8,7 +16,9 @@
 
 HBM NTM Reforged is an unofficial Minecraft Forge 1.12.2 port and continuation of HBM's Nuclear Tech Mod.
 
-This project is focused on preserving, restoring, and continuing the HBM NTM experience for Minecraft 1.12.2, including machines, weapons, blocks, items, resources, world generation, and mechanics from the original mod and Extended Edition where possible.
+The main foundation of this project is the original HBM Nuclear Tech Mod for Minecraft 1.7.10. The goal is to preserve and restore the original HBM NTM experience on Minecraft Forge 1.12.2 as accurately as possible.
+
+Selected content from Extended Edition may also be added as extra or expanded content when it improves the experience, adds useful features, or brings high-quality content that is not present in the original 1.7.10 version.
 
 ## Status
 
@@ -18,12 +28,13 @@ Bugs, crashes, missing content, unfinished mechanics, and balance issues are exp
 
 ## Goals
 
-- Restore and preserve HBM NTM content for Minecraft Forge 1.12.2
-- Port missing content from the original mod and Extended Edition where possible
+- Restore and preserve the original HBM NTM 1.7.10 experience on Minecraft Forge 1.12.2
+- Keep the original 1.7.10 mod as the main foundation of the project
+- Add selected Extended Edition content as optional/expanded content where it makes sense
 - Improve stability and compatibility
 - Fix broken or unfinished mechanics
 - Add missing machines, weapons, blocks, items, resources, and world generation
-- Work toward full parity with the original/Extended Edition content
+- Work toward a complete and polished 1.12.2 version
 - Prepare the project for a future port to newer Minecraft versions
 
 ## Current version
@@ -59,6 +70,8 @@ This is an unofficial fan/community project.
 Original HBM's Nuclear Tech Mod belongs to its original creators.
 
 This project is not an official release from the original HBM NTM creators. It is made to preserve, restore, and continue the mod for the community.
+
+Extended Edition content is used only as selected additional/expanded content where appropriate. The original HBM NTM 1.7.10 experience remains the main foundation.
 
 ## License
 
