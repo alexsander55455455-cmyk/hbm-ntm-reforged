@@ -1,5 +1,4 @@
 # <p align="center">HBM NTM Reforged</p>
-
 <p align="center">
   <a href="https://discord.gg/BgrqdWEK">
     <img src="https://img.shields.io/discord/901451468282941470?color=5865f2&label=Discord&style=flat&logo=discord&logoColor=white" alt="Discord">
