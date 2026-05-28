@@ -1,154 +1,80 @@
-<div dir=rtl align=center>
+<h1 align="center">HBM NTM Reforged</h1>
 
-### [**English 🇺🇸**](README.md) / [**Русский 🇷🇺**](README_ru.md) / **简体中文 🇨🇳** / [**한국어 🇰🇷**](README_kr.md) / [**Українська 🇺🇦**](README_ua.md)
-</div>
+<p align="center">
+  <a href="README.md">English</a> /
+  <a href="README_ru.md">Русский</a> /
+  <a href="README_zh.md">简体中文</a> /
+  <a href="README_kr.md">한국어</a> /
+  <a href="README_ua.md">Українська</a>
+</p>
 
-<p align="center"><img src="./github/icon.png" alt="Logo" width="300"></p>
+<p align="center">
+  <a href="https://discord.gg/BgrqdWEK">
+    <img src="https://img.shields.io/discord/901451468282941470?color=5865f2&label=Discord&style=flat&logo=discord&logoColor=white" alt="Discord">
+  </a>
+</p>
 
-<h1 align="center"> HBM的核科技 社区版 <br>
-	<a href="https://www.curseforge.com/minecraft/mc-mods/hbm-nuclear-tech-mod-community-edition"><img src="http://cf.way2muchnoise.eu/1312314.svg" alt="CF"></a>
-    <a href="https://modrinth.com/mod/ntm-ce"><img src="https://img.shields.io/modrinth/dt/ntm-ce?logo=modrinth&label=&suffix=%20&style=flat&color=242629&labelColor=5ca424&logoColor=1c1c1c" alt="Modrinth"></a>
-    <a href="https://www.mcmod.cn/class/21023.html"><img src="https://img.shields.io/badge/MC-%E7%99%BE%E7%A7%91-58B6D8?style=flat&labelColor=86C155" alt="MC百科"></a>
-    <a href="https://discord.gg/eKFrH7P5ZR"><img src="https://img.shields.io/discord/1241479482964054057?color=5865f2&label=Discord&style=flat" alt="Discord"></a>
-    <a href="https://qm.qq.com/q/xbjhxWXxYc"><img src="https://img.shields.io/badge/QQ群-515151?style=flat&logo=qq&logoColor=white" alt="QQ"></a>
-<br>
-</h1>
+HBM NTM Reforged 是 HBM's Nuclear Tech Mod 的非官方 Minecraft Forge 1.12.2 移植版与延续项目。
 
-这是一个HBM的核科技mod的1.12.2**权威移植**，在所有移植中完成度最高，因其他开发者未能持续更新与维护其它fork而生。
+本项目的主要基础是 Minecraft 1.7.10 的原版 HBM Nuclear Tech Mod。目标是在 Minecraft Forge 1.12.2 上尽可能准确地保留并恢复原版 HBM NTM 的体验。
 
-> [!IMPORTANT]
-> **提交问题（Issue）时请严格遵循模板**  
-> 鉴于我们每日收到的问题数量，我们**强制**执行模板中规定的报告规范。  
-未按模板提交的问题将会**直接关闭并锁定**。该规则**不追溯既往**。请尊重我们的时间，使用英文提交**高质量**的问题报告。
+Extended Edition 中的部分内容也可能会作为额外或扩展内容加入，但仅限于它能改善体验、带来有用功能，或提供原版 1.7.10 中不存在的高质量内容时。
 
-> [!NOTE]
-> 如安装了 Universal Tweaks，请将 `B:"Disable Fancy Missing Model"` 设为 `false` 以修复模型旋转问题  
-> 配置位置：`config/Universal Tweaks - Tweaks.cfg`
+## 状态
 
-<br>
-<p align="center"><img src="./github/faq.png" alt="NTM:CE FAQ" width="700"></p>
-<br>
+本项目目前处于 alpha 阶段。
 
-### 现在能正常生存吗？
+可能会出现 bug、崩溃、缺失内容、未完成机制以及平衡性问题。
 
-可以正常进行游戏而**不会发生致命崩溃**。小缺陷是存在的，也还有些内容尚待移植。
+## 目标
 
-### 与 NTM: Extended Edition 的附属mod / 光影兼容吗？
+- 在 Minecraft Forge 1.12.2 上恢复并保留原版 HBM NTM 1.7.10 的体验
+- 将原版 1.7.10 模组作为项目的主要基础
+- 在合适的情况下，将 Extended Edition 中选定的内容作为额外/扩展内容加入
+- 提高稳定性与兼容性
+- 修复损坏或未完成的机制
+- 添加缺失的机器、武器、方块、物品、资源和世界生成
+- 将 1.12.2 版本完善到完整且稳定的状态
+- 为未来移植到更新版本的 Minecraft 做准备
 
-很遗憾，**不兼容**。安装Ex版的附属大概率会导致崩溃，从而使整合包无法游玩；此前移植的新枪械系统和光影**不兼容**，在持枪时可见严重伪影。  
-此外，光影也与NTM的天空盒材质（Skybox）不兼容；可在 `config/hbm -> hbm.cfg` 中将 `B:1.00_enableSkybox=true` 改为 `false` 解决。  
-我们计划修复与光影相关的问题，但这需要时间。
+## 当前版本
 
-### 与 Extended Edition 有多大差异？
+当前公开版本：
 
-与Ex版存档**完全不兼容！**  
-我们已经重写了**约 75%** 的整体代码，尽可能移植每一个特性。变化之多已难以一一罗列。欢迎查看我们的 Issue 区，我们用它来追踪缺失内容。
+`0.8.0-alpha`
 
-### 为什么不直接改进 Extended Edition？
+构建文件命名格式：
 
-Alcater 在 CurseForge 上的版本已**超过 1.5 年**没有更新。他的版本存在严重的性能瓶颈和怪异的逻辑实现，更不用说他拒绝与我们合作。因此我们选择fork并独立开发。
+`HBM-NTM-Reforged-X.X.X-alpha-1.12.2.jar`
 
-### 既然还在开发中，为什么要上 CurseForge？
+示例：
 
-**我们需要 Bug 反馈。**  
-如果没有 CurseForge、Modrinth 这样的平台提供的公开渠道，我们的曝光度将**大幅降低**。我们希望玩家知道：有一个**正规的移植**正在进行中，并可以通过**提交 Issue**或**直接发起 Pull Request** 来帮助我们。我们**始终欢迎新贡献者**。
+`HBM-NTM-Reforged-0.8.0-alpha-1.12.2.jar`
 
-### 是否会针对某些整合包做定制改动？
-**不会！**  
-虽然该移植最初起源于 WarFactory 项目，但目前作为**独立模组**维护。任何改动都仅为确保**兼容性、稳定性**，或**方便整合包作者**的开发；不会为特定整合包做直接定制。
+## 未来计划
 
-### 会移植到 1.1x/1.2x 吗？
+在 1.12.2 版本完成后，下一步目标是开始移植到更新版本的 Minecraft，可能是 1.20+。
 
-**我们目前没有这个计划。**  
-我们需要**专注于一个版本**。碎片化，以及曾经众多团队的各自为政，是导致本模组此前的多次移植版本失败的关键原因。因此我们希望**集中力量**先把一个版本做好。
+未来还计划建立一个公开的 modded Minecraft 社区/服务器，等模组和社区准备好后开放。
 
-<br>
-<p align="center"><img src="./github/dev_guide.png" alt="Development Guide" width="700"></p>
-<br>
+## Discord
 
-## **开发环境使用 Java 25！**
+加入 Discord 社区，提交 bug、提出建议、查看开发更新、讨论 modded Minecraft，以及了解未来公开服务器计划。
 
-我们使用 [JvmDowngrader](https://github.com/unimined/JvmDowngrader) 来在使用现代 Java 语法与 API 的同时，无缝地生成面向 1.12.2 的 Java 8 字节码。
+[Join the Discord](https://discord.gg/BgrqdWEK)
 
-### 快速上手
+## Disclaimer
 
-1. 克隆此仓库
-2. 准备 **JDK 25**
-3. 运行任务 `setupDecompWorkspace`（会完成工作区初始化与 MC 源码的反编译/反混淆）
-4. 确认一切正常后，运行任务 `runClient`（应启动 Minecraft 客户端）
+这是一个非官方的粉丝/社区项目。
 
-* 请**始终**使用 `gradlew`（Linux/macOS）或 `gradlew.bat`（Windows）来执行任务，而不是系统的 `gradle`，以确保所有开发者环境一致。
+原版 HBM's Nuclear Tech Mod 归其原作者所有。
 
-### Apple M 系列机器的开发注意事项
+本项目不是 HBM NTM 原作者的官方版本。它的目的是为了社区保存、恢复并继续这个模组。
 
-由于当前**没有 ARM 架构**的本地库（natives），因此你需要使用 **x86_64 JDK**（最简单的方式是通过 IntelliJ 的 SDK 管理器获取）。
+Extended Edition 内容仅在合适时作为选定的额外/扩展内容使用。原版 HBM NTM 1.7.10 体验仍然是本项目的主要基础。
 
-你可以使用以下任一方法指定 JDK：
+## 许可证
 
-- 设置环境变量 `GRADLE_OPTS`：  
-  `export GRADLE_OPTS="-Dorg.gradle.java.home=/path/to/your/desired/jdk"`
-- 在 `gradle.properties`（`~/.gradle` 或项目目录）中添加属性：  
-  `org.gradle.java.home=/path/to/your/desired/jdk`
-- 在终端直接使用 `-D` 参数：  
-  `./gradlew -Dorg.gradle.java.home=/path/to/your/desired/jdk wantedTask`
+本项目在适用范围内遵循 GNU Lesser General Public License v3.0。
 
-#### 故障排查
-
-1. 如果尽管你使用了 x86_64 JDK，但日志中 Gradle 仍将你的机器识别为 ARM，请按以下步骤操作：
-    1) 清理工作区：`git fetch; git clean -fdx; git reset --hard HEAD`  
-       （**注意**：会将本地同步到远端状态，并**删除所有本地改动**）
-    2) 清理 Gradle 缓存：`rm -rf ~/.gradle`  
-       （**注意**：会**清空整个** Gradle 缓存）
-    3) 清理下载的 JVM：`rm -rf /path/to/used/jvm`  
-       （已用 JVM 的路径可在 `/run/logs/latest.log` 中找到，如：  
-       `Java is OpenJDK 64-Bit Server VM, version 1.8.0_442, running on Mac OS X:x86_64:15.3.2, installed at /this/is/the/path`）
-    4) 重新执行“快速上手”步骤。
-
-## Maven
-
-### 快照 / Snapshots
-表示某个版本的最新提交构建。
-
-```groovy
-repositories {
-    maven {
-        name "Warfactory Snapshots"
-        url "https://repo.warfactory.co/snapshots"
-    }
-}
-dependencies {
-    // Java 8, 未混淆
-    implementation "com.hbm:ntm-ce:2.1.1.0-SNAPSHOT:dev"
-    // Java 25, 未混淆
-    implementation "com.hbm:ntm-ce-java25:2.1.1.0-SNAPSHOT:dev"
-    // Java 8, 混淆
-    implementation "com.hbm:ntm-ce:2.1.1.0-SNAPSHOT"
-    // Java 25, 混淆
-    implementation "com.hbm:ntm-ce-java25:2.1.1.0-SNAPSHOT"
-}
-```
-
-### 正式版本 / Releases
-对应 CurseForge / Modrinth 的正式发布版本。
-
-```groovy
-repositories {
-    maven {
-        name "Warfactory Releases"
-        url "https://repo.warfactory.co/releases"
-    }
-}
-dependencies {
-    // Java 8, 未混淆
-    implementation "com.hbm:ntm-ce:2.1.1.0:dev"
-    // Java 25, 未混淆
-    implementation "com.hbm:ntm-ce:2.1.1.0:dev-java25"
-    // Java 8, 混淆
-    implementation "com.hbm:ntm-ce:2.1.1.0"
-    // Java 25, 混淆
-    implementation "com.hbm:ntm-ce:2.1.1.0:java25"
-}
-```
-
-一般情况下在开发环境中应使用未混淆 jar。  
-在 Cleanroom + JDK 25 开发环境下 Java 8 和 Java 25 版本都能用；其他情况下建议使用 Java 8 版本。
+详情请查看 `LICENSE` 和 `LICENSE.LESSER`。
