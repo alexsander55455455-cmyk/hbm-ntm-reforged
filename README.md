@@ -44,7 +44,7 @@ A public modded Minecraft community/server is also planned for the future when t
 
 Join the Discord community for bug reports, suggestions, development updates, modded Minecraft discussion, and future public server plans.
 
-Discord: <a href="https://discord.gg/ТВОЯ_ССЫЛКА"><img src="https://img.shields.io/discord/BgrqdWEK?color=5865f2&label=Discord&style=flat" alt="Discord"></a>
+<a href="https://discord.gg/BgrqdWEK"><img src="https://img.shields.io/discord/901451468282941470?color=5865f2&label=Discord&style=flat" alt="Discord"></a>
 
 ## Disclaimer
 
