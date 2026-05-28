@@ -1,4 +1,4 @@
-# HBM NTM Reforged
+<p align="center"># HBM NTM Reforged</p>
 
 <p align="center">
   <a href="https://discord.gg/BgrqdWEK">
