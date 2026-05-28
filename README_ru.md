@@ -14,67 +14,67 @@
   </a>
 </p>
 
-HBM NTM Reforged is an unofficial Minecraft Forge 1.12.2 port and continuation of HBM's Nuclear Tech Mod.
+HBM NTM Reforged — это неофициальный порт и продолжение HBM's Nuclear Tech Mod для Minecraft Forge 1.12.2.
 
-The main foundation of this project is the original HBM Nuclear Tech Mod for Minecraft 1.7.10. The goal is to preserve and restore the original HBM NTM experience on Minecraft Forge 1.12.2 as accurately as possible.
+Основой проекта является оригинальный HBM Nuclear Tech Mod для Minecraft 1.7.10. Главная цель — сохранить и восстановить оригинальный опыт HBM NTM на Minecraft Forge 1.12.2 максимально близко к оригиналу.
 
-Selected content from Extended Edition may also be added as extra or expanded content when it improves the experience, adds useful features, or brings high-quality content that is not present in the original 1.7.10 version.
+Отдельный контент из Extended Edition также может добавляться как дополнительный или расширенный контент, если он улучшает игровой опыт, добавляет полезные функции или содержит качественные вещи, которых нет в оригинальной версии 1.7.10.
 
-## Status
+## Статус
 
-This project is currently in alpha.
+Проект сейчас находится в стадии alpha.
 
-Bugs, crashes, missing content, unfinished mechanics, and balance issues are expected.
+Ожидаются баги, краши, недостающий контент, незавершённые механики и проблемы с балансом.
 
-## Goals
+## Цели
 
-- Restore and preserve the original HBM NTM 1.7.10 experience on Minecraft Forge 1.12.2
-- Keep the original 1.7.10 mod as the main foundation of the project
-- Add selected Extended Edition content as optional/expanded content where it makes sense
-- Improve stability and compatibility
-- Fix broken or unfinished mechanics
-- Add missing machines, weapons, blocks, items, resources, and world generation
-- Work toward a complete and polished 1.12.2 version
-- Prepare the project for a future port to newer Minecraft versions
+- Восстановить и сохранить оригинальный опыт HBM NTM 1.7.10 на Minecraft Forge 1.12.2
+- Оставить оригинальный мод 1.7.10 основной базой проекта
+- Добавлять выбранный контент из Extended Edition как дополнительный/расширенный контент там, где это имеет смысл
+- Улучшать стабильность и совместимость
+- Исправлять сломанные или незавершённые механики
+- Добавлять недостающие машины, оружие, блоки, предметы, ресурсы и генерацию мира
+- Довести версию 1.12.2 до полного и отполированного состояния
+- Подготовить проект к будущему порту на новые версии Minecraft
 
-## Current version
+## Текущая версия
 
-Current public version:
+Текущая публичная версия:
 
 `0.8.0-alpha`
 
-Artifact naming format:
+Формат имени артефакта:
 
 `HBM-NTM-Reforged-X.X.X-alpha-1.12.2.jar`
 
-Example:
+Пример:
 
 `HBM-NTM-Reforged-0.8.0-alpha-1.12.2.jar`
 
-## Future plans
+## Планы на будущее
 
-After the 1.12.2 version is completed, the next goal is to begin work on a newer Minecraft version, possibly 1.20+.
+После завершения версии 1.12.2 следующая цель — начать работу над более новой версией Minecraft, возможно 1.20+.
 
-A public modded Minecraft community/server is also planned for the future when the mod and community are ready.
+Также в будущем планируется публичное modded Minecraft сообщество/сервер, когда мод и комьюнити будут готовы.
 
 ## Discord
 
-Join the Discord community for bug reports, suggestions, development updates, modded Minecraft discussion, and future public server plans.
+Присоединяйтесь к Discord-сообществу для баг-репортов, предложений, новостей разработки, обсуждения modded Minecraft и будущих планов публичного сервера.
 
 [Join the Discord](https://discord.gg/BgrqdWEK)
 
 ## Disclaimer
 
-This is an unofficial fan/community project.
+Это неофициальный фанатский/общественный проект.
 
-Original HBM's Nuclear Tech Mod belongs to its original creators.
+Оригинальный HBM's Nuclear Tech Mod принадлежит его оригинальным создателям.
 
-This project is not an official release from the original HBM NTM creators. It is made to preserve, restore, and continue the mod for the community.
+Этот проект не является официальным релизом от оригинальных создателей HBM NTM. Он создан для сохранения, восстановления и продолжения мода для сообщества.
 
-Extended Edition content is used only as selected additional/expanded content where appropriate. The original HBM NTM 1.7.10 experience remains the main foundation.
+Контент из Extended Edition используется только как выбранный дополнительный/расширенный контент там, где это уместно. Основой проекта остаётся оригинальный опыт HBM NTM 1.7.10.
 
-## License
+## Лицензия
 
-This project follows the GNU Lesser General Public License v3.0 where applicable.
+Этот проект использует GNU Lesser General Public License v3.0 там, где это применимо.
 
-See `LICENSE` and `LICENSE.LESSER` for details.
+Подробности смотрите в `LICENSE` и `LICENSE.LESSER`.
