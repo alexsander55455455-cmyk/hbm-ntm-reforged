@@ -1,0 +1,26 @@
+﻿
+FullName                                                                                                                   LastWriteTime       Length
+--------                                                                                                                   -------------       ------
+C:\Users\alex\Desktop\перенос мода hbm\hbm-x5687-1.12.2\.gradle\9.2.1\gc.properties                                        28.05.2026 3:41:27       0
+C:\Users\alex\Desktop\перенос мода hbm\hbm-x5687-1.12.2\.gradle\buildOutputCleanup\cache.properties                        15.05.2026 23:30:14     59
+C:\Users\alex\Desktop\перенос мода hbm\hbm-x5687-1.12.2\.gradle\vcs-1\gc.properties                                        28.05.2026 3:41:27       0
+C:\Users\alex\Desktop\перенос мода hbm\hbm-x5687-1.12.2\bin\main\assets\hbm\optifine\emissive.properties                   15.05.2026 23:07:11     18
+C:\Users\alex\Desktop\перенос мода hbm\hbm-x5687-1.12.2\bin\main\assets\minecraft\optifine\emissive.properties             15.05.2026 23:07:17     18
+C:\Users\alex\Desktop\перенос мода hbm\hbm-x5687-1.12.2\build\resources\main\assets\hbm\optifine\emissive.properties       28.05.2026 15:14:15     18
+C:\Users\alex\Desktop\перенос мода hbm\hbm-x5687-1.12.2\build\resources\main\assets\minecraft\optifine\emissive.properties 28.05.2026 15:14:56     18
+C:\Users\alex\Desktop\перенос мода hbm\hbm-x5687-1.12.2\gradle\wrapper\gradle-wrapper.properties                           15.05.2026 23:07:04    259
+C:\Users\alex\Desktop\перенос мода hbm\hbm-x5687-1.12.2\processor\build.gradle                                             15.05.2026 23:07:05   1380
+C:\Users\alex\Desktop\перенос мода hbm\hbm-x5687-1.12.2\src\main\resources\assets\hbm\optifine\emissive.properties         15.05.2026 23:07:11     18
+C:\Users\alex\Desktop\перенос мода hbm\hbm-x5687-1.12.2\src\main\resources\assets\minecraft\optifine\emissive.properties   15.05.2026 23:07:17     18
+C:\Users\alex\Desktop\перенос мода hbm\hbm-x5687-1.12.2\tools\unused-assets.ps1                                            15.05.2026 23:07:17   2132
+C:\Users\alex\Desktop\перенос мода hbm\hbm-x5687-1.12.2\build.gradle                                                       16.05.2026 4:22:50   83865
+C:\Users\alex\Desktop\перенос мода hbm\hbm-x5687-1.12.2\buildscript.properties                                             16.05.2026 4:58:28   10598
+C:\Users\alex\Desktop\перенос мода hbm\hbm-x5687-1.12.2\dependencies.gradle                                                16.05.2026 1:11:12    5997
+C:\Users\alex\Desktop\перенос мода hbm\hbm-x5687-1.12.2\gradle.properties                                                  26.05.2026 3:51:36    2075
+C:\Users\alex\Desktop\перенос мода hbm\hbm-x5687-1.12.2\gradlew                                                            15.05.2026 23:07:04   8955
+C:\Users\alex\Desktop\перенос мода hbm\hbm-x5687-1.12.2\gradlew.bat                                                        15.05.2026 23:07:04   2918
+C:\Users\alex\Desktop\перенос мода hbm\hbm-x5687-1.12.2\repositories.gradle                                                16.05.2026 0:45:36     963
+C:\Users\alex\Desktop\перенос мода hbm\hbm-x5687-1.12.2\settings.gradle                                                    15.05.2026 23:07:05    998
+
+
+

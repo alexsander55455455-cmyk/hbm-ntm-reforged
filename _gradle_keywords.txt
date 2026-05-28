@@ -1,0 +1,795 @@
+﻿
+  build.gradle:6: * You can also run ./gradlew updateBuildScript to update your buildscript.
+  build.gradle:7: */
+  build.gradle:8:
+  build.gradle:9:
+> build.gradle:10:import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+  build.gradle:11:import com.gtnewhorizons.retrofuturagradle.MinecraftExtension
+  build.gradle:12:import com.gtnewhorizons.retrofuturagradle.mcp.MCPTasks
+> build.gradle:13:import com.gtnewhorizons.retrofuturagradle.mcp.ReobfuscatedJar
+  build.gradle:14:import com.gtnewhorizons.retrofuturagradle.minecraft.MinecraftTasks
+  build.gradle:15:import com.gtnewhorizons.retrofuturagradle.minecraft.RunMinecraftTask
+  build.gradle:16:import com.gtnewhorizons.retrofuturagradle.util.Distribution
+  build.gradle:17:import com.modrinth.minotaur.dependencies.ModDependency
+  build.gradle:23:import org.gradle.internal.logging.text.StyledTextOutputFactory
+  build.gradle:24:import org.jetbrains.gradle.ext.Gradle
+  build.gradle:25:
+  build.gradle:26:import javax.inject.Inject
+> build.gradle:27:import java.util.jar.JarFile
+  build.gradle:28:
+  build.gradle:29:import static org.gradle.internal.logging.text.StyledTextOutput.Style
+  build.gradle:30:
+  build.gradle:31:plugins {
+  build.gradle:39:    id 'net.darkhax.curseforgegradle' version '1.1.24' apply false
+  build.gradle:40:    id 'com.modrinth.minotaur' version '2.8.7' apply false
+  build.gradle:41:    id 'com.diffplug.spotless' version '6.13.0' apply false
+  build.gradle:42:    id 'com.palantir.git-version' version '3.0.0' apply false
+> build.gradle:43:    id 'com.gradleup.shadow' version '8.3.9' apply false
+  build.gradle:44:    id 'org.jetbrains.kotlin.jvm' version '1.8.0' apply false
+  build.gradle:45:    id 'org.jetbrains.kotlin.kapt' version '1.8.0' apply false
+  build.gradle:46:    id 'com.google.devtools.ksp' version '1.8.0-1.0.9' apply false
+  build.gradle:47:    id 'de.undercouch.download' version '5.6.0' apply false
+  build.gradle:68:checkPropertyExists("containsMixinsAndOrCoreModOnly")
+  build.gradle:69:
+  build.gradle:70:// Optional properties: we can assume some default behavior if these are missing
+  build.gradle:71:propertyDefaultIfUnset("modVersion", "")
+> build.gradle:72:propertyDefaultIfUnset("includeMCVersionJar", false)
+  build.gradle:73:propertyDefaultIfUnset("autoUpdateBuildScript", false)
+> build.gradle:74:propertyDefaultIfUnset("modArchivesBaseName", project.modId)
+  build.gradle:75:propertyDefaultIfUnsetWithEnvVar("developmentEnvironmentUserName", "Developer", "DEV_USERNAME")
+  build.gradle:76:propertyDefaultIfUnset("additionalJavaArguments", "")
+  build.gradle:77:propertyDefaultIfUnset("enableJava17RunTasks", false)
+  build.gradle:78:propertyDefaultIfUnset("generateGradleTokenClass", "")
+  build.gradle:88:propertyDefaultIfUnset("forceEnableMixins", false)
+  build.gradle:89:propertyDefaultIfUnset("mixinConfigRefmap", "mixins.${project.modId}.refmap.json")
+  build.gradle:90:propertyDefaultIfUnsetWithEnvVar("enableCoreModDebug", false, "CORE_MOD_DEBUG")
+  build.gradle:91:propertyDefaultIfUnset("generateMixinConfig", true)
+> build.gradle:92:propertyDefaultIfUnset("usesShadowedDependencies", false)
+> build.gradle:93:propertyDefaultIfUnset("minimizeShadowedDependencies", true)
+> build.gradle:94:propertyDefaultIfUnset("relocateShadowedDependencies", true)
+  build.gradle:95:propertyDefaultIfUnset("separateRunDirectories", false)
+  build.gradle:96:propertyDefaultIfUnset("versionDisplayFormat", '$MOD_NAME \u2212 $VERSION')
+  build.gradle:97:propertyDefaultIfUnsetWithEnvVar("modrinthProjectId", "", "MODRINTH_PROJECT_ID")
+  build.gradle:98:propertyDefaultIfUnset("modrinthRelations", "")
+  build.gradle:274:if (project.file('.git/HEAD').isFile() || project.file('.git').isFile()) {
+  build.gradle:275:    apply plugin: 'com.palantir.git-version'
+  build.gradle:276:}
+  build.gradle:277:
+> build.gradle:278:// Shadowing
+> build.gradle:279:if (usesShadowedDependencies.toBoolean()) {
+> build.gradle:280:    apply plugin: 'com.gradleup.shadow'
+  build.gradle:281:}
+  build.gradle:282:
+  build.gradle:283:
+  build.gradle:284:// Configure Java
+  build.gradle:293:        // Azul covers the most platforms for Java 8+ toolchains, crucially including MacOS arm64
+  build.gradle:294://        vendor.set(JvmVendorSpec.AZUL)
+  build.gradle:295:    }
+  build.gradle:296:    if (!noPublishedSources.toBoolean()) {
+> build.gradle:297:        withSourcesJar()
+  build.gradle:298:    }
+  build.gradle:299:}
+  build.gradle:300:
+  build.gradle:301:tasks.withType(JavaCompile).configureEach {
+  build.gradle:367:        modVersion = 'NO-GIT-TAG-SET'
+  build.gradle:368:    }
+  build.gradle:369:}
+  build.gradle:370:
+> build.gradle:371:if (includeMCVersionJar.toBoolean()){
+  build.gradle:372:    version = "${minecraftVersion}-${modVersion}"
+  build.gradle:373:}
+  build.gradle:374:else {
+  build.gradle:375:    version = modVersion
+  build.gradle:377:
+  build.gradle:378:group = modGroup
+  build.gradle:379:
+  build.gradle:380:base {
+> build.gradle:381:    archivesName = modArchivesBaseName
+  build.gradle:382:}
+  build.gradle:383:
+  build.gradle:384:minecraft {
+  build.gradle:385:    mcVersion = minecraftVersion
+  build.gradle:399:
+  build.gradle:400:    // JVM arguments
+  build.gradle:401:    extraRunJvmArguments.add("-ea:${modGroup}")
+  build.gradle:402:
+> build.gradle:403:    // enable JLine Terminal since idea_rt.jar is no longer added to the classpath
+  build.gradle:404:    extraRunJvmArguments.add('-Dterminal.jline=true')
+  build.gradle:405:
+  build.gradle:406:    if (usesMixins.toBoolean()) {
+  build.gradle:407:        extraRunJvmArguments.addAll([
+  build.gradle:429:}
+  build.gradle:430:
+  build.gradle:431:if (coreModClass) {
+  build.gradle:432:    for (runTask in ['runClient', 'runServer']) {
+> build.gradle:433:        tasks.named(runTask).configure {
+  build.gradle:434:            extraJvmArgs.add("-Dfml.coreMods.load=${modGroup}.${coreModClass}")
+  build.gradle:435:        }
+  build.gradle:436:    }
+  build.gradle:437:}
+  build.gradle:439:if (generateGradleTokenClass) {
+  build.gradle:440:    tasks.injectTags.outputClassName.set(generateGradleTokenClass)
+  build.gradle:441:}
+  build.gradle:442:
+> build.gradle:443:tasks.named('processIdeaSettings').configure {
+  build.gradle:444:    dependsOn('injectTags')
+  build.gradle:445:}
+  build.gradle:446:
+  build.gradle:447:
+  build.gradle:495:            name 'Cleanroom Maven'
+  build.gradle:496:            url 'https://maven.cleanroommc.com'
+  build.gradle:497:        }
+  build.gradle:498:        maven {
+> build.gradle:499:            name 'BlameJared Maven'
+> build.gradle:500:            url 'https://maven.blamejared.com'
+  build.gradle:501:        }
+  build.gradle:502:        maven {
+  build.gradle:503:            name 'GTNH Maven'
+  build.gradle:504:            url 'https://nexus.gtnewhorizons.com/repository/public/'
+  build.gradle:527:configurations {
+  build.gradle:528:    embed
+  build.gradle:529:    implementation.extendsFrom(embed)
+  build.gradle:530:
+> build.gradle:531:    if (usesShadowedDependencies.toBoolean()) {
+  build.gradle:532:        for (config in [compileClasspath, runtimeClasspath, testCompileClasspath, testRuntimeClasspath]) {
+> build.gradle:533:            config.extendsFrom(shadowImplementation)
+> build.gradle:534:            config.extendsFrom(shadowCompile)
+  build.gradle:535:        }
+  build.gradle:536:    }
+  build.gradle:537:
+  build.gradle:538:    create("runtimeOnlyNonPublishable") {
+> build.gradle:539:        description = "Runtime only dependencies that are not published alongside the jar"
+  build.gradle:540:        canBeConsumed = false
+  build.gradle:541:        canBeResolved = false
+  build.gradle:542:    }
+  build.gradle:543:    create("devOnlyNonPublishable") {
+> build.gradle:544:        description = "Runtime and compiletime dependencies that are not published alongside the jar (compileOnly + runtimeOnlyNonPublishable)"
+  build.gradle:545:        canBeConsumed = false
+  build.gradle:546:        canBeResolved = false
+  build.gradle:547:    }
+  build.gradle:548:
+  build.gradle:676:    }
+  build.gradle:677:}
+  build.gradle:678:
+  build.gradle:679:
+> build.gradle:680:// Resource processing and jar building
+  build.gradle:681:
+  build.gradle:682:processResources {
+  build.gradle:683:    // this will ensure that this task is redone when the versions change.
+  build.gradle:684:    inputs.property 'version', modVersion
+  build.gradle:706:    }
+  build.gradle:707:}
+  build.gradle:708:
+  build.gradle:709:// Automatically generate a mixin json file if it does not already exist
+> build.gradle:710:tasks.register('generateAssets') {
+  build.gradle:711:    group = 'GT Buildscript'
+  build.gradle:712:    description = 'Generates a pack.mcmeta, mcmod.info, or mixins.{modid}.json if needed'
+  build.gradle:713:    doLast {
+  build.gradle:714:        // pack.mcmeta
+  build.gradle:761:        }
+  build.gradle:762:    }
+  build.gradle:763:}
+  build.gradle:764:
+> build.gradle:765:tasks.named('processResources').configure {
+  build.gradle:766:    dependsOn('generateAssets')
+  build.gradle:767:}
+  build.gradle:768:
+> build.gradle:769:jar {
+  build.gradle:770:    manifest {
+  build.gradle:771:        attributes(getManifestAttributes())
+  build.gradle:772:    }
+  build.gradle:773:
+  build.gradle:774:    from sourceSets.injectedTags.output
+  build.gradle:775:    dependsOn injectedTagsClasses
+  build.gradle:776:
+> build.gradle:777:    // Add all embedded dependencies into the jar
+  build.gradle:778:    from provider {
+  build.gradle:779:        configurations.embed.collect {
+  build.gradle:780:            it.isDirectory() ? it : zipTree(it)
+  build.gradle:781:        }
+  build.gradle:798:if (enableModernJavaSyntax.toBoolean()) {
+  build.gradle:799:    apply plugin: 'xyz.wagyourtail.jvmdowngrader'
+  build.gradle:800:
+  build.gradle:801:    shadeDowngradedApi {
+> build.gradle:802:        archiveClassifier.set('dev')
+  build.gradle:803:    }
+  build.gradle:804:
+> build.gradle:805:    tasks.named('reobfJar', ReobfuscatedJar) {
+> build.gradle:806:        inputJar.set(tasks.named('shadeDowngradedApi', Jar).flatMap { it.archiveFile })
+  build.gradle:807:        dependsOn('shadeDowngradedApi')
+  build.gradle:808:    }
+  build.gradle:809:
+  build.gradle:810:    for (runTask in ['runClient', 'runServer']) {
+> build.gradle:811:        tasks.named(runTask, RunMinecraftTask).configure {
+> build.gradle:812:            classpath = classpath.minus(project.layout.files(tasks.jar)) + project.layout.files(tasks.shadeDowngradedApi)
+  build.gradle:813:            dependsOn('shadeDowngradedApi')
+  build.gradle:814:        }
+  build.gradle:815:    }
+  build.gradle:816:}
+  build.gradle:825:        workingDir = file('run/server')
+  build.gradle:826:    }
+  build.gradle:827:}
+  build.gradle:828:
+> build.gradle:829:// Create API library jar
+  build.gradle:830:def apiJavaSources = useSrcApiPath.toBoolean() ? sourceSets.api.java : sourceSets.main.java
+  build.gradle:831:def apiClassOutput = useSrcApiPath.toBoolean() ? sourceSets.api.output : sourceSets.main.output
+  build.gradle:832:
+  build.gradle:833:if (enableModernJavaSyntax.toBoolean()) {
+> build.gradle:834:    tasks.register('apiJarJava25', Jar) {
+  build.gradle:835:        destinationDirectory.set(layout.buildDirectory.dir('publication-libs'))
+> build.gradle:836:        archiveBaseName.set(project.modArchivesBaseName.toString() + '-java25-publish')
+> build.gradle:837:        archiveClassifier.set('api')
+  build.gradle:838:        from(apiJavaSources) {
+  build.gradle:839:            include "${modGroupPath}/${apiPackagePath}/**"
+  build.gradle:840:        }
+  build.gradle:841:        from(apiClassOutput) {
+  build.gradle:843:        }
+  build.gradle:844:    }
+  build.gradle:845:}
+  build.gradle:846:
+> build.gradle:847:tasks.register('apiJar', Jar) {
+> build.gradle:848:    archiveClassifier.set('api')
+  build.gradle:849:    from(apiJavaSources) {
+  build.gradle:850:        include "${modGroupPath}/${apiPackagePath}/**"
+  build.gradle:851:    }
+  build.gradle:852:    if (enableModernJavaSyntax.toBoolean()) {
+  build.gradle:853:        dependsOn('shadeDowngradedApi')
+  build.gradle:854:        from(provider {
+> build.gradle:855:            zipTree(tasks.named('shadeDowngradedApi', Jar).get().archiveFile.get().asFile)
+  build.gradle:856:        }) {
+  build.gradle:857:            include "${modGroupPath}/${apiPackagePath}/**"
+  build.gradle:858:        }
+  build.gradle:859:    } else {
+  build.gradle:863:    }
+  build.gradle:864:}
+  build.gradle:865:
+  build.gradle:866:if (apiPackage) {
+> build.gradle:867:    tasks.named('build').configure {
+> build.gradle:868:        dependsOn('apiJar')
+  build.gradle:869:        if (enableModernJavaSyntax.toBoolean()) {
+> build.gradle:870:            dependsOn('apiJarJava25')
+  build.gradle:871:        }
+  build.gradle:872:    }
+  build.gradle:873:}
+  build.gradle:874:
+> build.gradle:875:// Configure shadow jar task
+> build.gradle:876:if (usesShadowedDependencies.toBoolean()) {
+> build.gradle:877:    tasks.named('shadowJar', ShadowJar).configure {
+  build.gradle:878:        manifest {
+  build.gradle:879:            attributes(getManifestAttributes())
+  build.gradle:880:        }
+  build.gradle:881:        from sourceSets.injectedTags.output
+  build.gradle:882:        dependsOn injectedTagsClasses
+  build.gradle:883:        exclude 'module-info.class'
+> build.gradle:884:        // Only shadow classes that are actually used, if enabled
+> build.gradle:885:        if (minimizeShadowedDependencies.toBoolean()) {
+  build.gradle:886:            minimize()
+  build.gradle:887:        }
+  build.gradle:888:        configurations = [
+> build.gradle:889:                project.configurations.shadowImplementation,
+> build.gradle:890:                project.configurations.shadowCompile
+  build.gradle:891:        ]
+> build.gradle:892:        // When modern syntax downgrading is enabled, shadeDowngradedApi produces the final dev jar.
+> build.gradle:893:        // Keep shadowJar as an intermediate artifact to avoid both tasks writing the same output file.
+  build.gradle:894:        // This fixes gradle UP-TO-DATE detection
+> build.gradle:895:        archiveClassifier.set(enableModernJavaSyntax.toBoolean() ? 'dev-shadow' : 'dev')
+> build.gradle:896:        if (relocateShadowedDependencies.toBoolean()) {
+> build.gradle:897:            relocationPrefix = modGroup + '.shadow'
+  build.gradle:898:            enableRelocation = true
+  build.gradle:899:        }
+  build.gradle:900:    }
+  build.gradle:901:    def publishedDevTask = enableModernJavaSyntax.toBoolean()
+> build.gradle:902:            ? tasks.named('shadeDowngradedApi', Jar)
+> build.gradle:903:            : tasks.named('shadowJar', ShadowJar)
+> build.gradle:904:    tasks.named('jar', Jar) {
+  build.gradle:905:        enabled = false
+> build.gradle:906:        finalizedBy(tasks.shadowJar)
+  build.gradle:907:    }
+> build.gradle:908:    tasks.named('reobfJar', ReobfuscatedJar) {
+> build.gradle:909:        inputJar.set(publishedDevTask.flatMap({it.archiveFile}))
+  build.gradle:910:    }
+  build.gradle:911:    AdhocComponentWithVariants javaComponent = (AdhocComponentWithVariants) project.components.findByName('java')
+> build.gradle:912:    javaComponent.withVariantsFromConfiguration(configurations.shadowRuntimeElements) {
+  build.gradle:913:        skip()
+  build.gradle:914:    }
+  build.gradle:915:    for (runTask in ['runClient', 'runServer']) {
+> build.gradle:916:        tasks.named(runTask).configure {
+> build.gradle:917:            dependsOn('shadowJar')
+  build.gradle:918:        }
+  build.gradle:919:    }
+  build.gradle:920:}
+  build.gradle:921:
+  build.gradle:983:        lwjgl3ifyAsm("org.ow2.asm:asm-util:${lwjgl3ifyAsmVersion}")
+  build.gradle:984:        lwjgl3ifyAsm("org.ow2.asm:asm-analysis:${lwjgl3ifyAsmVersion}")
+  build.gradle:985:    }
+  build.gradle:986:
+> build.gradle:987:    def lwjgl3ifyDevJarProvider = project.provider {
+  build.gradle:988:        ((Configuration) project.property("java17DependenciesCfg")).files.find {
+> build.gradle:989:            it.name.startsWith("lwjgl3ify-") && it.name.endsWith("-dev.jar")
+  build.gradle:990:        }
+  build.gradle:991:    }
+> build.gradle:992:    def lwjgl3ifyForgePatchesJarProvider = project.provider {
+  build.gradle:993:        ((Configuration) project.property("java17PatchDependenciesCfg")).files.find {
+> build.gradle:994:            it.name.startsWith("lwjgl3ify-") && it.name.contains("forgePatches") && it.name.endsWith(".jar")
+  build.gradle:995:        }
+  build.gradle:996:    }
+  build.gradle:997:
+> build.gradle:998:    def repackLwjgl3ifyJar = { String taskName, Provider<File> inputJarProvider, String outputArchiveFileName ->
+> build.gradle:999:        tasks.register(taskName, Jar) {
+  build.gradle:1000:            destinationDirectory.set(layout.buildDirectory.dir("tmp/lwjgl3ify"))
+> build.gradle:1001:            archiveFileName.set(outputArchiveFileName)
+  build.gradle:1002:            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+  build.gradle:1003:            doFirst {
+> build.gradle:1004:                final File inputJar = inputJarProvider.get()
+> build.gradle:1005:                if (!inputJar.exists()) {
+> build.gradle:1006:                    throw new GradleException("Missing lwjgl3ify input jar for task ${taskName}")
+  build.gradle:1007:                }
+> build.gradle:1008:                final JarFile jarFile = new JarFile(inputJar)
+  build.gradle:1009:                try {
+> build.gradle:1010:                    final inputManifest = jarFile.getManifest()
+  build.gradle:1011:                    if (inputManifest != null) {
+  build.gradle:1012:                        inputManifest.mainAttributes.each { key, value ->
+  build.gradle:1013:                            manifest.attributes((key.toString()): value.toString())
+  build.gradle:1014:                        }
+  build.gradle:1015:                    }
+  build.gradle:1016:                } finally {
+> build.gradle:1017:                    jarFile.close()
+  build.gradle:1018:                }
+  build.gradle:1019:            }
+> build.gradle:1020:            from(project.provider { zipTree(inputJarProvider.get()) }) {
+  build.gradle:1021:                exclude "org/objectweb/asm/**"
+  build.gradle:1022:            }
+  build.gradle:1023:            from(project.provider {
+  build.gradle:1024:                ((Configuration) project.property("lwjgl3ifyAsmCfg")).files.collect { zipTree(it) }
+  build.gradle:1027:            }
+  build.gradle:1028:        }
+  build.gradle:1029:    }
+  build.gradle:1030:
+> build.gradle:1031:    ext.repackLwjgl3ifyDevJar = repackLwjgl3ifyJar(
+> build.gradle:1032:            "repackLwjgl3ifyDevJar",
+> build.gradle:1033:            lwjgl3ifyDevJarProvider,
+> build.gradle:1034:            "lwjgl3ify-1.0.1-dev-asm-${lwjgl3ifyAsmVersion}.jar"
+  build.gradle:1035:    )
+> build.gradle:1036:    ext.repackLwjgl3ifyForgePatchesJar = repackLwjgl3ifyJar(
+> build.gradle:1037:            "repackLwjgl3ifyForgePatchesJar",
+> build.gradle:1038:            lwjgl3ifyForgePatchesJarProvider,
+> build.gradle:1039:            "lwjgl3ify-1.0.1-forgePatches-asm-${lwjgl3ifyAsmVersion}.jar"
+  build.gradle:1040:    )
+  build.gradle:1041:
+  build.gradle:1042:    ext.java17JvmArgs = [
+  build.gradle:1043:            "-Dfile.encoding=UTF-8",
+  build.gradle:1065:
+  build.gradle:1066:    ext.hotswapJvmArgs = [
+  build.gradle:1067:            // DCEVM advanced hot reload
+  build.gradle:1068:            "-XX:+AllowEnhancedClassRedefinition",
+> build.gradle:1069:            "-XX:HotswapAgent=fatjar"
+  build.gradle:1070:    ]
+  build.gradle:1071:
+> build.gradle:1072:    ext.setupHotswapAgent17 = tasks.register("setupHotswapAgent17", SetupHotswapAgentTask, t -> {
+  build.gradle:1073:        t.setTargetForToolchain(java17Toolchain)
+  build.gradle:1074:    })
+  build.gradle:1075:
+> build.gradle:1076:    ext.setupHotswapAgent21 = tasks.register("setupHotswapAgent21", SetupHotswapAgentTask, t -> {
+  build.gradle:1077:        t.setTargetForToolchain(java21Toolchain)
+  build.gradle:1078:    })
+  build.gradle:1079:
+> build.gradle:1080:    ext.setupHotswapAgent25 = tasks.register("setupHotswapAgent25", SetupHotswapAgentTask, t -> {
+  build.gradle:1081:        t.setTargetForToolchain(java25Toolchain)
+  build.gradle:1082:    })
+  build.gradle:1083:
+> build.gradle:1084:    def runClient17Task = tasks.register("runClient17", RunHotswappableMinecraftTask, Distribution.CLIENT, "runClient")
+  build.gradle:1085:    runClient17Task.configure {
+  build.gradle:1086:        dependsOn(setupHotswapAgent17)
+  build.gradle:1087:        setup(project)
+  build.gradle:1088:        javaLauncher = project.javaToolchains.launcherFor(project.java17Toolchain)
+  build.gradle:1089:    }
+  build.gradle:1090:
+> build.gradle:1091:    def runServer17Task = tasks.register("runServer17", RunHotswappableMinecraftTask, Distribution.DEDICATED_SERVER, "runServer")
+  build.gradle:1092:    runServer17Task.configure {
+  build.gradle:1093:        dependsOn(setupHotswapAgent17)
+  build.gradle:1094:        setup(project)
+  build.gradle:1095:        javaLauncher = project.javaToolchains.launcherFor(project.java17Toolchain)
+  build.gradle:1096:    }
+  build.gradle:1097:
+> build.gradle:1098:    def runClient21Task = tasks.register("runClient21", RunHotswappableMinecraftTask, Distribution.CLIENT, "runClient")
+  build.gradle:1099:    runClient21Task.configure {
+  build.gradle:1100:        dependsOn(setupHotswapAgent21)
+  build.gradle:1101:        setup(project)
+  build.gradle:1102:        javaLauncher = project.javaToolchains.launcherFor(project.java21Toolchain)
+  build.gradle:1103:    }
+  build.gradle:1104:
+> build.gradle:1105:    def runServer21Task = tasks.register("runServer21", RunHotswappableMinecraftTask, Distribution.DEDICATED_SERVER, "runServer")
+  build.gradle:1106:    runServer21Task.configure {
+  build.gradle:1107:        dependsOn(setupHotswapAgent21)
+  build.gradle:1108:        setup(project)
+  build.gradle:1109:        javaLauncher = project.javaToolchains.launcherFor(project.java21Toolchain)
+  build.gradle:1110:    }
+  build.gradle:1111:
+> build.gradle:1112:    def runClient25Task = tasks.register("runClient25", RunHotswappableMinecraftTask, Distribution.CLIENT, "runClient")
+  build.gradle:1113:    runClient25Task.configure {
+  build.gradle:1114:        dependsOn(setupHotswapAgent25)
+  build.gradle:1115:        jvmArgsProperty = "java25JvmArgs"
+  build.gradle:1116:        excludedRuntimeArtifactPrefixes = ["groovyscript-", "top-245211-"]
+  build.gradle:1117:        setup(project)
+  build.gradle:1118:        javaLauncher = project.javaToolchains.launcherFor(project.java25Toolchain)
+  build.gradle:1119:    }
+  build.gradle:1120:
+> build.gradle:1121:    def runServer25Task = tasks.register("runServer25", RunHotswappableMinecraftTask, Distribution.DEDICATED_SERVER, "runServer")
+  build.gradle:1122:    runServer25Task.configure {
+  build.gradle:1123:        dependsOn(setupHotswapAgent25)
+  build.gradle:1124:        jvmArgsProperty = "java25JvmArgs"
+  build.gradle:1125:        excludedRuntimeArtifactPrefixes = ["groovyscript-", "top-245211-"]
+  build.gradle:1190:        }
+  build.gradle:1191:
+  build.gradle:1192:        this.classpath(project.provider {
+  build.gradle:1193:            java17PatchDependenciesCfg.files.findAll {
+> build.gradle:1194:                !(it.name.startsWith("lwjgl3ify-") && it.name.contains("forgePatches") && it.name.endsWith(".jar"))
+> build.gradle:1195:            } + [project.tasks.named("repackLwjgl3ifyForgePatchesJar", Jar).get().archiveFile.get().asFile]
+  build.gradle:1196:        })
+  build.gradle:1197:        this.classpath(mcpTasks.getTaskPackageMcLauncher())
+  build.gradle:1198:        this.classpath(mcpTasks.getTaskPackagePatchedMc())
+  build.gradle:1199:        this.classpath(mcpTasks.getPatchedConfiguration())
+> build.gradle:1200:        this.classpath(project.getTasks().named("jar"))
+  build.gradle:1201:        this.classpath(project.provider {
+  build.gradle:1202:            java17DependenciesCfg.files.findAll {
+> build.gradle:1203:                !(it.name.startsWith("lwjgl3ify-") && it.name.endsWith("-dev.jar")) &&
+  build.gradle:1204:                        !excludedRuntimeArtifactPrefixes.any { prefix -> it.name.startsWith(prefix) }
+> build.gradle:1205:            } + [project.tasks.named("repackLwjgl3ifyDevJar", Jar).get().archiveFile.get().asFile]
+  build.gradle:1206:        })
+  build.gradle:1207:
+  build.gradle:1208:        super.setup(project)
+  build.gradle:1209:
+  build.gradle:1210:        dependsOn(
+> build.gradle:1211:                "repackLwjgl3ifyForgePatchesJar",
+> build.gradle:1212:                "repackLwjgl3ifyDevJar",
+  build.gradle:1213:                mcpTasks.getLauncherSources().getClassesTaskName(),
+  build.gradle:1214:                mcTasks.getTaskDownloadVanillaAssets(),
+  build.gradle:1215:                mcpTasks.getTaskPackagePatchedMc(),
+> build.gradle:1216:                "jar"
+  build.gradle:1217:        )
+  build.gradle:1218:
+  build.gradle:1219:        getMainClass().set((side == Distribution.CLIENT) ? "GradleStart" : "GradleStartServer")
+  build.gradle:1220:        getUsername().set(minecraft.getUsername())
+  build.gradle:1244:    abstract RegularFileProperty getTargetFile()
+  build.gradle:1245:
+  build.gradle:1246:    void setTargetForToolchain(Action<JavaToolchainSpec> spec) {
+  build.gradle:1247:        getTargetFile().set(project.javaToolchains.launcherFor(spec).map {
+> build.gradle:1248:            it.metadata.installationPath.file("lib/hotswap/hotswap-agent.jar")
+  build.gradle:1249:        })
+  build.gradle:1250:    }
+  build.gradle:1251:
+  build.gradle:1252:    @Inject
+  build.gradle:1257:    }
+  build.gradle:1258:
+  build.gradle:1259:    @TaskAction
+  build.gradle:1260:    void installHSA() {
+> build.gradle:1261:        final String url = 'https://github.com/HotswapProjects/HotswapAgent/releases/download/1.4.2-SNAPSHOT/hotswap-agent-1.4.2-SNAPSHOT.jar'
+  build.gradle:1262:        final File target = getTargetFile().getAsFile().get()
+  build.gradle:1263:        final File parent = target.getParentFile()
+  build.gradle:1264:        FileUtils.forceMkdir(parent)
+  build.gradle:1265:        final DownloadExtension download = getProject().getExtensions().findByType(DownloadExtension.class)
+  build.gradle:1341:                if (enableSpotless.toBoolean()) {
+  build.gradle:1342:                    '6. Apply Spotless'(Gradle) {
+  build.gradle:1343:                        taskNames = ["spotlessApply"]
+  build.gradle:1344:                    }
+> build.gradle:1345:                    '7. Build Jars'(Gradle) {
+  build.gradle:1346:                        taskNames = ['build']
+  build.gradle:1347:                    }
+  build.gradle:1348:                } else {
+> build.gradle:1349:                    '6. Build Jars'(Gradle) {
+  build.gradle:1350:                        taskNames = ['build']
+  build.gradle:1351:                    }
+  build.gradle:1352:                }
+  build.gradle:1353:                'Update Buildscript'(Gradle) {
+  build.gradle:1379:
+  build.gradle:1380:if (isCIEnv || deploymentDebug.toBoolean()) {
+  build.gradle:1381:    artifacts {
+  build.gradle:1382:        if (!noPublishedSources.toBoolean()) {
+> build.gradle:1383:            archives sourcesJar
+  build.gradle:1384:        }
+  build.gradle:1385:        if (apiPackage) {
+> build.gradle:1386:            archives apiJar
+  build.gradle:1387:            if (enableModernJavaSyntax.toBoolean()) {
+> build.gradle:1388:                archives apiJarJava25
+  build.gradle:1389:            }
+  build.gradle:1390:        }
+  build.gradle:1391:    }
+  build.gradle:1392:}
+  build.gradle:1393:
+  build.gradle:1394:// Changelog generation
+> build.gradle:1395:tasks.register('generateChangelog') {
+  build.gradle:1396:    group = 'GT Buildscript'
+  build.gradle:1397:    description = 'Generate a default changelog of all commits since the last tagged git commit'
+  build.gradle:1398:    onlyIf {
+  build.gradle:1399:        generateDefaultChangelog.toBoolean()
+  build.gradle:1426:
+  build.gradle:1427:if (cfApiKey.isPresent() || deploymentDebug.toBoolean()) {
+  build.gradle:1428:    apply plugin: 'net.darkhax.curseforgegradle'
+  build.gradle:1429:    //noinspection UnnecessaryQualifiedReference
+> build.gradle:1430:    tasks.register('curseforge', net.darkhax.curseforgegradle.TaskPublishCurseForge) {
+  build.gradle:1431:        disableVersionDetection()
+  build.gradle:1432:        debugMode = deploymentDebug.toBoolean()
+  build.gradle:1433:        apiToken = cfApiKey.getOrElse('debug_token')
+  build.gradle:1434:
+  build.gradle:1435:        doFirst {
+> build.gradle:1436:            def mainFile = upload(curseForgeProjectId, reobfJar)
+  build.gradle:1437:            def changelogFile = getChangelog()
+  build.gradle:1438:            def changelogRaw = changelogFile.exists() ? changelogFile.getText('UTF-8') : ""
+  build.gradle:1439:
+  build.gradle:1440:            mainFile.displayName = versionDisplayFormat.replace('$MOD_NAME', modName).replace('$VERSION', modVersion)
+  build.gradle:1513:        versionNumber = modVersion
+  build.gradle:1514:        gameVersions = [minecraftVersion]
+  build.gradle:1515:        loaders = ["forge"]
+  build.gradle:1516:        debugMode = deploymentDebug.toBoolean()
+> build.gradle:1517:        uploadFile = reobfJar
+  build.gradle:1518:        additionalFiles = getSecondaryArtifacts()
+  build.gradle:1519:    }
+  build.gradle:1520:    if (modrinthRelations.size() != 0) {
+  build.gradle:1521:        String[] deps = modrinthRelations.split(';')
+  build.gradle:1563:        String publishedVersion = modVersion
+  build.gradle:1564:        String baseVersion = System.getenv('RELEASE_VERSION') ?: publishedVersion
+  build.gradle:1565:        String baseArtifactId = 'ntm-ce'
+  build.gradle:1566:        String baseGroupId = System.getenv('ARTIFACT_GROUP_ID') ?: project.mavenArtifactGroup
+> build.gradle:1567:        def java25DevJarTask = tasks.named(usesShadowedDependencies.toBoolean() ? "shadowJarJava25" : "jarJava25")
+> build.gradle:1568:        def java25ReobfJarTask = tasks.named("reobfJarJava25")
+  build.gradle:1569:
+  build.gradle:1570:        publishing {
+  build.gradle:1571:            publications {
+  build.gradle:1572:                create('maven', MavenPublication) {
+  build.gradle:1573:                    //noinspection GroovyAssignabilityCheck
+  build.gradle:1574:                    from components.java
+  build.gradle:1575:
+  build.gradle:1576:                    if (apiPackage) {
+> build.gradle:1577:                        artifact apiJar
+  build.gradle:1578:                    }
+  build.gradle:1579:
+  build.gradle:1580:                    groupId = baseGroupId
+  build.gradle:1581:                    artifactId = baseArtifactId
+  build.gradle:1587:                        //noinspection GroovyAssignabilityCheck
+  build.gradle:1588:                        from components.findByName('java25')
+  build.gradle:1589:
+  build.gradle:1590:                        if (apiPackage) {
+> build.gradle:1591:                            artifact apiJarJava25
+  build.gradle:1592:                        }
+  build.gradle:1593:                        if (!noPublishedSources.toBoolean()) {
+> build.gradle:1594:                            artifact sourcesJar
+  build.gradle:1595:                        }
+  build.gradle:1596:
+  build.gradle:1597:                        groupId = baseGroupId
+  build.gradle:1598:                        artifactId = baseArtifactId + '-java25'
+  build.gradle:1616:    }
+  build.gradle:1617:}
+  build.gradle:1618:
+  build.gradle:1619:def getSecondaryArtifacts() {
+> build.gradle:1620:    def secondaryArtifacts = [usesShadowedDependencies.toBoolean() ? tasks.shadowJar : tasks.jar]
+> build.gradle:1621:    if (!noPublishedSources.toBoolean()) secondaryArtifacts += [sourcesJar]
+> build.gradle:1622:    if (apiPackage) secondaryArtifacts += [apiJar]
+  build.gradle:1623:    return secondaryArtifacts
+  build.gradle:1624:}
+  build.gradle:1625:
+  build.gradle:1626:def getReleaseType() {
+  build.gradle:1651:// Buildscript updating
+  build.gradle:1652:
+  build.gradle:1653:def buildscriptGradleVersion = '9.2.1'
+  build.gradle:1654:
+> build.gradle:1655:tasks.named('wrapper', Wrapper).configure {
+  build.gradle:1656:    gradleVersion = buildscriptGradleVersion
+  build.gradle:1657:}
+  build.gradle:1658:
+> build.gradle:1659:tasks.register('updateBuildScript') {
+  build.gradle:1660:    group = 'GT Buildscript'
+  build.gradle:1661:    description = 'Updates the build script to the latest version'
+  build.gradle:1662:
+  build.gradle:1663:    if (gradle.gradleVersion != buildscriptGradleVersion && !Boolean.getBoolean('DISABLE_BUILDSCRIPT_GRADLE_UPDATE')) {
+  build.gradle:1724:
+  build.gradle:1725:
+  build.gradle:1726:// Faq
+  build.gradle:1727:
+> build.gradle:1728:tasks.register('faq') {
+  build.gradle:1729:    group = 'GT Buildscript'
+  build.gradle:1730:    description = 'Prints frequently asked questions about building a project'
+  build.gradle:1731:    doLast {
+  build.gradle:1732:        print("\nTo update this buildscript to the latest version, run 'gradlew updateBuildScript' or run the generated run configuration if you are using IDEA.\n" +
+  build.gradle:1813:} else if (getFile('addon.gradle.kts').exists()) {
+  build.gradle:1814:    apply from: 'addon.gradle.kts'
+  build.gradle:1815:}
+  build.gradle:1816:
+> build.gradle:1817:// Obfuscated Java 25 jar for cleanroom users
+> build.gradle:1818:tasks.register('jarJava25', Jar) {
+  build.gradle:1819:    group = 'build'
+> build.gradle:1820:    description = 'Packages the Java 25 classes into a temporary jar.'
+  build.gradle:1821:    destinationDirectory.set(layout.buildDirectory.dir("libs"))
+> build.gradle:1822:    archiveClassifier.set('dev-java25')
+  build.gradle:1823:    from sourceSets.main.output
+  build.gradle:1824:    from sourceSets.injectedTags.output
+  build.gradle:1825:    dependsOn injectedTagsClasses
+  build.gradle:1826:    if (useSrcApiPath.toBoolean() && apiPackage) {
+  build.gradle:1842:        attributes(getManifestAttributes())
+  build.gradle:1843:    }
+  build.gradle:1844:}
+  build.gradle:1845:
+> build.gradle:1846:def cleanroomInputTask = tasks.named('jarJava25')
+  build.gradle:1847:
+> build.gradle:1848:if (usesShadowedDependencies.toBoolean()) {
+> build.gradle:1849:    tasks.register('shadowJarJava25', ShadowJar) {
+  build.gradle:1850:        group = 'build'
+  build.gradle:1851:        destinationDirectory.set(layout.buildDirectory.dir("libs"))
+> build.gradle:1852:        archiveClassifier.set('dev-java25')
+  build.gradle:1853:
+  build.gradle:1854:        from sourceSets.main.output
+  build.gradle:1855:        from sourceSets.injectedTags.output
+  build.gradle:1856:        dependsOn injectedTagsClasses
+  build.gradle:1857:        if (useSrcApiPath.toBoolean() && apiPackage) {
+  build.gradle:1858:            from sourceSets.api.output
+  build.gradle:1859:        }
+  build.gradle:1860:        configurations = [
+> build.gradle:1861:                project.configurations.shadowImplementation,
+> build.gradle:1862:                project.configurations.shadowCompile
+  build.gradle:1863:        ]
+  build.gradle:1864:
+  build.gradle:1865:        manifest {
+  build.gradle:1866:            attributes(getManifestAttributes())
+  build.gradle:1867:        }
+  build.gradle:1868:        exclude 'module-info.class'
+  build.gradle:1869:
+> build.gradle:1870:        if (minimizeShadowedDependencies.toBoolean()) {
+  build.gradle:1871:            minimize()
+  build.gradle:1872:        }
+> build.gradle:1873:        if (relocateShadowedDependencies.toBoolean()) {
+> build.gradle:1874:            relocationPrefix = modGroup + '.shadow'
+  build.gradle:1875:            enableRelocation = true
+  build.gradle:1876:        }
+  build.gradle:1877:    }
+> build.gradle:1878:    cleanroomInputTask = tasks.named('shadowJarJava25')
+  build.gradle:1879:}
+  build.gradle:1880:
+  build.gradle:1881:for (runTask in ['runClient25', 'runServer25']) {
+> build.gradle:1882:    tasks.named(runTask, RunHotswappableMinecraftTask).configure {
+> build.gradle:1883:        classpath = classpath.minus(project.layout.files(tasks.jar)) + project.layout.files(cleanroomInputTask)
+  build.gradle:1884:        dependsOn(cleanroomInputTask)
+  build.gradle:1885:    }
+  build.gradle:1886:}
+  build.gradle:1887:
+> build.gradle:1888:def mainReobfProv = tasks.named('reobfJar', ReobfuscatedJar)
+> build.gradle:1889:tasks.register('reobfJarJava25', ReobfuscatedJar) { t ->
+  build.gradle:1890:    group = 'deployment'
+> build.gradle:1891:    description = 'Creates a reobfuscated JAR with Java 25 bytecode for Cleanroom.'
+  build.gradle:1892:
+  build.gradle:1893:    destinationDirectory.set(layout.buildDirectory.dir('publication-libs'))
+> build.gradle:1894:    archiveBaseName.set(project.modArchivesBaseName.toString() + '-java25-publish')
+> build.gradle:1895:    inputJar.set(cleanroomInputTask.flatMap { it.archiveFile })
+> build.gradle:1896:    archiveClassifier.set('')
+  build.gradle:1897:
+  build.gradle:1898:    mcVersion.set(mainReobfProv.flatMap { it.mcVersion })
+  build.gradle:1899:    srg.set(mainReobfProv.flatMap { it.srg })
+  build.gradle:1900:    fieldCsv.set(mainReobfProv.flatMap { it.fieldCsv })
+  build.gradle:1901:    methodCsv.set(mainReobfProv.flatMap { it.methodCsv })
+  build.gradle:1902:    exceptorCfg.set(mainReobfProv.flatMap { it.exceptorCfg })
+> build.gradle:1903:    recompMcJar.set(mainReobfProv.flatMap { it.recompMcJar })
+  build.gradle:1904:    extraSrgEntries.set(mainReobfProv.flatMap { it.extraSrgEntries })
+  build.gradle:1905:    def main = mainReobfProv.get()
+  build.gradle:1906:    t.referenceClasspath.setFrom(main.referenceClasspath)
+  build.gradle:1907:    t.extraSrgFiles.setFrom(main.extraSrgFiles)
+  build.gradle:1909:    dependsOn(cleanroomInputTask)
+  build.gradle:1910:}
+  build.gradle:1911:
+  build.gradle:1912:def publishedRuntimeDevTask = enableModernJavaSyntax.toBoolean()
+> build.gradle:1913:        ? tasks.named(usesShadowedDependencies.toBoolean() ? 'shadeDowngradedApi' : 'jar', Jar)
+> build.gradle:1914:        : tasks.named(usesShadowedDependencies.toBoolean() ? 'shadowJar' : 'jar', Jar)
+  build.gradle:1915:def publishedApiDevTask = publishedRuntimeDevTask
+  build.gradle:1916:
+  build.gradle:1917:if (sourceSets.findByName('api') != null && !useSrcApiPath.toBoolean()) {
+> build.gradle:1918:    tasks.register('compileDevJar', Jar) {
+  build.gradle:1919:        group = 'build'
+> build.gradle:1920:        description = 'Packages the normal dev jar plus src/api output for compile-time consumers.'
+  build.gradle:1921:        destinationDirectory.set(layout.buildDirectory.dir("libs"))
+> build.gradle:1922:        archiveClassifier.set('dev-compile')
+  build.gradle:1923:        dependsOn(publishedRuntimeDevTask)
+  build.gradle:1924:        dependsOn(apiClasses)
+  build.gradle:1925:        from(provider {
+> build.gradle:1926:            zipTree(publishedRuntimeDevTask.get().archiveFile.get().asFile)
+  build.gradle:1927:        })
+  build.gradle:1928:        from(sourceSets.api.output)
+  build.gradle:1929:    }
+> build.gradle:1930:    publishedApiDevTask = tasks.named('compileDevJar', Jar)
+  build.gradle:1931:}
+  build.gradle:1932:
+  build.gradle:1933:if (enableModernJavaSyntax.toBoolean()) {
+  build.gradle:1934:    def publishedJava25RuntimeDevTask = cleanroomInputTask
+  build.gradle:1935:
+  build.gradle:1936:    def publishedJava25ApiDevTask = publishedJava25RuntimeDevTask
+  build.gradle:1937:    if (sourceSets.findByName('api') != null && !useSrcApiPath.toBoolean()) {
+> build.gradle:1938:        publishedJava25ApiDevTask = tasks.register('compileDevJarJava25', Jar) {
+  build.gradle:1939:            group = 'build'
+> build.gradle:1940:            description = 'Packages the Java 25 dev jar plus src/api output for compile-time consumers.'
+  build.gradle:1941:            destinationDirectory.set(layout.buildDirectory.dir('publication-libs'))
+> build.gradle:1942:            archiveBaseName.set(project.modArchivesBaseName.toString() + '-java25-publish')
+> build.gradle:1943:            archiveClassifier.set('dev-compile')
+  build.gradle:1944:            dependsOn(publishedJava25RuntimeDevTask)
+  build.gradle:1945:            dependsOn(apiClasses)
+  build.gradle:1946:            from(provider {
+> build.gradle:1947:                zipTree(publishedJava25RuntimeDevTask.get().archiveFile.get().asFile)
+  build.gradle:1948:            })
+  build.gradle:1949:            from(sourceSets.api.output)
+  build.gradle:1950:        }
+  build.gradle:1951:    }
+  build.gradle:1977:    copyOutgoingAttributes(configurations.runtimeElements, java25RuntimeElements)
+  build.gradle:1978:    copyOutgoingAttributes(configurations.reobfElements, java25ReobfElements)
+  build.gradle:1979:    java25ApiElements.outgoing.artifact(publishedJava25ApiDevTask)
+  build.gradle:1980:    java25RuntimeElements.outgoing.artifact(publishedJava25RuntimeDevTask) {
+> build.gradle:1981:        classifier = 'dev'
+  build.gradle:1982:    }
+> build.gradle:1983:    java25ReobfElements.outgoing.artifact(tasks.named('reobfJarJava25'))
+  build.gradle:1984:
+  build.gradle:1985:    def softwareComponentFactory = project.services.get(org.gradle.api.component.SoftwareComponentFactory)
+  build.gradle:1986:    def java25Component = softwareComponentFactory.adhoc('java25')
+  build.gradle:1987:    components.add(java25Component)
+  build.gradle:2000:configurations.apiElements.outgoing.artifacts.clear()
+  build.gradle:2001:configurations.runtimeElements.outgoing.artifact(publishedRuntimeDevTask)
+  build.gradle:2002:configurations.apiElements.outgoing.artifact(publishedApiDevTask)
+  build.gradle:2003:
+> build.gradle:2004:tasks.register('releaseBuild') {
+  build.gradle:2005:    group = 'build'
+> build.gradle:2006:    description = 'Runs the normal build and also produces the Java 25 reobfuscated release jar.'
+  build.gradle:2007:    dependsOn('build')
+> build.gradle:2008:    dependsOn('reobfJarJava25')
+  build.gradle:2009:}
+> build.gradle:2010:// End Obfuscated Java 25 jar
+  build.gradle:2011:
+  build.gradle:2012:// GlStateManager hack
+  build.gradle:2013:def sourceBackupDir = file("build/tmp/sourceBackup")
+  build.gradle:2014:def glStateManagerSource = file("build/rfg/minecraft-src/java/net/minecraft/client/renderer/GlStateManager.java")
+  build.gradle:2069:    }
+  build.gradle:2070:    targetFile.setText(newContent, 'UTF-8')
+  build.gradle:2071:}
+  build.gradle:2072:
+> build.gradle:2073:tasks.register('patchAndBackupSources') {
+  build.gradle:2074:    group = 'build'
+  build.gradle:2075:
+  build.gradle:2076:    def glStateManagerBackupFile = file("$sourceBackupDir/GlStateManager.java.bak")
+  build.gradle:2077:    def fmlTweakerBackupFile = file("$sourceBackupDir/FMLTweaker.java.bak")
+  build.gradle:2087:        patchFmlTweakerSource(fmlTweakerSource)
+  build.gradle:2088:    }
+  build.gradle:2089:}
+  build.gradle:2090:
+> build.gradle:2091:tasks.register('restoreOriginalSources') {
+  build.gradle:2092:    group = 'build'
+  build.gradle:2093:
+  build.gradle:2094:    def glStateManagerBackupFile = file("$sourceBackupDir/GlStateManager.java.bak")
+  build.gradle:2095:    def fmlTweakerBackupFile = file("$sourceBackupDir/FMLTweaker.java.bak")
+  build.gradle:2108:        }
+  build.gradle:2109:    }
+  build.gradle:2110:}
+  build.gradle:2111:
+> build.gradle:2112:tasks.register('repatchSourcesForIDE') {
+  build.gradle:2113:    group = 'ide'
+  build.gradle:2114:
+  build.gradle:2115:    outputs.files(glStateManagerSource, fmlTweakerSource)
+  build.gradle:2116:
+  build.gradle:2119:        patchFmlTweakerSource(fmlTweakerSource)
+  build.gradle:2120:    }
+  build.gradle:2121:}
+  build.gradle:2122:
+> build.gradle:2123:tasks.named('patchAndBackupSources').configure {it.dependsOn(tasks.named('decompressDecompiledSources'))}
+> build.gradle:2124:tasks.named('compilePatchedMcJava').configure {it.dependsOn(tasks.named('patchAndBackupSources'))}
+> build.gradle:2125:tasks.named('restoreOriginalSources').configure {it.dependsOn(tasks.named('classes'))}
+> build.gradle:2126:tasks.named('reobfJar').configure {it.dependsOn(tasks.named('restoreOriginalSources'))}
+> build.gradle:2127:tasks.named('build').configure {it.finalizedBy(tasks.named('repatchSourcesForIDE'))}
+  build.gradle:2128:// End GlStateManager hack
+  build.gradle:2129:
+  build.gradle:2130:// JVMDG configuration
+  build.gradle:2131:jvmdg {
+  build.gradle:2153:        languageVersion = JavaLanguageVersion.of(25)
+  build.gradle:2154:    })
+  build.gradle:2155:}
+  build.gradle:2156:
+> build.gradle:2157:tasks.named('compilePatchedMcJava').configure {
+> build.gradle:2158:    classpath += files('libs/launchwrapper-1.12.jar')
+  build.gradle:2159:}
+  build.gradle:2160:
+> build.gradle:2161:tasks.named('compileMcLauncherJava').configure {
+> build.gradle:2162:    classpath += files('libs/launchwrapper-1.12.jar')
+  build.gradle:2163:}
+
+
+
