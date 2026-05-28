@@ -1,126 +1,61 @@
-<div dir=rtl align=center>
+# HBM NTM Reforged
 
-### **English 🇺🇸** / [**Русский 🇷🇺**](README_ru.md) / [**简体中文 🇨🇳**](README_zh.md) / [**한국어 🇰🇷**](README_kr.md) / [**Українська 🇺🇦**](README_ua.md)
-</div>
+HBM NTM Reforged is an unofficial Minecraft Forge 1.12.2 port and continuation of HBM's Nuclear Tech Mod.
 
-<p align="center"><img src="./github/icon.png" alt="Logo" width="300"></p>
+This project is focused on preserving, restoring, and continuing the HBM NTM experience for Minecraft 1.12.2, including machines, weapons, blocks, items, resources, world generation, and mechanics from the original mod and Extended Edition where possible.
 
-<h1 align="center"> HBM's Nuclear Tech Mod Community Edition  <br>
-	<a href="https://www.curseforge.com/minecraft/mc-mods/hbm-nuclear-tech-mod-community-edition"><img src="http://cf.way2muchnoise.eu/1312314.svg" alt="CF"></a>
-    <a href="https://modrinth.com/mod/ntm-ce"><img src="https://img.shields.io/modrinth/dt/ntm-ce?logo=modrinth&label=&suffix=%20&style=flat&color=242629&labelColor=5ca424&logoColor=1c1c1c" alt="Modrinth"></a>
-	<a href="https://discord.gg/eKFrH7P5ZR"><img src="https://img.shields.io/discord/1241479482964054057?color=5865f2&label=Discord&style=flat" alt="Discord"></a>
-    <br>
-</h1>
+## Status
 
-A definitive port of HBM's Nuclear Tech Mod from 1.7.10 to 1.12.2, the most completed one among others. Came from necessity as other developers have failed to update and maintain other forks.
+This project is currently in alpha.
 
-> [!IMPORTANT]
-> **FOLLOW THE ISSUE TEMPLATE WHILE REPORTING ISSUES**  
-> Due to the amount of issues we get daily, we enforce strict issue report guidelines stated in the templates.  
-Failure to follow the templates will result in closing and locking of the issue without a warning. Rule does not apply
-retroactively. Please respect our time and make sure issue reports are of quality.
+Bugs, crashes, missing content, unfinished mechanics, and balance issues are expected.
 
-> [!NOTE]
-> If you have Universal Tweaks installed, set `B:"Disable Fancy Missing Model"` to `false` to fix model rotation  
-> This can be found at `config/Universal Tweaks - Tweaks.cfg`
+## Goals
 
-<br>
-<p align="center"><img src="./github/faq.png" alt="NTM:CE FAQ" width="700"></p>
-<br>
+- Restore and preserve HBM NTM content for Minecraft Forge 1.12.2
+- Port missing content from the original mod and Extended Edition where possible
+- Improve stability and compatibility
+- Fix broken or unfinished mechanics
+- Add missing machines, weapons, blocks, items, resources, and world generation
+- Work toward full parity with the original/Extended Edition content
+- Prepare the project for a future port to newer Minecraft versions
 
-### Is it survival ready?
-Yes!
-### Is the mod compatible with NTM: Extended edition addons?
-No. It will crash.
-### Shaders?
-Should be compatible with most shaders; If you find any visual artifacts, please report them to us.
-### How different is it from Extended edition?
-**Extended worlds are fully incompatible!** <br>
-We have rewritten ~75% of the entire mod, porting every single feature we can.
-The amount of changes is difficult to track at this point. I invite you to check our GitHub issues, as we use them to
-track missing/added content.
+## Current version
 
-<br>
-<p align="center"><img src="./github/dev_guide.png" alt="Development Guide" width="700"></p>
-<br>
+Current public version:
 
-## **For development Java 25 is used!**
+`0.8.0-alpha`
 
-We have [JvmDowngrader](https://github.com/unimined/JvmDowngrader) to target Java 8 bytecode seamlessly while still using modern syntax and apis.
+Artifact naming format:
 
+`HBM-NTM-Reforged-X.X.X-alpha-1.12.2.jar`
 
-### General quickstart
-1. Clone this repository.
-2. Prepare JDK 25
-3. Run task `setupDecompWorkspace` (this will setup workspace, including MC sources deobfuscation)
-4. Ensure everything is OK. Run task `runClient` (should open minecraft client with mod loaded)
+Example:
 
+`HBM-NTM-Reforged-0.8.0-alpha-1.12.2.jar`
 
-- Always use `gradlew` (Linux/MACOS) or `gradlew.bat` (Win) and not `gradle` for tasks. So each dev will have consistent environment.
-### Development quirks for Apple M-chip machines.
+## Future plans
 
-Since there are no natives for ARM arch, therefore you will have to use x86_64 JDK (the easiest way to get the right one is IntelliJ SDK manager)
+After the 1.12.2 version is completed, the next goal is to begin work on a newer Minecraft version, possibly 1.20+.
 
-You can use one of the following methods:
-- GRADLE_OPTS env variable `export GRADLE_OPTS="-Dorg.gradle.java.home=/path/to/your/desired/jdk"`
-- additional property in gradle.properties (~/.gradle or pwd) `org.gradle.java.home=/path/to/your/desired/jdk`
-- direct usage with -D param in terminal `./gradlew -Dorg.gradle.java.home=/path/to/your/desired/jdk wantedTask`
+A public modded Minecraft community/server is also planned for the future when the mod and community are ready.
 
-#### Troubleshooting:
+## Discord
 
-1. If you see that even when using x86_64 JDK in logs gradle treats you as ARM machine. Do following:
-    1. Clear workspace `git fetch; git clean -fdx; git reset --hard HEAD` (IMPORTANT: will sync local to git, and remove all progress)
-    2. Clear gradle cache `rm -rf ~/.gradle` (IMPORTANT: will erase WHOLE gradle cache)
-    3. Clear downloaded JVMs `rm -rf /path/to/used/jvm`
-       (path to used jvm can be found in /run/logs/latest.log like this `Java is OpenJDK 64-Bit Server VM, version 1.8.0_442, running on Mac OS X:x86_64:15.3.2, installed at /this/is/the/path`)
-    4. Repeat quickstart.
+Join the Discord community for bug reports, suggestions, development updates, modded Minecraft discussion, and future public server plans.
 
-## Maven
-Our server is extremely unreliable and slow, curse maven is recommended for releases.
+Discord: `PASTE_YOUR_DISCORD_LINK_HERE`
 
-### Snapshots
-These represent the latest commit for a given version.
+## Disclaimer
 
-```groovy
-repositories {
-    maven {
-        name "Warfactory Snapshots"
-        url "https://repo.warfactory.co/snapshots"
-    }
-}
-dependencies {
-    // Java 8, unobfuscated
-    implementation "com.hbm:ntm-ce:2.4.0.0-SNAPSHOT:dev"
-    // Java 25, unobfuscated
-    implementation "com.hbm:ntm-ce-java25:2.4.0.0-SNAPSHOT:dev"
-    // Java 8, obfuscated
-    implementation "com.hbm:ntm-ce:2.4.0.0-SNAPSHOT"
-    // Java 25, obfuscated
-    implementation "com.hbm:ntm-ce-java25:2.4.0.0-SNAPSHOT"
-}
-```
+This is an unofficial fan/community project.
 
-### Releases
-These correspond to a CurseForge / Modrinth release.
+Original HBM's Nuclear Tech Mod belongs to its original creators.
 
-```groovy
-repositories {
-    maven {
-        name "Warfactory Releases"
-        url "https://repo.warfactory.co/releases"
-    }
-}
-dependencies {
-    // Java 8, unobfuscated
-    implementation "com.hbm:ntm-ce:2.4.0.0:dev"
-    // Java 25, unobfuscated
-    implementation "com.hbm:ntm-ce-java25:2.4.0.0:dev"
-    // Java 8, obfuscated
-    implementation "com.hbm:ntm-ce:2.4.0.0"
-    // Java 25, obfuscated
-    implementation "com.hbm:ntm-ce-java25:2.4.0.0"
-}
-```
+This project is not an official release from the original HBM NTM creators. It is made to preserve, restore, and continue the mod for the community.
 
-Normally you should use unobfuscated jars for development.  
-If you are on Cleanroom and is using JDK 25 then both Java 8 and Java 25 variants are fine; otherwise the Java 8 ones are recommended.
+## License
+
+This project follows the GNU Lesser General Public License v3.0 where applicable.
+
+See `LICENSE` and `LICENSE.LESSER` for details.
