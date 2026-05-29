@@ -1,0 +1,62 @@
+package com.hbm.render.entity;
+
+import com.hbm.entity.projectile.EntityLaser;
+import com.hbm.interfaces.AutoRegister;
+import com.hbm.lib.Library;
+import com.hbm.render.misc.BeamPronter;
+import com.hbm.render.misc.BeamPronter.EnumBeamType;
+import com.hbm.render.misc.BeamPronter.EnumWaveType;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.fml.client.registry.IRenderFactory;
+@AutoRegister(factory = "FACTORY")
+public class RenderLaser extends Render<EntityLaser> {
+
+	public static final IRenderFactory<EntityLaser> FACTORY = man -> new RenderLaser(man);
+	
+	protected RenderLaser(RenderManager renderManager) {
+		super(renderManager);
+	}
+
+	@Override
+	public void doRender(EntityLaser laser, double x, double y, double z, float entityYaw, float partialTicks) {
+		GlStateManager.pushMatrix();
+		
+		EntityPlayer player = laser.world.getPlayerEntityByName(laser.getDataManager().get(EntityLaser.PLAYER_NAME));
+		
+		if(player != null) {
+
+			
+			
+			//GlStateManager.translate(x - dX, y - dY, z - dZ);
+			
+			GlStateManager.translate(x, y, z);
+			
+			RayTraceResult pos = Library.rayTrace(player, 100, 1);
+			
+			Vec3d skeleton = new Vec3d(pos.hitVec.x - player.posX, pos.hitVec.y - player.posY - player.getEyeHeight(), pos.hitVec.z - player.posZ);
+			int init = (int) -(System.currentTimeMillis() % 360);
+			
+			//BeamPronter.prontHelix(skeleton, 0, 0, 0, EnumWaveType.SPIRAL, EnumBeamType.LINE, 0x0000ff, 0x8080ff, 0, (int)(skeleton.length() * 5), 0.2F);
+	        BeamPronter.prontBeam(skeleton, EnumWaveType.SPIRAL, EnumBeamType.SOLID, 0xff5000, 0xff5000, init, (int) skeleton.length() + 1, 0.1F, 4, 0.05F);
+	        BeamPronter.prontBeam(skeleton, EnumWaveType.SPIRAL, EnumBeamType.SOLID, 0xff3000, 0xff3000, init, 1, 0F, 4, 0.05F);
+		}
+		
+		GlStateManager.popMatrix();
+	}
+	
+	@Override
+	public void doRenderShadowAndFire(Entity entityIn, double x, double y, double z, float yaw, float partialTicks) {}
+	
+	@Override
+	protected ResourceLocation getEntityTexture(EntityLaser entity) {
+		return null;
+	}
+
+}

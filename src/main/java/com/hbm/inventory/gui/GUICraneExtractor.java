@@ -1,0 +1,100 @@
+package com.hbm.inventory.gui;
+
+import com.hbm.Tags;
+import com.hbm.handler.threading.PacketThreading;
+import com.hbm.inventory.container.ContainerCraneExtractor;
+import com.hbm.modules.ModulePatternMatcher;
+import com.hbm.packet.toserver.NBTControlPacket;
+import com.hbm.tileentity.network.TileEntityCraneExtractor;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.Slot;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
+
+import java.io.IOException;
+import java.util.Arrays;
+
+import static com.hbm.util.SoundUtil.playClickSound;
+
+public class GUICraneExtractor extends GuiInfoContainer {
+
+    private static final ResourceLocation texture = new ResourceLocation(Tags.MODID + ":textures/gui/storage/gui_crane_ejector.png");
+    public TileEntityCraneExtractor ejector;
+
+    public GUICraneExtractor(InventoryPlayer invPlayer, TileEntityCraneExtractor tedf) {
+        super(new ContainerCraneExtractor(invPlayer, tedf));
+        ejector = tedf;
+
+        this.xSize = 212;
+        this.ySize = 185;
+    }
+
+    @Override
+    public void drawScreen(int x, int y, float interp) {
+        super.drawScreen(x, y, interp);
+
+        if(this.mc.player.inventory.getItemStack().isEmpty()) {
+            for(int i = 0; i < 9; ++i) {
+                Slot slot = this.inventorySlots.inventorySlots.get(i);
+
+                if(this.isMouseOverSlot(slot, x, y) && ejector.matcher.modes[i] != null) {
+                    this.drawHoveringText(Arrays.asList(TextFormatting.RED + "Right click to change", ModulePatternMatcher.getLabel(ejector.matcher.modes[i])), x, y - 30);
+                }
+            }
+        }
+
+        if(guiLeft + 187 <= x && guiLeft + 187 + 18 > x && guiTop + 34 < y && guiTop + 34 + 18 >= y) {
+            this.drawHoveringText(Arrays.asList("Only take maximum possible: " + (ejector.maxEject ? TextFormatting.GREEN + "ON" : TextFormatting.RED + "OFF")), x, y);
+        }
+
+        this.renderHoveredToolTip(x, y);
+    }
+
+    @Override
+    protected void mouseClicked(int x, int y, int i) throws IOException {
+        super.mouseClicked(x, y, i);
+
+        if(guiLeft + 187 <= x && guiLeft + 187 + 18 > x && guiTop + 34 < y && guiTop + 34 + 18 >= y) {
+            playClickSound();
+            NBTTagCompound data = new NBTTagCompound();
+            data.setBoolean("maxEject", true);
+            PacketThreading.createSendToServerThreadedPacket(new NBTControlPacket(data, ejector.getPos()));
+        }
+
+        if(guiLeft + 128 <= x && guiLeft + 128 + 14 > x && guiTop + 30 < y && guiTop + 30 + 26 >= y) {
+            playClickSound();
+            NBTTagCompound data = new NBTTagCompound();
+            data.setBoolean("whitelist", true);
+            PacketThreading.createSendToServerThreadedPacket(new NBTControlPacket(data, ejector.getPos()));
+        }
+    }
+
+    @Override
+    protected void drawGuiContainerForegroundLayer(int i, int j) {
+        String name = this.ejector.hasCustomName() ? this.ejector.getName() : I18n.format(this.ejector.getName());
+        this.fontRenderer.drawString(name, this.xSize / 2 - this.fontRenderer.getStringWidth(name) / 2, 6, 4210752);
+        this.fontRenderer.drawString(I18n.format("container.inventory"), 8, this.ySize - 96 + 2, 4210752);
+    }
+
+    @Override
+    protected void drawGuiContainerBackgroundLayer(float p_146976_1_, int p_146976_2_, int p_146976_3_) {
+        super.drawDefaultBackground();
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        Minecraft.getMinecraft().getTextureManager().bindTexture(texture);
+        drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
+
+        if(ejector.maxEject) {
+            drawTexturedModalRect(guiLeft + 187, guiTop + 34, 212, 0, 18, 18);
+        }
+
+        if(ejector.isWhitelist) {
+            drawTexturedModalRect(guiLeft + 139, guiTop + 33, 212, 18, 3, 6);
+        } else {
+            drawTexturedModalRect(guiLeft + 139, guiTop + 47, 212, 18, 3, 6);
+        }
+    }
+}

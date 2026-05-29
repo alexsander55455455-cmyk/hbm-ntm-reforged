@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "meta=0": { "model": "hbm:plant_flower_foxglove" },
+    "meta=1": { "model": "hbm:plant_flower_hemp" },
+    "meta=2": { "model": "hbm:plant_flower_mustard_willow_0" },
+    "meta=3": { "model": "hbm:plant_flower_mustard_willow_1" },
+    "meta=4": { "model": "hbm:plant_flower_nightshade" },
+    "meta=5": { "model": "hbm:plant_flower_tobacco" },
+    "meta=6": { "model": "hbm:plant_flower_strawberry" },
+    "meta=7": { "model": "hbm:plant_flower_mint" },
+    "inventory-0": { "model": "hbm:plant_flower_foxglove" },
+    "inventory-1": { "model": "hbm:plant_flower_hemp" },
+    "inventory-2": { "model": "hbm:plant_flower_mustard_willow_0" },
+    "inventory-3": { "model": "hbm:plant_flower_mustard_willow_1" },
+    "inventory-4": { "model": "hbm:plant_flower_nightshade" },
+    "inventory-5": { "model": "hbm:plant_flower_tobacco" },
+    "inventory-6": { "model": "hbm:plant_flower_strawberry" },
+    "inventory-7": { "model": "hbm:plant_flower_mint" }
+  }
+}

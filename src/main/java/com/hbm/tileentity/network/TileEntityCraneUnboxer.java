@@ -1,0 +1,189 @@
+package com.hbm.tileentity.network;
+
+import com.hbm.api.conveyor.IConveyorBelt;
+import com.hbm.entity.item.EntityMovingItem;
+import com.hbm.interfaces.AutoRegister;
+import com.hbm.inventory.container.ContainerCraneUnboxer;
+import com.hbm.inventory.gui.GUICraneUnboxer;
+import com.hbm.items.ModItems;
+import com.hbm.lib.Library;
+import com.hbm.tileentity.IGUIProvider;
+import com.hbm.util.SoundUtil;
+import net.minecraft.block.Block;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
+import org.jetbrains.annotations.NotNull;
+
+@AutoRegister
+public class TileEntityCraneUnboxer extends TileEntityCraneBase implements IGUIProvider {
+    private int tickCounter = 0;
+    public static int[] allowed_slots = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
+    public TileEntityCraneUnboxer() {
+        super(0);
+
+        inventory = new ItemStackHandler(23) {
+            @Override
+            protected void onContentsChanged(int slot) {
+                super.onContentsChanged(slot);
+                markDirty();
+            }
+
+            @Override
+            public void setStackInSlot(int slot, @NotNull ItemStack stack) {
+                super.setStackInSlot(slot, stack);
+                if (Library.isMachineUpgrade(stack) && slot >= 21 && slot <= 22)
+                    SoundUtil.playUpgradePlugSound(world, pos);
+            }
+        };
+    }
+
+    @Override
+    public String getDefaultName() {
+        return "container.craneUnboxer";
+    }
+
+    @Override
+    public int[] getAccessibleSlotsFromSide(EnumFacing e) {
+        return allowed_slots;
+    }
+
+    @Override
+    public void update() {
+        super.update();
+        if(!world.isRemote) {
+            tickCounter++;
+
+            int xCoord = pos.getX();
+            int yCoord = pos.getY();
+            int zCoord = pos.getZ();
+            int delay = 20;
+            if (!inventory.getStackInSlot(22).isEmpty()) {
+                if (inventory.getStackInSlot(22).getItem() == ModItems.upgrade_ejector_1) {
+                    delay = 10;
+                } else if (inventory.getStackInSlot(22).getItem() == ModItems.upgrade_ejector_2) {
+                    delay = 5;
+                } else if (inventory.getStackInSlot(22).getItem() == ModItems.upgrade_ejector_3) {
+                    delay = 2;
+                }
+            }
+
+            if (tickCounter >= delay && !this.world.isBlockPowered(pos)) {
+                tickCounter = 0;
+                int amount = 1;
+
+                if (!inventory.getStackInSlot(21).isEmpty()) {
+                    if (inventory.getStackInSlot(21).getItem() == ModItems.upgrade_stack_1) {
+                        amount = 4;
+                    } else if (inventory.getStackInSlot(21).getItem() == ModItems.upgrade_stack_2) {
+                        amount = 16;
+                    } else if (inventory.getStackInSlot(21).getItem() == ModItems.upgrade_stack_3) {
+                        amount = 64;
+                    }
+                }
+
+                EnumFacing outputSide = getOutputSide(); // note the non-existent switcheroo!
+                Block b = world.getBlockState(pos.offset(outputSide)).getBlock();
+
+                if (b instanceof IConveyorBelt belt) {
+
+                    for (int index : allowed_slots) {
+                        ItemStack stack = inventory.getStackInSlot(index);
+
+                        if (!stack.isEmpty()) {
+
+                            int toSend = Math.min(amount, stack.getCount());
+                            ItemStack cStack = stack.copy();
+                            stack.shrink(toSend);
+                            if (stack.getCount() == 0)
+                                inventory.setStackInSlot(index, ItemStack.EMPTY);
+                            cStack.setCount(toSend);
+
+                            EntityMovingItem moving = new EntityMovingItem(world);
+                            Vec3d pos = new Vec3d(xCoord + 0.5 + outputSide.getDirectionVec().getX() * 0.55, yCoord + 0.5 + outputSide.getDirectionVec().getY() * 0.55, zCoord + 0.5 + outputSide.getDirectionVec().getZ() * 0.55);
+                            Vec3d snap = belt.getClosestSnappingPosition(world, new BlockPos(xCoord + outputSide.getDirectionVec().getX(), yCoord + outputSide.getDirectionVec().getY(), zCoord + outputSide.getDirectionVec().getZ()), pos);
+                            moving.setPosition(snap.x, snap.y, snap.z);
+                            moving.setItemStack(cStack);
+                            world.spawnEntity(moving);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public boolean tryFillTeDirect(ItemStack stack){
+        return tryInsertItemCap(inventory, stack);
+    }
+
+    public static boolean tryInsertItemCap(IItemHandler chest, ItemStack stack) {
+        if(stack.isEmpty()) return false;
+
+        boolean movedAny = false;
+
+        for(int i : allowed_slots) {
+            if(stack.isEmpty()) break;
+
+            ItemStack probe = stack.copy();
+            probe.setCount(1);
+            ItemStack simOne = chest.insertItem(i, probe, true);
+            if(!simOne.isEmpty()) continue;
+
+            int maxTry = Math.min(stack.getCount(), chest.getSlotLimit(i));
+            int accepted = findMaxInsertable(chest, i, stack, maxTry);
+
+            if(accepted > 0) {
+                ItemStack toInsert = stack.copy();
+                toInsert.setCount(accepted);
+                ItemStack rest = chest.insertItem(i, toInsert, false);
+
+                int actuallyInserted = accepted - (!rest.isEmpty() ? rest.getCount() : 0);
+                if(actuallyInserted > 0) {
+                    stack.shrink(actuallyInserted);
+                    movedAny = true;
+                }
+            }
+        }
+
+        return movedAny;
+    }
+
+    private static int findMaxInsertable(IItemHandler target, int slot, ItemStack stack, int upperBound) {
+        int lo = 0;
+        int hi = upperBound;
+        while (lo < hi) {
+            int mid = (lo + hi + 1) >>> 1;
+            ItemStack test = stack.copy();
+            test.setCount(mid);
+            ItemStack res = target.insertItem(slot, test, true);
+            if (res.isEmpty()) {
+                lo = mid;
+            } else {
+                hi = mid - 1;
+            }
+        }
+        return lo;
+    }
+
+    @Override
+    public Container provideContainer(int ID, EntityPlayer player, World world, int x, int y, int z) {
+
+        return new ContainerCraneUnboxer(player.inventory, this);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public GuiScreen provideGUI(int ID, EntityPlayer player, World world, int x, int y, int z) {
+        return new GUICraneUnboxer(player.inventory, this);
+    }
+}

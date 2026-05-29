@@ -1,0 +1,188 @@
+package com.hbm.render.entity.projectile;
+
+import com.hbm.Tags;
+import com.hbm.entity.projectile.EntityChemical;
+import com.hbm.interfaces.AutoRegister;
+import com.hbm.render.util.NTMBufferBuilder;
+import com.hbm.render.util.NTMImmediate;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.client.registry.IRenderFactory;
+import org.lwjgl.opengl.GL11;
+
+import java.awt.*;
+@AutoRegister(factory = "FACTORY")
+public class RenderChemical extends Render<EntityChemical> {
+    private static ResourceLocation gas = new ResourceLocation(Tags.MODID + ":textures/particle/particle_base.png");
+
+    public static final IRenderFactory<EntityChemical> FACTORY =
+            man -> new RenderChemical(man);
+
+    protected RenderChemical(RenderManager renderManager) {
+        super(renderManager);
+    }
+
+    @Override
+    public void doRender(EntityChemical chem, double x, double y, double z, float f0, float f1) {
+
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(x, y, z);
+
+        EntityChemical.ChemicalStyle style = chem.getStyle();
+
+        if(style == EntityChemical.ChemicalStyle.AMAT || style == EntityChemical.ChemicalStyle.LIGHTNING)
+            renderAmatBeam(chem, f1);
+
+        if(style == EntityChemical.ChemicalStyle.GAS) {
+            this.bindEntityTexture(chem);
+            renderGasCloud(chem, f1);
+        }
+
+        if(style == EntityChemical.ChemicalStyle.GASFLAME) {
+            this.bindEntityTexture(chem);
+            renderGasFire(chem, f1);
+        }
+
+        GL11.glPopMatrix();
+    }
+
+    private void renderGasFire(EntityChemical chem, float interp) {
+
+        float exp = (chem.ticksExisted + interp) / (float) chem.getMaxAge();
+        float size = exp * 2F;
+        Color color = Color.getHSBColor(Math.max((60 - exp * 100) / 360F, 0.0F), 1 - exp * 0.25F, 1 - exp * 0.5F);
+
+        GlStateManager.enableBlend();
+        GlStateManager.alphaFunc(GL11.GL_GREATER, 0.0F);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+        GL11.glDisable(GL11.GL_ALPHA_TEST);
+        GlStateManager.depthMask(false);
+
+        GlStateManager.rotate(180.0F - this.renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
+        GlStateManager.rotate(-this.renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
+
+        int r = color.getRed();
+        int g = color.getGreen();
+        int b = color.getBlue();
+        int a = (int) Math.max(255.0F * (1.0F - exp), 0.0F);
+        int packedColor = NTMBufferBuilder.packColor(r, g, b, a);
+
+        NTMBufferBuilder buf = NTMImmediate.INSTANCE.beginPositionTexColorQuads(1);
+        buf.appendPositionTexColorQuadUnchecked(
+                -size, -size, 0.0F, 1.0F, 1.0F, packedColor,
+                size, -size, 0.0F, 0.0F, 1.0F, packedColor,
+                size, size, 0.0F, 0.0F, 0.0F, packedColor,
+                -size, size, 0.0F, 1.0F, 0.0F, packedColor
+        );
+        NTMImmediate.INSTANCE.draw();
+
+        GlStateManager.depthMask(true);
+        GlStateManager.enableAlpha();
+        GlStateManager.disableBlend();
+        GlStateManager.alphaFunc(GL11.GL_GEQUAL, 0.1F);
+    }
+
+    private void renderGasCloud(EntityChemical chem, float interp) {
+
+        float exp = (chem.ticksExisted + interp) / (float) chem.getMaxAge();
+        float size = exp * 10F;
+        int color = chem.getType().getColor();
+
+        GlStateManager.enableBlend();
+        GlStateManager.alphaFunc(GL11.GL_GREATER, 0.0F);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+        GlStateManager.disableAlpha();
+        GlStateManager.depthMask(false);
+
+        GlStateManager.rotate(180.0F - this.renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
+        GlStateManager.rotate(-this.renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
+
+        java.util.Random rand = new java.util.Random(chem.getEntityId());
+        int i = rand.nextInt(2);
+        int j = rand.nextInt(2);
+
+        float u0 = 1 - i;
+        float v0 = 1 - j;
+        float u1 = i;
+        float v1 = j;
+
+        int r = (color >> 16) & 0xFF;
+        int g = (color >> 8) & 0xFF;
+        int b = color & 0xFF;
+        int a = (int) Math.max(127.0D * (1.0D - exp), 0.0D);
+        int packedColor = NTMBufferBuilder.packColor(r, g, b, a);
+
+        NTMBufferBuilder buf = NTMImmediate.INSTANCE.beginPositionTexColorQuads(1);
+        buf.appendPositionTexColorQuadUnchecked(
+                -size, -size, 0.0F, u0, v0, packedColor,
+                size, -size, 0.0F, u1, v0, packedColor,
+                size, size, 0.0F, u1, v1, packedColor,
+                -size, size, 0.0F, u0, v1, packedColor
+        );
+        NTMImmediate.INSTANCE.draw();
+
+        GlStateManager.depthMask(true);
+        GlStateManager.enableAlpha();
+        GlStateManager.disableBlend();
+        GlStateManager.alphaFunc(GL11.GL_GEQUAL, 0.1F);
+    }
+
+    private void renderAmatBeam(EntityChemical chem, float interp) {
+
+        float yaw = chem.prevRotationYaw + (chem.rotationYaw - chem.prevRotationYaw) * interp;
+        float pitch = chem.prevRotationPitch + (chem.rotationPitch - chem.prevRotationPitch) * interp;
+        GlStateManager.rotate(yaw, 0.0F, 1.0F, 0.0F);
+        GlStateManager.rotate(-pitch - 90.0F, 1.0F, 0.0F, 0.0F);
+
+        GlStateManager.disableTexture2D();
+        GlStateManager.disableCull();
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+        GlStateManager.disableAlpha();
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        GlStateManager.depthMask(false);
+
+        double motionLen = Math.sqrt(chem.motionX * chem.motionX + chem.motionY * chem.motionY + chem.motionZ * chem.motionZ);
+        float length = (float) (motionLen * (chem.ticksExisted + interp) * 0.75D);
+        float size = 0.0625F;
+        float o = 0.2F;
+        int packedNearColor = NTMBufferBuilder.packColor(1.0F, 1.0F, 1.0F, o);
+        int packedFarColor = NTMBufferBuilder.packColor(1.0F, 1.0F, 1.0F, 0.0F);
+
+        NTMBufferBuilder buf = NTMImmediate.INSTANCE.beginPositionColorQuads(4);
+        buf.appendPositionColorUnchecked(-size, 0.0F, -size, packedNearColor);
+        buf.appendPositionColorUnchecked(size, 0.0F, -size, packedNearColor);
+        buf.appendPositionColorUnchecked(size, length, -size, packedFarColor);
+        buf.appendPositionColorUnchecked(-size, length, -size, packedFarColor);
+
+        buf.appendPositionColorUnchecked(-size, 0.0F, size, packedNearColor);
+        buf.appendPositionColorUnchecked(size, 0.0F, size, packedNearColor);
+        buf.appendPositionColorUnchecked(size, length, size, packedFarColor);
+        buf.appendPositionColorUnchecked(-size, length, size, packedFarColor);
+
+        buf.appendPositionColorUnchecked(-size, 0.0F, -size, packedNearColor);
+        buf.appendPositionColorUnchecked(-size, 0.0F, size, packedNearColor);
+        buf.appendPositionColorUnchecked(-size, length, size, packedFarColor);
+        buf.appendPositionColorUnchecked(-size, length, -size, packedFarColor);
+
+        buf.appendPositionColorUnchecked(size, 0.0F, -size, packedNearColor);
+        buf.appendPositionColorUnchecked(size, 0.0F, size, packedNearColor);
+        buf.appendPositionColorUnchecked(size, length, size, packedFarColor);
+        buf.appendPositionColorUnchecked(size, length, -size, packedFarColor);
+
+        NTMImmediate.INSTANCE.draw();
+
+        GlStateManager.depthMask(true);
+        GlStateManager.shadeModel(GL11.GL_FLAT);
+        GlStateManager.disableBlend();
+        GlStateManager.enableTexture2D();
+        GlStateManager.enableAlpha();
+    }
+
+    @Override
+    protected ResourceLocation getEntityTexture(EntityChemical entity) {
+        return gas;
+    }
+}

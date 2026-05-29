@@ -1,0 +1,67 @@
+package com.hbm.inventory.container;
+
+import com.hbm.inventory.TransferStrategy;
+import com.hbm.inventory.slot.SlotBattery;
+import com.hbm.inventory.slot.SlotFiltered;
+import com.hbm.inventory.slot.SlotUpgrade;
+import com.hbm.lib.Library;
+import com.hbm.tileentity.machine.TileEntityMachineExposureChamber;
+import com.hbm.util.InventoryUtil;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.SlotItemHandler;
+
+public class ContainerMachineExposureChamber extends Container {
+
+    private final TileEntityMachineExposureChamber chamber;
+
+    private static final TransferStrategy TRANSFER_STRATEGY = TransferStrategy.builder(7)
+                                                                              .rule(0, 4,
+                                                                                      ContainerMachineExposureChamber::isNormal)
+                                                                              .rule(4, 5, Library::isBattery)
+                                                                              .rule(5, 7, Library::isMachineUpgrade)
+                                                                              .ruleDispatchMode(
+                                                                                      TransferStrategy.RuleDispatchMode.FALLTHROUGH_ON_FAILURE)
+                                                                              .playerFallbackMode(
+                                                                                      TransferStrategy.PlayerFallbackMode.REBALANCE_SECTIONS)
+                                                                              .build();
+
+    public ContainerMachineExposureChamber(InventoryPlayer invPlayer, TileEntityMachineExposureChamber te) {
+        this.chamber = te;
+
+        this.addSlotToContainer(new SlotItemHandler(te.inventory, 0, 8, 18));
+        this.addSlotToContainer(SlotFiltered.takeOnly(te.inventory, 2, 8, 54));
+        this.addSlotToContainer(new SlotItemHandler(te.inventory, 3, 80, 36));
+        this.addSlotToContainer(SlotFiltered.takeOnly(te.inventory, 4, 116, 36));
+        this.addSlotToContainer(new SlotBattery(te.inventory, 5, 152, 54));
+        this.addSlotToContainer(new SlotUpgrade(te.inventory, 6, 44, 54));
+        this.addSlotToContainer(new SlotUpgrade(te.inventory, 7, 62, 54));
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 9; j++) {
+                this.addSlotToContainer(new Slot(invPlayer, j + i * 9 + 9, 8 + j * 18, 104 + i * 18));
+            }
+        }
+
+        for (int i = 0; i < 9; i++) {
+            this.addSlotToContainer(new Slot(invPlayer, i, 8 + i * 18, 162));
+        }
+    }
+
+    private static boolean isNormal(ItemStack stack) {
+        return !Library.isBattery(stack) && !Library.isMachineUpgrade(stack);
+    }
+
+    @Override
+    public ItemStack transferStackInSlot(EntityPlayer player, int index) {
+        return InventoryUtil.transferStack(this.inventorySlots, index, this.TRANSFER_STRATEGY, player);
+    }
+
+    @Override
+    public boolean canInteractWith(EntityPlayer player) {
+        return chamber.isUseableByPlayer(player);
+    }
+}

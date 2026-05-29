@@ -1,0 +1,1271 @@
+
+==================== gun_revolver_schrabidium ====================
+
+--- Block lines 15161 to 15220 ---
+      1352: new           #388                // class net/minecraft/item/ItemStack
+      1355: dup
+      1356: getstatic     #2684               // Field com/hbm/items/ModItems.gun_revolver_schrabidium:Lnet/minecraft/item/Item;
+      1359: iconst_1
+      1360: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+      1363: bipush        10
+      1365: anewarray     #4                  // class java/lang/Object
+      1368: dup
+      1369: iconst_0
+      1370: ldc_w         #2649               // String SSM
+      1373: aastore
+      1374: dup
+      1375: iconst_1
+      1376: ldc_w         #2651               // String  RW
+      1379: aastore
+      1380: dup
+      1381: iconst_2
+      1382: bipush        83
+      1384: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      1387: aastore
+      1388: dup
+      1389: iconst_3
+      1390: getstatic     #311                // Field com/hbm/inventory/OreDictManager.SA326:Lcom/hbm/inventory/OreDictManager$DictFrame;
+      1393: invokevirtual #733                // Method com/hbm/inventory/OreDictManager$DictFrame.block:()Ljava/lang/String;
+      1396: aastore
+      1397: dup
+      1398: iconst_4
+      1399: bipush        87
+      1401: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      1404: aastore
+      1405: dup
+      1406: iconst_5
+      1407: getstatic     #174                // Field com/hbm/inventory/OreDictManager.W:Lcom/hbm/inventory/OreDictManager$DictFrame;
+      1410: invokevirtual #410                // Method com/hbm/inventory/OreDictManager$DictFrame.ingot:()Ljava/lang/String;
+      1413: aastore
+      1414: dup
+      1415: bipush        6
+      1417: bipush        82
+      1419: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      1422: aastore
+      1423: dup
+      1424: bipush        7
+      1426: new           #388                // class net/minecraft/item/ItemStack
+      1429: dup
+      1430: getstatic     #2281               // Field com/hbm/items/ModItems.wire:Lnet/minecraft/item/Item;
+      1433: iconst_1
+      1434: getstatic     #2284               // Field com/hbm/inventory/material/Mats.MAT_SCHRABIDIUM:Lcom/hbm/inventory/material/NTMMaterial;
+      1437: getfield      #1919               // Field com/hbm/inventory/material/NTMMaterial.id:I
+      1440: invokespecial #1533               // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;II)V
+      1443: aastore
+      1444: dup
+      1445: bipush        8
+      1447: bipush        77
+      1449: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      1452: aastore
+      1453: dup
+      1454: bipush        9
+      1456: getstatic     #2687               // Field com/hbm/items/ModItems.mechanism_special:Lnet/minecraft/item/Item;
+      1459: aastore
+      1460: invokestatic  #185                // Method addRecipeAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+
+--- Block lines 16873 to 16931 ---
+      4461: new           #388                // class net/minecraft/item/ItemStack
+      4464: dup
+      4465: getstatic     #2877               // Field com/hbm/items/ModItems.gun_b92:Lnet/minecraft/item/Item;
+      4468: iconst_1
+      4469: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+      4472: bipush        11
+      4474: anewarray     #4                  // class java/lang/Object
+      4477: dup
+      4478: iconst_0
+      4479: ldc_w         #2879               // String DDD
+      4482: aastore
+      4483: dup
+      4484: iconst_1
+      4485: ldc_w         #2881               // String SSC
+      4488: aastore
+      4489: dup
+      4490: iconst_2
+      4491: ldc_w         #2883               // String   R
+      4494: aastore
+      4495: dup
+      4496: iconst_3
+      4497: bipush        68
+      4499: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      4502: aastore
+      4503: dup
+      4504: iconst_4
+      4505: getstatic     #2886               // Field com/hbm/items/ModItems.plate_dineutronium:Lnet/minecraft/item/Item;
+      4508: aastore
+      4509: dup
+      4510: iconst_5
+      4511: bipush        83
+      4513: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      4516: aastore
+      4517: dup
+      4518: bipush        6
+      4520: getstatic     #1638               // Field com/hbm/inventory/OreDictManager.STAR:Lcom/hbm/inventory/OreDictManager$DictFrame;
+      4523: invokevirtual #410                // Method com/hbm/inventory/OreDictManager$DictFrame.ingot:()Ljava/lang/String;
+      4526: aastore
+      4527: dup
+      4528: bipush        7
+      4530: bipush        67
+      4532: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      4535: aastore
+      4536: dup
+      4537: bipush        8
+      4539: getstatic     #149                // Field com/hbm/items/ModItems.circuit:Lnet/minecraft/item/Item;
+      4542: getstatic     #2438               // Field com/hbm/items/machine/ItemCircuit$EnumCircuitType.BISMOID:Lcom/hbm/items/machine/ItemCircuit$EnumCircuitType;
+      4545: invokestatic  #157                // Method com/hbm/inventory/OreDictManager$DictFrame.fromOne:(Lnet/minecraft/item/Item;Ljava/lang/Enum;)Lnet/minecraft/item/ItemStack;
+      4548: aastore
+      4549: dup
+      4550: bipush        9
+      4552: bipush        82
+      4554: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      4557: aastore
+      4558: dup
+      4559: bipush        10
+      4561: getstatic     #2684               // Field com/hbm/items/ModItems.gun_revolver_schrabidium:Lnet/minecraft/item/Item;
+      4564: aastore
+      4565: invokestatic  #185                // Method addRecipeAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+
+--- Block lines 19482 to 19933 ---
+       128: new           #388                // class net/minecraft/item/ItemStack
+       131: dup
+       132: getstatic     #3175               // Field com/hbm/items/ModItems.gun_revolver_schrabidium_ammo:Lnet/minecraft/item/Item;
+       135: bipush        12
+       137: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+       140: iconst_1
+       141: anewarray     #4                  // class java/lang/Object
+       144: dup
+       145: iconst_0
+       146: new           #388                // class net/minecraft/item/ItemStack
+       149: dup
+       150: getstatic     #3178               // Field com/hbm/items/ModItems.clip_revolver_schrabidium:Lnet/minecraft/item/Item;
+       153: invokespecial #918                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;)V
+       156: aastore
+       157: invokestatic  #736                // Method addShapelessAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+       160: new           #388                // class net/minecraft/item/ItemStack
+       163: dup
+       164: getstatic     #3181               // Field com/hbm/items/ModItems.gun_revolver_cursed_ammo:Lnet/minecraft/item/Item;
+       167: bipush        17
+       169: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+       172: iconst_1
+       173: anewarray     #4                  // class java/lang/Object
+       176: dup
+       177: iconst_0
+       178: new           #388                // class net/minecraft/item/ItemStack
+       181: dup
+       182: getstatic     #3184               // Field com/hbm/items/ModItems.clip_revolver_cursed:Lnet/minecraft/item/Item;
+       185: invokespecial #918                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;)V
+       188: aastore
+       189: invokestatic  #736                // Method addShapelessAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+       192: new           #388                // class net/minecraft/item/ItemStack
+       195: dup
+       196: getstatic     #3187               // Field com/hbm/items/ModItems.gun_revolver_nightmare_ammo:Lnet/minecraft/item/Item;
+       199: bipush        6
+       201: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+       204: iconst_1
+       205: anewarray     #4                  // class java/lang/Object
+       208: dup
+       209: iconst_0
+       210: new           #388                // class net/minecraft/item/ItemStack
+       213: dup
+       214: getstatic     #3190               // Field com/hbm/items/ModItems.clip_revolver_nightmare:Lnet/minecraft/item/Item;
+       217: invokespecial #918                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;)V
+       220: aastore
+       221: invokestatic  #736                // Method addShapelessAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+       224: new           #388                // class net/minecraft/item/ItemStack
+       227: dup
+       228: getstatic     #3193               // Field com/hbm/items/ModItems.gun_revolver_nightmare2_ammo:Lnet/minecraft/item/Item;
+       231: bipush        6
+       233: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+       236: iconst_1
+       237: anewarray     #4                  // class java/lang/Object
+       240: dup
+       241: iconst_0
+       242: new           #388                // class net/minecraft/item/ItemStack
+       245: dup
+       246: getstatic     #3196               // Field com/hbm/items/ModItems.clip_revolver_nightmare2:Lnet/minecraft/item/Item;
+       249: invokespecial #918                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;)V
+       252: aastore
+       253: invokestatic  #736                // Method addShapelessAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+       256: new           #388                // class net/minecraft/item/ItemStack
+       259: dup
+       260: getstatic     #3199               // Field com/hbm/items/ModItems.ammo_44_pip:Lnet/minecraft/item/Item;
+       263: bipush        6
+       265: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+       268: iconst_1
+       269: anewarray     #4                  // class java/lang/Object
+       272: dup
+       273: iconst_0
+       274: new           #388                // class net/minecraft/item/ItemStack
+       277: dup
+       278: getstatic     #3202               // Field com/hbm/items/ModItems.clip_revolver_pip:Lnet/minecraft/item/Item;
+       281: invokespecial #918                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;)V
+       284: aastore
+       285: invokestatic  #736                // Method addShapelessAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+       288: new           #388                // class net/minecraft/item/ItemStack
+       291: dup
+       292: getstatic     #3205               // Field com/hbm/items/ModItems.ammo_44:Lnet/minecraft/item/Item;
+       295: bipush        12
+       297: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+       300: iconst_1
+       301: anewarray     #4                  // class java/lang/Object
+       304: dup
+       305: iconst_0
+       306: new           #388                // class net/minecraft/item/ItemStack
+       309: dup
+       310: getstatic     #3208               // Field com/hbm/items/ModItems.clip_revolver_nopip:Lnet/minecraft/item/Item;
+       313: invokespecial #918                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;)V
+       316: aastore
+       317: invokestatic  #736                // Method addShapelessAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+       320: new           #388                // class net/minecraft/item/ItemStack
+       323: dup
+       324: getstatic     #3211               // Field com/hbm/items/ModItems.ammo_rocket:Lnet/minecraft/item/Item;
+       327: bipush        6
+       329: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+       332: iconst_1
+       333: anewarray     #4                  // class java/lang/Object
+       336: dup
+       337: iconst_0
+       338: new           #388                // class net/minecraft/item/ItemStack
+       341: dup
+       342: getstatic     #3214               // Field com/hbm/items/ModItems.clip_rpg:Lnet/minecraft/item/Item;
+       345: invokespecial #918                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;)V
+       348: aastore
+       349: invokestatic  #736                // Method addShapelessAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+       352: new           #388                // class net/minecraft/item/ItemStack
+       355: dup
+       356: getstatic     #2629               // Field com/hbm/items/ModItems.gun_stinger_ammo:Lnet/minecraft/item/Item;
+       359: bipush        6
+       361: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+       364: iconst_1
+       365: anewarray     #4                  // class java/lang/Object
+       368: dup
+       369: iconst_0
+       370: new           #388                // class net/minecraft/item/ItemStack
+       373: dup
+       374: getstatic     #3217               // Field com/hbm/items/ModItems.clip_stinger:Lnet/minecraft/item/Item;
+       377: invokespecial #918                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;)V
+       380: aastore
+       381: invokestatic  #736                // Method addShapelessAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+       384: new           #388                // class net/minecraft/item/ItemStack
+       387: dup
+       388: getstatic     #3220               // Field com/hbm/items/ModItems.ammo_nuke:Lnet/minecraft/item/Item;
+       391: bipush        6
+       393: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+       396: iconst_1
+       397: anewarray     #4                  // class java/lang/Object
+       400: dup
+       401: iconst_0
+       402: new           #388                // class net/minecraft/item/ItemStack
+       405: dup
+       406: getstatic     #3223               // Field com/hbm/items/ModItems.clip_fatman:Lnet/minecraft/item/Item;
+       409: invokespecial #918                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;)V
+       412: aastore
+       413: invokestatic  #736                // Method addShapelessAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+       416: new           #388                // class net/minecraft/item/ItemStack
+       419: dup
+       420: getstatic     #3226               // Field com/hbm/items/ModItems.ammo_mirv:Lnet/minecraft/item/Item;
+       423: iconst_3
+       424: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+       427: iconst_1
+       428: anewarray     #4                  // class java/lang/Object
+       431: dup
+       432: iconst_0
+       433: new           #388                // class net/minecraft/item/ItemStack
+       436: dup
+       437: getstatic     #3229               // Field com/hbm/items/ModItems.clip_mirv:Lnet/minecraft/item/Item;
+       440: invokespecial #918                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;)V
+       443: aastore
+       444: invokestatic  #736                // Method addShapelessAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+       447: new           #388                // class net/minecraft/item/ItemStack
+       450: dup
+       451: getstatic     #3232               // Field com/hbm/items/ModItems.gun_bf_ammo:Lnet/minecraft/item/Item;
+       454: iconst_2
+       455: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+       458: iconst_1
+       459: anewarray     #4                  // class java/lang/Object
+       462: dup
+       463: iconst_0
+       464: new           #388                // class net/minecraft/item/ItemStack
+       467: dup
+       468: getstatic     #3235               // Field com/hbm/items/ModItems.clip_bf:Lnet/minecraft/item/Item;
+       471: invokespecial #918                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;)V
+       474: aastore
+       475: invokestatic  #736                // Method addShapelessAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+       478: new           #388                // class net/minecraft/item/ItemStack
+       481: dup
+       482: getstatic     #3238               // Field com/hbm/items/ModItems.ammo_9mm:Lnet/minecraft/item/Item;
+       485: bipush        32
+       487: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+       490: iconst_1
+       491: anewarray     #4                  // class java/lang/Object
+       494: dup
+       495: iconst_0
+       496: new           #388                // class net/minecraft/item/ItemStack
+       499: dup
+       500: getstatic     #3241               // Field com/hbm/items/ModItems.clip_mp40:Lnet/minecraft/item/Item;
+       503: invokespecial #918                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;)V
+       506: aastore
+       507: invokestatic  #736                // Method addShapelessAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+       510: new           #388                // class net/minecraft/item/ItemStack
+       513: dup
+       514: getstatic     #3244               // Field com/hbm/items/ModItems.ammo_22lr:Lnet/minecraft/item/Item;
+       517: bipush        32
+       519: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+       522: iconst_1
+       523: anewarray     #4                  // class java/lang/Object
+       526: dup
+       527: iconst_0
+       528: new           #388                // class net/minecraft/item/ItemStack
+       531: dup
+       532: getstatic     #3247               // Field com/hbm/items/ModItems.clip_uzi:Lnet/minecraft/item/Item;
+       535: invokespecial #918                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;)V
+       538: aastore
+       539: invokestatic  #736                // Method addShapelessAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+       542: new           #388                // class net/minecraft/item/ItemStack
+       545: dup
+       546: getstatic     #3250               // Field com/hbm/items/ModItems.ammo_12gauge:Lnet/minecraft/item/Item;
+       549: bipush        24
+       551: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+       554: iconst_1
+       555: anewarray     #4                  // class java/lang/Object
+       558: dup
+       559: iconst_0
+       560: new           #388                // class net/minecraft/item/ItemStack
+       563: dup
+       564: getstatic     #3253               // Field com/hbm/items/ModItems.clip_uboinik:Lnet/minecraft/item/Item;
+       567: invokespecial #918                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;)V
+       570: aastore
+       571: invokestatic  #736                // Method addShapelessAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+       574: new           #388                // class net/minecraft/item/ItemStack
+       577: dup
+       578: getstatic     #3256               // Field com/hbm/items/ModItems.ammo_20gauge:Lnet/minecraft/item/Item;
+       581: bipush        24
+       583: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+       586: iconst_1
+       587: anewarray     #4                  // class java/lang/Object
+       590: dup
+       591: iconst_0
+       592: new           #388                // class net/minecraft/item/ItemStack
+       595: dup
+       596: getstatic     #3259               // Field com/hbm/items/ModItems.clip_lever_action:Lnet/minecraft/item/Item;
+       599: invokespecial #918                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;)V
+       602: aastore
+       603: invokestatic  #736                // Method addShapelessAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+       606: new           #388                // class net/minecraft/item/ItemStack
+       609: dup
+       610: getstatic     #3262               // Field com/hbm/items/ModItems.ammo_20gauge_slug:Lnet/minecraft/item/Item;
+       613: bipush        24
+       615: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+       618: iconst_1
+       619: anewarray     #4                  // class java/lang/Object
+       622: dup
+       623: iconst_0
+       624: new           #388                // class net/minecraft/item/ItemStack
+       627: dup
+       628: getstatic     #3265               // Field com/hbm/items/ModItems.clip_bolt_action:Lnet/minecraft/item/Item;
+       631: invokespecial #918                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;)V
+       634: aastore
+       635: invokestatic  #736                // Method addShapelessAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+       638: new           #388                // class net/minecraft/item/ItemStack
+       641: dup
+       642: getstatic     #3268               // Field com/hbm/items/ModItems.gun_osipr_ammo:Lnet/minecraft/item/Item;
+       645: bipush        30
+       647: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+       650: iconst_1
+       651: anewarray     #4                  // class java/lang/Object
+       654: dup
+       655: iconst_0
+       656: new           #388                // class net/minecraft/item/ItemStack
+       659: dup
+       660: getstatic     #3271               // Field com/hbm/items/ModItems.clip_osipr:Lnet/minecraft/item/Item;
+       663: invokespecial #918                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;)V
+       666: aastore
+       667: invokestatic  #736                // Method addShapelessAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+       670: new           #388                // class net/minecraft/item/ItemStack
+       673: dup
+       674: getstatic     #3274               // Field com/hbm/items/ModItems.gun_immolator_ammo:Lnet/minecraft/item/Item;
+       677: bipush        64
+       679: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+       682: iconst_1
+       683: anewarray     #4                  // class java/lang/Object
+       686: dup
+       687: iconst_0
+       688: new           #388                // class net/minecraft/item/ItemStack
+       691: dup
+       692: getstatic     #3277               // Field com/hbm/items/ModItems.clip_immolator:Lnet/minecraft/item/Item;
+       695: invokespecial #918                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;)V
+       698: aastore
+       699: invokestatic  #736                // Method addShapelessAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+       702: new           #388                // class net/minecraft/item/ItemStack
+       705: dup
+       706: getstatic     #3280               // Field com/hbm/items/ModItems.gun_cryolator_ammo:Lnet/minecraft/item/Item;
+       709: bipush        64
+       711: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+       714: iconst_1
+       715: anewarray     #4                  // class java/lang/Object
+       718: dup
+       719: iconst_0
+       720: new           #388                // class net/minecraft/item/ItemStack
+       723: dup
+       724: getstatic     #3283               // Field com/hbm/items/ModItems.clip_cryolator:Lnet/minecraft/item/Item;
+       727: invokespecial #918                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;)V
+       730: aastore
+       731: invokestatic  #736                // Method addShapelessAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+       734: new           #388                // class net/minecraft/item/ItemStack
+       737: dup
+       738: getstatic     #3286               // Field com/hbm/items/ModItems.ammo_566_gold:Lnet/minecraft/item/Item;
+       741: bipush        40
+       743: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+       746: iconst_1
+       747: anewarray     #4                  // class java/lang/Object
+       750: dup
+       751: iconst_0
+       752: new           #388                // class net/minecraft/item/ItemStack
+       755: dup
+       756: getstatic     #3289               // Field com/hbm/items/ModItems.clip_mp:Lnet/minecraft/item/Item;
+       759: invokespecial #918                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;)V
+       762: aastore
+       763: invokestatic  #736                // Method addShapelessAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+       766: new           #388                // class net/minecraft/item/ItemStack
+       769: dup
+       770: getstatic     #3292               // Field com/hbm/items/ModItems.gun_xvl1456_ammo:Lnet/minecraft/item/Item;
+       773: bipush        64
+       775: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+       778: iconst_1
+       779: anewarray     #4                  // class java/lang/Object
+       782: dup
+       783: iconst_0
+       784: new           #388                // class net/minecraft/item/ItemStack
+       787: dup
+       788: getstatic     #3295               // Field com/hbm/items/ModItems.clip_xvl1456:Lnet/minecraft/item/Item;
+       791: invokespecial #918                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;)V
+       794: aastore
+       795: invokestatic  #736                // Method addShapelessAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+       798: new           #388                // class net/minecraft/item/ItemStack
+       801: dup
+       802: getstatic     #3298               // Field com/hbm/items/ModItems.gun_emp_ammo:Lnet/minecraft/item/Item;
+       805: bipush        6
+       807: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+       810: iconst_1
+       811: anewarray     #4                  // class java/lang/Object
+       814: dup
+       815: iconst_0
+       816: new           #388                // class net/minecraft/item/ItemStack
+       819: dup
+       820: getstatic     #3301               // Field com/hbm/items/ModItems.clip_emp:Lnet/minecraft/item/Item;
+       823: invokespecial #918                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;)V
+       826: aastore
+       827: invokestatic  #736                // Method addShapelessAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+       830: new           #388                // class net/minecraft/item/ItemStack
+       833: dup
+       834: getstatic     #3304               // Field com/hbm/items/ModItems.gun_jack_ammo:Lnet/minecraft/item/Item;
+       837: bipush        12
+       839: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+       842: iconst_1
+       843: anewarray     #4                  // class java/lang/Object
+       846: dup
+       847: iconst_0
+       848: new           #388                // class net/minecraft/item/ItemStack
+       851: dup
+       852: getstatic     #3307               // Field com/hbm/items/ModItems.clip_jack:Lnet/minecraft/item/Item;
+       855: invokespecial #918                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;)V
+       858: aastore
+       859: invokestatic  #736                // Method addShapelessAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+       862: new           #388                // class net/minecraft/item/ItemStack
+       865: dup
+       866: getstatic     #3310               // Field com/hbm/items/ModItems.gun_spark_ammo:Lnet/minecraft/item/Item;
+       869: iconst_4
+       870: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+       873: iconst_1
+       874: anewarray     #4                  // class java/lang/Object
+       877: dup
+       878: iconst_0
+       879: new           #388                // class net/minecraft/item/ItemStack
+       882: dup
+       883: getstatic     #3313               // Field com/hbm/items/ModItems.clip_spark:Lnet/minecraft/item/Item;
+       886: invokespecial #918                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;)V
+       889: aastore
+       890: invokestatic  #736                // Method addShapelessAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+       893: new           #388                // class net/minecraft/item/ItemStack
+       896: dup
+       897: getstatic     #3316               // Field com/hbm/items/ModItems.gun_hp_ammo:Lnet/minecraft/item/Item;
+       900: bipush        12
+       902: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+       905: iconst_1
+       906: anewarray     #4                  // class java/lang/Object
+       909: dup
+       910: iconst_0
+       911: new           #388                // class net/minecraft/item/ItemStack
+       914: dup
+       915: getstatic     #3319               // Field com/hbm/items/ModItems.clip_hp:Lnet/minecraft/item/Item;
+       918: invokespecial #918                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;)V
+       921: aastore
+       922: invokestatic  #736                // Method addShapelessAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+       925: new           #388                // class net/minecraft/item/ItemStack
+       928: dup
+       929: getstatic     #3322               // Field com/hbm/items/ModItems.gun_euthanasia_ammo:Lnet/minecraft/item/Item;
+       932: bipush        16
+       934: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+       937: iconst_1
+       938: anewarray     #4                  // class java/lang/Object
+       941: dup
+       942: iconst_0
+       943: new           #388                // class net/minecraft/item/ItemStack
+       946: dup
+       947: getstatic     #3325               // Field com/hbm/items/ModItems.clip_euthanasia:Lnet/minecraft/item/Item;
+       950: invokespecial #918                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;)V
+       953: aastore
+       954: invokestatic  #736                // Method addShapelessAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+       957: new           #388                // class net/minecraft/item/ItemStack
+       960: dup
+       961: getstatic     #3328               // Field com/hbm/items/ModItems.gun_defabricator_ammo:Lnet/minecraft/item/Item;
+       964: bipush        16
+       966: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+       969: iconst_1
+       970: anewarray     #4                  // class java/lang/Object
+       973: dup
+       974: iconst_0
+       975: new           #388                // class net/minecraft/item/ItemStack
+       978: dup
+       979: getstatic     #3331               // Field com/hbm/items/ModItems.clip_defabricator:Lnet/minecraft/item/Item;
+       982: invokespecial #918                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;)V
+       985: aastore
+       986: invokestatic  #736                // Method addShapelessAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+       989: new           #388                // class net/minecraft/item/ItemStack
+       992: dup
+       993: getstatic     #3232               // Field com/hbm/items/ModItems.gun_bf_ammo:Lnet/minecraft/item/Item;
+       996: iconst_1
+       997: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+      1000: bipush        9
+      1002: anewarray     #4                  // class java/lang/Object
+      1005: dup
+      1006: iconst_0
+      1007: ldc_w         #1675               // String  S
+      1010: aastore
+      1011: dup
+      1012: iconst_1
+      1013: ldc_w         #3333               // String EBE
+      1016: aastore
+      1017: dup
+      1018: iconst_2
+      1019: ldc_w         #1675               // String  S
+      1022: aastore
+      1023: dup
+      1024: iconst_3
+      1025: bipush        83
+      1027: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      1030: aastore
+      1031: dup
+      1032: iconst_4
+      1033: getstatic     #2051               // Field com/hbm/items/ModItems.hull_small_steel:Lnet/minecraft/item/Item;
+      1036: aastore
+      1037: dup
+      1038: iconst_5
+      1039: bipush        69
+      1041: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      1044: aastore
+      1045: dup
+      1046: bipush        6
+      1048: getstatic     #1508               // Field com/hbm/items/ModItems.powder_power:Lnet/minecraft/item/Item;
+      1051: aastore
+      1052: dup
+      1053: bipush        7
+      1055: bipush        66
+      1057: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      1060: aastore
+      1061: dup
+      1062: bipush        8
+      1064: getstatic     #1071               // Field com/hbm/items/ModItems.egg_balefire_shard:Lnet/minecraft/item/Item;
+      1067: aastore
+      1068: invokestatic  #185                // Method addRecipeAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+
+==================== gun_deagle ====================
+
+--- Block lines 15221 to 15280 ---
+      1463: new           #388                // class net/minecraft/item/ItemStack
+      1466: dup
+      1467: getstatic     #2690               // Field com/hbm/items/ModItems.gun_deagle:Lnet/minecraft/item/Item;
+      1470: iconst_1
+      1471: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+      1474: bipush        10
+      1476: anewarray     #4                  // class java/lang/Object
+      1479: dup
+      1480: iconst_0
+      1481: ldc_w         #2692               // String PPM
+      1484: aastore
+      1485: dup
+      1486: iconst_1
+      1487: ldc_w         #2694               // String  BI
+      1490: aastore
+      1491: dup
+      1492: iconst_2
+      1493: bipush        80
+      1495: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      1498: aastore
+      1499: dup
+      1500: iconst_3
+      1501: getstatic     #307                // Field com/hbm/inventory/OreDictManager.STEEL:Lcom/hbm/inventory/OreDictManager$DictFrame;
+      1504: invokevirtual #229                // Method com/hbm/inventory/OreDictManager$DictFrame.plate:()Ljava/lang/String;
+      1507: aastore
+      1508: dup
+      1509: iconst_4
+      1510: bipush        66
+      1512: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      1515: aastore
+      1516: dup
+      1517: iconst_5
+      1518: new           #388                // class net/minecraft/item/ItemStack
+      1521: dup
+      1522: getstatic     #1908               // Field com/hbm/items/ModItems.bolt:Lnet/minecraft/item/Item;
+      1525: iconst_1
+      1526: getstatic     #2251               // Field com/hbm/inventory/material/Mats.MAT_STEEL:Lcom/hbm/inventory/material/NTMMaterial;
+      1529: getfield      #1919               // Field com/hbm/inventory/material/NTMMaterial.id:I
+      1532: invokespecial #1533               // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;II)V
+      1535: aastore
+      1536: dup
+      1537: bipush        6
+      1539: bipush        73
+      1541: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      1544: aastore
+      1545: dup
+      1546: bipush        7
+      1548: getstatic     #285                // Field com/hbm/inventory/OreDictManager.ANY_PLASTIC:Lcom/hbm/inventory/OreDictManager$DictGroup;
+      1551: invokevirtual #266                // Method com/hbm/inventory/OreDictManager$DictGroup.ingot:()Ljava/lang/String;
+      1554: aastore
+      1555: dup
+      1556: bipush        8
+      1558: bipush        77
+      1560: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      1563: aastore
+      1564: dup
+      1565: bipush        9
+      1567: getstatic     #2697               // Field com/hbm/items/ModItems.mechanism_rifle_1:Lnet/minecraft/item/Item;
+      1570: aastore
+      1571: invokestatic  #185                // Method addRecipeAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+
+==================== gun_thompson ====================
+
+--- Block lines 15746 to 15803 ---
+      2426: new           #388                // class net/minecraft/item/ItemStack
+      2429: dup
+      2430: getstatic     #2750               // Field com/hbm/items/ModItems.gun_thompson:Lnet/minecraft/item/Item;
+      2433: iconst_1
+      2434: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+      2437: bipush        11
+      2439: anewarray     #4                  // class java/lang/Object
+      2442: dup
+      2443: iconst_0
+      2444: ldc_w         #2722               // String IIM
+      2447: aastore
+      2448: dup
+      2449: iconst_1
+      2450: ldc_w         #2744               // String  SW
+      2453: aastore
+      2454: dup
+      2455: iconst_2
+      2456: ldc_w         #1675               // String  S
+      2459: aastore
+      2460: dup
+      2461: iconst_3
+      2462: bipush        83
+      2464: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      2467: aastore
+      2468: dup
+      2469: iconst_4
+      2470: getstatic     #409                // Field com/hbm/inventory/OreDictManager.IRON:Lcom/hbm/inventory/OreDictManager$DictFrame;
+      2473: invokevirtual #229                // Method com/hbm/inventory/OreDictManager$DictFrame.plate:()Ljava/lang/String;
+      2476: aastore
+      2477: dup
+      2478: iconst_5
+      2479: bipush        73
+      2481: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      2484: aastore
+      2485: dup
+      2486: bipush        6
+      2488: getstatic     #307                // Field com/hbm/inventory/OreDictManager.STEEL:Lcom/hbm/inventory/OreDictManager$DictFrame;
+      2491: invokevirtual #229                // Method com/hbm/inventory/OreDictManager$DictFrame.plate:()Ljava/lang/String;
+      2494: aastore
+      2495: dup
+      2496: bipush        7
+      2498: bipush        87
+      2500: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      2503: aastore
+      2504: dup
+      2505: bipush        8
+      2507: ldc_w         #498                // String plankWood
+      2510: aastore
+      2511: dup
+      2512: bipush        9
+      2514: bipush        77
+      2516: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      2519: aastore
+      2520: dup
+      2521: bipush        10
+      2523: getstatic     #2747               // Field com/hbm/items/ModItems.mechanism_rifle_2:Lnet/minecraft/item/Item;
+      2526: aastore
+      2527: invokestatic  #185                // Method addRecipeAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+
+==================== gun_ks23 ====================
+
+--- Block lines 17937 to 18004 ---
+      6384: new           #388                // class net/minecraft/item/ItemStack
+      6387: dup
+      6388: getstatic     #3010               // Field com/hbm/items/ModItems.gun_ks23:Lnet/minecraft/item/Item;
+      6391: iconst_1
+      6392: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+      6395: bipush        12
+      6397: anewarray     #4                  // class java/lang/Object
+      6400: dup
+      6401: iconst_0
+      6402: ldc_w         #2692               // String PPM
+      6405: aastore
+      6406: dup
+      6407: iconst_1
+      6408: ldc_w         #3012               // String SWL
+      6411: aastore
+      6412: dup
+      6413: iconst_2
+      6414: bipush        80
+      6416: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      6419: aastore
+      6420: dup
+      6421: iconst_3
+      6422: getstatic     #307                // Field com/hbm/inventory/OreDictManager.STEEL:Lcom/hbm/inventory/OreDictManager$DictFrame;
+      6425: invokevirtual #229                // Method com/hbm/inventory/OreDictManager$DictFrame.plate:()Ljava/lang/String;
+      6428: aastore
+      6429: dup
+      6430: iconst_4
+      6431: bipush        77
+      6433: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      6436: aastore
+      6437: dup
+      6438: iconst_5
+      6439: getstatic     #2697               // Field com/hbm/items/ModItems.mechanism_rifle_1:Lnet/minecraft/item/Item;
+      6442: aastore
+      6443: dup
+      6444: bipush        6
+      6446: bipush        83
+      6448: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      6451: aastore
+      6452: dup
+      6453: bipush        7
+      6455: getstatic     #1665               // Field net/minecraft/init/Items.field_151055_y:Lnet/minecraft/item/Item;
+      6458: aastore
+      6459: dup
+      6460: bipush        8
+      6462: bipush        87
+      6464: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      6467: aastore
+      6468: dup
+      6469: bipush        9
+      6471: new           #388                // class net/minecraft/item/ItemStack
+      6474: dup
+      6475: getstatic     #2281               // Field com/hbm/items/ModItems.wire:Lnet/minecraft/item/Item;
+      6478: iconst_1
+      6479: getstatic     #2666               // Field com/hbm/inventory/material/Mats.MAT_TUNGSTEN:Lcom/hbm/inventory/material/NTMMaterial;
+      6482: getfield      #1919               // Field com/hbm/inventory/material/NTMMaterial.id:I
+      6485: invokespecial #1533               // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;II)V
+      6488: aastore
+      6489: dup
+      6490: bipush        10
+      6492: bipush        76
+      6494: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      6497: aastore
+      6498: dup
+      6499: bipush        11
+      6501: ldc_w         #3014               // String logWood
+      6504: aastore
+      6505: invokestatic  #185                // Method addRecipeAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+
+--- Block lines 18005 to 18118 ---
+      6508: new           #388                // class net/minecraft/item/ItemStack
+      6511: dup
+      6512: getstatic     #3017               // Field com/hbm/items/ModItems.gun_sauer:Lnet/minecraft/item/Item;
+      6515: iconst_1
+      6516: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+      6519: iconst_4
+      6520: anewarray     #4                  // class java/lang/Object
+      6523: dup
+      6524: iconst_0
+      6525: getstatic     #2271               // Field com/hbm/items/ModItems.ducttape:Lnet/minecraft/item/Item;
+      6528: aastore
+      6529: dup
+      6530: iconst_1
+      6531: getstatic     #3010               // Field com/hbm/items/ModItems.gun_ks23:Lnet/minecraft/item/Item;
+      6534: aastore
+      6535: dup
+      6536: iconst_2
+      6537: getstatic     #3020               // Field net/minecraft/init/Blocks.field_150442_at:Lnet/minecraft/block/Block;
+      6540: aastore
+      6541: dup
+      6542: iconst_3
+      6543: getstatic     #3010               // Field com/hbm/items/ModItems.gun_ks23:Lnet/minecraft/item/Item;
+      6546: aastore
+      6547: invokestatic  #736                // Method addShapelessAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+      6550: new           #388                // class net/minecraft/item/ItemStack
+      6553: dup
+      6554: getstatic     #3023               // Field com/hbm/items/ModItems.gun_flamer:Lnet/minecraft/item/Item;
+      6557: iconst_1
+      6558: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+      6561: bipush        17
+      6563: anewarray     #4                  // class java/lang/Object
+      6566: dup
+      6567: iconst_0
+      6568: ldc_w         #3025               // String WPP
+      6571: aastore
+      6572: dup
+      6573: iconst_1
+      6574: ldc_w         #3027               // String SCT
+      6577: aastore
+      6578: dup
+      6579: iconst_2
+      6580: ldc_w         #3029               // String WMI
+      6583: aastore
+      6584: dup
+      6585: iconst_3
+      6586: bipush        87
+      6588: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      6591: aastore
+      6592: dup
+      6593: iconst_4
+      6594: new           #388                // class net/minecraft/item/ItemStack
+      6597: dup
+      6598: getstatic     #2281               // Field com/hbm/items/ModItems.wire:Lnet/minecraft/item/Item;
+      6601: iconst_1
+      6602: getstatic     #2678               // Field com/hbm/inventory/material/Mats.MAT_GOLD:Lcom/hbm/inventory/material/NTMMaterial;
+      6605: getfield      #1919               // Field com/hbm/inventory/material/NTMMaterial.id:I
+      6608: invokespecial #1533               // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;II)V
+      6611: aastore
+      6612: dup
+      6613: iconst_5
+      6614: bipush        80
+      6616: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      6619: aastore
+      6620: dup
+      6621: bipush        6
+      6623: getstatic     #2018               // Field com/hbm/items/ModItems.pipes_steel:Lnet/minecraft/item/Item;
+      6626: aastore
+      6627: dup
+      6628: bipush        7
+      6630: bipush        83
+      6632: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      6635: aastore
+      6636: dup
+      6637: bipush        8
+      6639: getstatic     #2051               // Field com/hbm/items/ModItems.hull_small_steel:Lnet/minecraft/item/Item;
+      6642: aastore
+      6643: dup
+      6644: bipush        9
+      6646: bipush        67
+      6648: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      6651: aastore
+      6652: dup
+      6653: bipush        10
+      6655: getstatic     #2033               // Field com/hbm/items/ModItems.coil_tungsten:Lnet/minecraft/item/Item;
+      6658: aastore
+      6659: dup
+      6660: bipush        11
+      6662: bipush        84
+      6664: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      6667: aastore
+      6668: dup
+      6669: bipush        12
+      6671: getstatic     #2015               // Field com/hbm/items/ModItems.tank_steel:Lnet/minecraft/item/Item;
+      6674: aastore
+      6675: dup
+      6676: bipush        13
+      6678: bipush        77
+      6680: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      6683: aastore
+      6684: dup
+      6685: bipush        14
+      6687: getstatic     #2600               // Field com/hbm/items/ModItems.mechanism_launcher_1:Lnet/minecraft/item/Item;
+      6690: aastore
+      6691: dup
+      6692: bipush        15
+      6694: bipush        73
+      6696: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      6699: aastore
+      6700: dup
+      6701: bipush        16
+      6703: getstatic     #307                // Field com/hbm/inventory/OreDictManager.STEEL:Lcom/hbm/inventory/OreDictManager$DictFrame;
+      6706: invokevirtual #410                // Method com/hbm/inventory/OreDictManager$DictFrame.ingot:()Ljava/lang/String;
+      6709: aastore
+      6710: invokestatic  #185                // Method addRecipeAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+
+==================== gun_flamer ====================
+
+--- Block lines 18029 to 18118 ---
+      6550: new           #388                // class net/minecraft/item/ItemStack
+      6553: dup
+      6554: getstatic     #3023               // Field com/hbm/items/ModItems.gun_flamer:Lnet/minecraft/item/Item;
+      6557: iconst_1
+      6558: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+      6561: bipush        17
+      6563: anewarray     #4                  // class java/lang/Object
+      6566: dup
+      6567: iconst_0
+      6568: ldc_w         #3025               // String WPP
+      6571: aastore
+      6572: dup
+      6573: iconst_1
+      6574: ldc_w         #3027               // String SCT
+      6577: aastore
+      6578: dup
+      6579: iconst_2
+      6580: ldc_w         #3029               // String WMI
+      6583: aastore
+      6584: dup
+      6585: iconst_3
+      6586: bipush        87
+      6588: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      6591: aastore
+      6592: dup
+      6593: iconst_4
+      6594: new           #388                // class net/minecraft/item/ItemStack
+      6597: dup
+      6598: getstatic     #2281               // Field com/hbm/items/ModItems.wire:Lnet/minecraft/item/Item;
+      6601: iconst_1
+      6602: getstatic     #2678               // Field com/hbm/inventory/material/Mats.MAT_GOLD:Lcom/hbm/inventory/material/NTMMaterial;
+      6605: getfield      #1919               // Field com/hbm/inventory/material/NTMMaterial.id:I
+      6608: invokespecial #1533               // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;II)V
+      6611: aastore
+      6612: dup
+      6613: iconst_5
+      6614: bipush        80
+      6616: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      6619: aastore
+      6620: dup
+      6621: bipush        6
+      6623: getstatic     #2018               // Field com/hbm/items/ModItems.pipes_steel:Lnet/minecraft/item/Item;
+      6626: aastore
+      6627: dup
+      6628: bipush        7
+      6630: bipush        83
+      6632: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      6635: aastore
+      6636: dup
+      6637: bipush        8
+      6639: getstatic     #2051               // Field com/hbm/items/ModItems.hull_small_steel:Lnet/minecraft/item/Item;
+      6642: aastore
+      6643: dup
+      6644: bipush        9
+      6646: bipush        67
+      6648: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      6651: aastore
+      6652: dup
+      6653: bipush        10
+      6655: getstatic     #2033               // Field com/hbm/items/ModItems.coil_tungsten:Lnet/minecraft/item/Item;
+      6658: aastore
+      6659: dup
+      6660: bipush        11
+      6662: bipush        84
+      6664: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      6667: aastore
+      6668: dup
+      6669: bipush        12
+      6671: getstatic     #2015               // Field com/hbm/items/ModItems.tank_steel:Lnet/minecraft/item/Item;
+      6674: aastore
+      6675: dup
+      6676: bipush        13
+      6678: bipush        77
+      6680: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      6683: aastore
+      6684: dup
+      6685: bipush        14
+      6687: getstatic     #2600               // Field com/hbm/items/ModItems.mechanism_launcher_1:Lnet/minecraft/item/Item;
+      6690: aastore
+      6691: dup
+      6692: bipush        15
+      6694: bipush        73
+      6696: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      6699: aastore
+      6700: dup
+      6701: bipush        16
+      6703: getstatic     #307                // Field com/hbm/inventory/OreDictManager.STEEL:Lcom/hbm/inventory/OreDictManager$DictFrame;
+      6706: invokevirtual #410                // Method com/hbm/inventory/OreDictManager$DictFrame.ingot:()Ljava/lang/String;
+      6709: aastore
+      6710: invokestatic  #185                // Method addRecipeAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+
+==================== alloy_shield ====================
+
+--- Block lines 8806 to 8845 ---
+      3828: new           #388                // class net/minecraft/item/ItemStack
+      3831: dup
+      3832: getstatic     #1853               // Field com/hbm/items/ModItems.alloy_shield:Lnet/minecraft/item/Item;
+      3835: iconst_1
+      3836: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+      3839: bipush        7
+      3841: anewarray     #4                  // class java/lang/Object
+      3844: dup
+      3845: iconst_0
+      3846: ldc           #210                // String IAI
+      3848: aastore
+      3849: dup
+      3850: iconst_1
+      3851: ldc           #245                // String III
+      3853: aastore
+      3854: dup
+      3855: iconst_2
+      3856: ldc_w         #1670               // String  I
+      3859: aastore
+      3860: dup
+      3861: iconst_3
+      3862: bipush        73
+      3864: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      3867: aastore
+      3868: dup
+      3869: iconst_4
+      3870: getstatic     #1838               // Field com/hbm/inventory/OreDictManager.ALLOY:Lcom/hbm/inventory/OreDictManager$DictFrame;
+      3873: invokevirtual #410                // Method com/hbm/inventory/OreDictManager$DictFrame.ingot:()Ljava/lang/String;
+      3876: aastore
+      3877: dup
+      3878: iconst_5
+      3879: bipush        65
+      3881: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      3884: aastore
+      3885: dup
+      3886: bipush        6
+      3888: getstatic     #409                // Field com/hbm/inventory/OreDictManager.IRON:Lcom/hbm/inventory/OreDictManager$DictFrame;
+      3891: invokevirtual #410                // Method com/hbm/inventory/OreDictManager$DictFrame.ingot:()Ljava/lang/String;
+      3894: aastore
+      3895: invokestatic  #185                // Method addRecipeAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+
+==================== battery_sc_yharonite ====================
+
+--- Block lines 61366 to 61422 ---
+      4601: new           #388                // class net/minecraft/item/ItemStack
+      4604: dup
+      4605: getstatic     #7312               // Field com/hbm/items/ModItems.battery_sc_yharonite:Lnet/minecraft/item/Item;
+      4608: invokespecial #918                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;)V
+      4611: bipush        11
+      4613: anewarray     #4                  // class java/lang/Object
+      4616: dup
+      4617: iconst_0
+      4618: ldc_w         #2411               // String NBN
+      4621: aastore
+      4622: dup
+      4623: iconst_1
+      4624: ldc_w         #515                // String PCP
+      4627: aastore
+      4628: dup
+      4629: iconst_2
+      4630: ldc_w         #2411               // String NBN
+      4633: aastore
+      4634: dup
+      4635: iconst_3
+      4636: bipush        78
+      4638: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      4641: aastore
+      4642: dup
+      4643: iconst_4
+      4644: getstatic     #6358               // Field com/hbm/inventory/OreDictManager.DNT:Lcom/hbm/inventory/OreDictManager$DictFrame;
+      4647: invokevirtual #199                // Method com/hbm/inventory/OreDictManager$DictFrame.nugget:()Ljava/lang/String;
+      4650: aastore
+      4651: dup
+      4652: iconst_5
+      4653: bipush        66
+      4655: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      4658: aastore
+      4659: dup
+      4660: bipush        6
+      4662: getstatic     #6038               // Field com/hbm/items/ModItems.billet_yharonite:Lnet/minecraft/item/Item;
+      4665: aastore
+      4666: dup
+      4667: bipush        7
+      4669: bipush        80
+      4671: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      4674: aastore
+      4675: dup
+      4676: bipush        8
+      4678: getstatic     #285                // Field com/hbm/inventory/OreDictManager.ANY_PLASTIC:Lcom/hbm/inventory/OreDictManager$DictGroup;
+      4681: invokevirtual #266                // Method com/hbm/inventory/OreDictManager$DictGroup.ingot:()Ljava/lang/String;
+      4684: aastore
+      4685: dup
+      4686: bipush        9
+      4688: bipush        67
+      4690: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      4693: aastore
+      4694: dup
+      4695: bipush        10
+      4697: getstatic     #7309               // Field com/hbm/items/ModItems.battery_sc_schrabidium:Lnet/minecraft/item/Item;
+      4700: aastore
+      4701: invokestatic  #185                // Method addRecipeAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+
+--- Block lines 61423 to 61477 ---
+      4704: new           #388                // class net/minecraft/item/ItemStack
+      4707: dup
+      4708: getstatic     #7315               // Field com/hbm/items/ModItems.battery_sc_electronium:Lnet/minecraft/item/Item;
+      4711: invokespecial #918                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;)V
+      4714: bipush        11
+      4716: anewarray     #4                  // class java/lang/Object
+      4719: dup
+      4720: iconst_0
+      4721: ldc_w         #2411               // String NBN
+      4724: aastore
+      4725: dup
+      4726: iconst_1
+      4727: ldc_w         #515                // String PCP
+      4730: aastore
+      4731: dup
+      4732: iconst_2
+      4733: ldc_w         #2411               // String NBN
+      4736: aastore
+      4737: dup
+      4738: iconst_3
+      4739: bipush        78
+      4741: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      4744: aastore
+      4745: dup
+      4746: iconst_4
+      4747: getstatic     #559                // Field com/hbm/items/ModItems.nugget_u238m2:Lnet/minecraft/item/Item;
+      4750: aastore
+      4751: dup
+      4752: iconst_5
+      4753: bipush        66
+      4755: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      4758: aastore
+      4759: dup
+      4760: bipush        6
+      4762: getstatic     #7318               // Field com/hbm/items/ModItems.glitch:Lnet/minecraft/item/Item;
+      4765: aastore
+      4766: dup
+      4767: bipush        7
+      4769: bipush        80
+      4771: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      4774: aastore
+      4775: dup
+      4776: bipush        8
+      4778: getstatic     #5285               // Field com/hbm/items/ModItems.ingot_electronium:Lnet/minecraft/item/Item;
+      4781: aastore
+      4782: dup
+      4783: bipush        9
+      4785: bipush        67
+      4787: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      4790: aastore
+      4791: dup
+      4792: bipush        10
+      4794: getstatic     #7312               // Field com/hbm/items/ModItems.battery_sc_yharonite:Lnet/minecraft/item/Item;
+      4797: aastore
+      4798: invokestatic  #185                // Method addRecipeAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+
+==================== battery_sc_electronium ====================
+
+--- Block lines 61423 to 61477 ---
+      4704: new           #388                // class net/minecraft/item/ItemStack
+      4707: dup
+      4708: getstatic     #7315               // Field com/hbm/items/ModItems.battery_sc_electronium:Lnet/minecraft/item/Item;
+      4711: invokespecial #918                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;)V
+      4714: bipush        11
+      4716: anewarray     #4                  // class java/lang/Object
+      4719: dup
+      4720: iconst_0
+      4721: ldc_w         #2411               // String NBN
+      4724: aastore
+      4725: dup
+      4726: iconst_1
+      4727: ldc_w         #515                // String PCP
+      4730: aastore
+      4731: dup
+      4732: iconst_2
+      4733: ldc_w         #2411               // String NBN
+      4736: aastore
+      4737: dup
+      4738: iconst_3
+      4739: bipush        78
+      4741: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      4744: aastore
+      4745: dup
+      4746: iconst_4
+      4747: getstatic     #559                // Field com/hbm/items/ModItems.nugget_u238m2:Lnet/minecraft/item/Item;
+      4750: aastore
+      4751: dup
+      4752: iconst_5
+      4753: bipush        66
+      4755: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      4758: aastore
+      4759: dup
+      4760: bipush        6
+      4762: getstatic     #7318               // Field com/hbm/items/ModItems.glitch:Lnet/minecraft/item/Item;
+      4765: aastore
+      4766: dup
+      4767: bipush        7
+      4769: bipush        80
+      4771: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      4774: aastore
+      4775: dup
+      4776: bipush        8
+      4778: getstatic     #5285               // Field com/hbm/items/ModItems.ingot_electronium:Lnet/minecraft/item/Item;
+      4781: aastore
+      4782: dup
+      4783: bipush        9
+      4785: bipush        67
+      4787: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+      4790: aastore
+      4791: dup
+      4792: bipush        10
+      4794: getstatic     #7312               // Field com/hbm/items/ModItems.battery_sc_yharonite:Lnet/minecraft/item/Item;
+      4797: aastore
+      4798: invokestatic  #185                // Method addRecipeAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+
+==================== gun_hk69 ====================
+
+--- Block lines 14689 to 14747 ---
+       485: new           #388                // class net/minecraft/item/ItemStack
+       488: dup
+       489: getstatic     #2617               // Field com/hbm/items/ModItems.gun_hk69:Lnet/minecraft/item/Item;
+       492: iconst_1
+       493: invokespecial #730                // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;I)V
+       496: bipush        10
+       498: anewarray     #4                  // class java/lang/Object
+       501: dup
+       502: iconst_0
+       503: ldc_w         #2619               // String SSI
+       506: aastore
+       507: dup
+       508: iconst_1
+       509: ldc_w         #2621               // String  MB
+       512: aastore
+       513: dup
+       514: iconst_2
+       515: bipush        83
+       517: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+       520: aastore
+       521: dup
+       522: iconst_3
+       523: getstatic     #2051               // Field com/hbm/items/ModItems.hull_small_steel:Lnet/minecraft/item/Item;
+       526: aastore
+       527: dup
+       528: iconst_4
+       529: bipush        73
+       531: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+       534: aastore
+       535: dup
+       536: iconst_5
+       537: getstatic     #409                // Field com/hbm/inventory/OreDictManager.IRON:Lcom/hbm/inventory/OreDictManager$DictFrame;
+       540: invokevirtual #410                // Method com/hbm/inventory/OreDictManager$DictFrame.ingot:()Ljava/lang/String;
+       543: aastore
+       544: dup
+       545: bipush        6
+       547: bipush        77
+       549: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+       552: aastore
+       553: dup
+       554: bipush        7
+       556: getstatic     #2600               // Field com/hbm/items/ModItems.mechanism_launcher_1:Lnet/minecraft/item/Item;
+       559: aastore
+       560: dup
+       561: bipush        8
+       563: bipush        66
+       565: invokestatic  #169                // Method java/lang/Character.valueOf:(C)Ljava/lang/Character;
+       568: aastore
+       569: dup
+       570: bipush        9
+       572: new           #388                // class net/minecraft/item/ItemStack
+       575: dup
+       576: getstatic     #1908               // Field com/hbm/items/ModItems.bolt:Lnet/minecraft/item/Item;
+       579: iconst_1
+       580: getstatic     #2251               // Field com/hbm/inventory/material/Mats.MAT_STEEL:Lcom/hbm/inventory/material/NTMMaterial;
+       583: getfield      #1919               // Field com/hbm/inventory/material/NTMMaterial.id:I
+       586: invokespecial #1533               // Method net/minecraft/item/ItemStack."<init>":(Lnet/minecraft/item/Item;II)V
+       589: aastore
+       590: invokestatic  #185                // Method addRecipeAuto:(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V

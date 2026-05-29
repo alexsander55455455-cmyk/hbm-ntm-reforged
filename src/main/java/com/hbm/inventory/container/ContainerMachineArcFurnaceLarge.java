@@ -1,0 +1,94 @@
+package com.hbm.inventory.container;
+
+import com.hbm.inventory.TransferStrategy;
+import com.hbm.inventory.recipes.ArcFurnaceRecipes;
+import com.hbm.inventory.slot.SlotBattery;
+import com.hbm.inventory.slot.SlotNonRetarded;
+import com.hbm.inventory.slot.SlotUpgrade;
+import com.hbm.items.ModItems;
+import com.hbm.lib.Library;
+import com.hbm.tileentity.machine.TileEntityMachineArcFurnaceLarge;
+import com.hbm.util.InventoryUtil;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.IItemHandler;
+import org.jetbrains.annotations.NotNull;
+
+public class ContainerMachineArcFurnaceLarge extends Container {
+
+    private final TileEntityMachineArcFurnaceLarge furnace;
+
+    private static final TransferStrategy TRANSFER_STRATEGY = TransferStrategy.builder(30)
+                                                                              .rule(0, 3,
+                                                                                      s -> s.getItem() == ModItems.arc_electrode)
+                                                                              .rule(3, 4, Library::isBattery)
+                                                                              .rule(4, 5, Library::isMachineUpgrade)
+                                                                              .genericMachineRange(5)
+                                                                              .ruleDispatchMode(
+                                                                                      TransferStrategy.RuleDispatchMode.FALLTHROUGH_ON_FAILURE)
+                                                                              .playerFallbackMode(
+                                                                                      TransferStrategy.PlayerFallbackMode.REBALANCE_SECTIONS)
+                                                                              .build();
+
+    public ContainerMachineArcFurnaceLarge(InventoryPlayer playerInv, TileEntityMachineArcFurnaceLarge tile) {
+        furnace = tile;
+
+        //Electrodes
+        for(int i = 0; i < 3; i++) this.addSlotToContainer(new SlotNonRetarded(tile.inventory, i, 62 + i * 18, 22));
+        //Battery
+        this.addSlotToContainer(new SlotBattery(tile.inventory, 3, 8, 108));
+        //Upgrade
+        this.addSlotToContainer(new SlotUpgrade(tile.inventory, 4, 152, 108));
+        //Inputs
+        for(int i = 0; i < 4; i++) for(int j = 0; j < 5; j++) this.addSlotToContainer(new SlotArcFurnace(tile, tile.inventory, 5 + j + i * 5, 44 + j * 18, 54 + i * 18));
+        //IO
+        for(int i = 0; i < 5; i++) this.addSlotToContainer(new SlotNonRetarded(tile.inventory, i + 25, 44 + i * 18, 129));
+
+        for(int i = 0; i < 3; i++) {
+            for(int j = 0; j < 9; j++) {
+                this.addSlotToContainer(new Slot(playerInv, j + i * 9 + 9, 8 + j * 18, 174 + i * 18));
+            }
+        }
+
+        for(int i = 0; i < 9; i++) {
+            this.addSlotToContainer(new Slot(playerInv, i, 8 + i * 18, 232));
+        }
+    }
+
+    @Override
+    public @NotNull ItemStack transferStackInSlot(@NotNull EntityPlayer player, int index) {
+        return InventoryUtil.transferStack(this.inventorySlots, index, this.TRANSFER_STRATEGY, player);
+    }
+
+    @Override
+    public boolean canInteractWith(@NotNull EntityPlayer player) {
+        return furnace.isUseableByPlayer(player);
+    }
+
+    public static class SlotArcFurnace extends SlotNonRetarded {
+        TileEntityMachineArcFurnaceLarge furnace;
+
+        SlotArcFurnace(TileEntityMachineArcFurnaceLarge furnace, IItemHandler inventory, int id, int x, int y) {
+            super(inventory, id, x, y);
+            this.furnace = furnace;
+        }
+
+        @Override
+        public boolean isItemValid(@NotNull ItemStack stack) {
+            if(furnace.liquidMode) return true;
+            ArcFurnaceRecipes.ArcFurnaceRecipe recipe = ArcFurnaceRecipes.getOutput(stack, false);
+            if(recipe != null && recipe.solidOutput != null) {
+                return recipe.solidOutput.getCount() * stack.getCount() <= recipe.solidOutput.getMaxStackSize() && stack.getCount() <= furnace.getMaxInputSize();
+            }
+            return false;
+        }
+
+        @Override
+        public int getSlotStackLimit() {
+            return this.getHasStack() ? furnace.getMaxInputSize() : 1;
+        }
+    }
+}

@@ -1,0 +1,333 @@
+package com.hbm.tileentity.machine.oil;
+
+import com.hbm.api.energymk2.IEnergyReceiverMK2;
+import com.hbm.api.fluid.IFluidStandardTransceiver;
+import com.hbm.blocks.ModBlocks;
+import com.hbm.inventory.UpgradeManagerNT;
+import com.hbm.inventory.fluid.Fluids;
+import com.hbm.inventory.fluid.tank.FluidTankNTM;
+import com.hbm.items.machine.ItemMachineUpgrade;
+import com.hbm.lib.DirPos;
+import com.hbm.lib.ForgeDirection;
+import com.hbm.lib.Library;
+import com.hbm.tileentity.*;
+import com.hbm.util.BobMathUtil;
+import com.hbm.util.SoundUtil;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.ItemStackHandler;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayDeque;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Queue;
+
+public abstract class TileEntityOilDrillBase extends TileEntityMachineBase implements ITickable, IEnergyReceiverMK2, IFluidStandardTransceiver, IConfigurableMachine, IPersistentNBT, IGUIProvider, IFluidCopiable, IUpgradeInfoProvider, IConnectionAnchors {
+    private final UpgradeManagerNT upgradeManager = new UpgradeManagerNT(this);
+    public long power;
+    public int indicator = 0;
+    public FluidTankNTM[] tanks;
+    public int speedLevel;
+    public int energyLevel;
+    public int overLevel;
+    HashSet<BlockPos> processed = new HashSet<>();
+
+    public TileEntityOilDrillBase() {
+        super(0, true, true);
+
+        inventory = new ItemStackHandler(8) {
+            @Override
+            protected void onContentsChanged(int slot) {
+                super.onContentsChanged(slot);
+                markDirty();
+            }
+
+            @Override
+            public void setStackInSlot(int slot, @NotNull ItemStack stack) {
+                super.setStackInSlot(slot, stack);
+                if (Library.isMachineUpgrade(stack) && slot >= 5 && slot <= 7)
+                    SoundUtil.playUpgradePlugSound(world, pos);
+            }
+        };
+
+        tanks = new FluidTankNTM[2];
+        tanks[0] = new FluidTankNTM(Fluids.OIL, 64_000).withOwner(this);
+        tanks[1] = new FluidTankNTM(Fluids.GAS, 64_000).withOwner(this);
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound compound) {
+        super.readFromNBT(compound);
+        this.power = compound.getLong("power");
+        for(int i = 0; i < this.tanks.length; i++)
+            this.tanks[i].readFromNBT(compound, "t" + i);
+    }
+
+    @Override
+    public @NotNull NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        compound.setLong("power", power);
+        for(int i = 0; i < this.tanks.length; i++)
+            this.tanks[i].writeToNBT(compound, "t" + i);
+        return super.writeToNBT(compound);
+    }
+
+    @Override
+    public void writeNBT(NBTTagCompound nbt) {
+
+        boolean empty = power == 0;
+        for (FluidTankNTM tank : tanks) if (tank.getFill() > 0) empty = false;
+
+        if (!empty) {
+            nbt.setLong("power", power);
+            for (int i = 0; i < this.tanks.length; i++) {
+                this.tanks[i].writeToNBT(nbt, "t" + i);
+            }
+        }
+    }
+
+    @Override
+    public void readNBT(NBTTagCompound nbt) {
+        this.power = nbt.getLong("power");
+        for (int i = 0; i < this.tanks.length; i++)
+            this.tanks[i].readFromNBT(nbt, "t" + i);
+    }
+
+    @Override
+    public void update() {
+        if (!world.isRemote) {
+
+            this.updateConnections();
+
+            this.tanks[0].unloadTank(1, 2, inventory);
+            this.tanks[1].unloadTank(3, 4, inventory);
+
+            upgradeManager.checkSlots(inventory, 5, 7);
+            this.speedLevel = Math.min(upgradeManager.getLevel(ItemMachineUpgrade.UpgradeType.SPEED), 3);
+            this.energyLevel = Math.min(upgradeManager.getLevel(ItemMachineUpgrade.UpgradeType.POWER), 3);
+            this.overLevel = Math.min(upgradeManager.getLevel(ItemMachineUpgrade.UpgradeType.OVERDRIVE), 3) + 1;
+            int abLevel = Math.min(upgradeManager.getLevel(ItemMachineUpgrade.UpgradeType.AFTERBURN), 3);
+
+            int toBurn = Math.min(tanks[1].getFill(), abLevel * 10);
+
+            if (toBurn > 0) {
+                tanks[1].setFill(tanks[1].getFill() - toBurn);
+                this.power += toBurn * 5L;
+
+                if (this.power > this.getMaxPower())
+                    this.power = this.getMaxPower();
+            }
+
+            power = Library.chargeTEFromItems(inventory, 0, power, this.getMaxPower());
+
+            for (DirPos pos : getConPos()) {
+                if (tanks[0].getFill() > 0)
+                    this.sendFluid(tanks[0], world, pos.getPos().getX(), pos.getPos().getY(), pos.getPos().getZ(), pos.getDir());
+                if (tanks[1].getFill() > 0)
+                    this.sendFluid(tanks[1], world, pos.getPos().getX(), pos.getPos().getY(), pos.getPos().getZ(), pos.getDir());
+            }
+
+            if (this.power >= this.getPowerReqEff() && this.tanks[0].getFill() < this.tanks[0].getMaxFill() && this.tanks[1].getFill() < this.tanks[1].getMaxFill()) {
+
+                this.power -= this.getPowerReqEff();
+
+                if (world.getTotalWorldTime() % getDelayEff() == 0) {
+                    this.indicator = 0;
+
+                    for (int y = pos.getY() - 1; y >= getDrillDepth(); y--) {
+
+                        if (world.getBlockState(new BlockPos(pos.getX(), y, pos.getZ())).getBlock() != ModBlocks.oil_pipe) {
+
+                            if (!trySuck(y)) {
+                                tryDrill(y);
+                            }
+                            break;
+                        }
+
+                        if (y == getDrillDepth())
+                            this.indicator = 1;
+                    }
+                }
+
+            } else {
+                this.indicator = 2;
+            }
+
+            this.sendUpdate();
+        }
+    }
+
+    public void sendUpdate() {
+        networkPackNT(25);
+    }
+
+    @Override
+    public void serialize(ByteBuf buf) {
+        super.serialize(buf);
+        buf.writeLong(power);
+        buf.writeInt(indicator);
+
+        for (FluidTankNTM tank : tanks)
+            tank.serialize(buf);
+    }
+
+    @Override
+    public void deserialize(ByteBuf buf) {
+        super.deserialize(buf);
+        this.power = buf.readLong();
+        this.indicator = buf.readInt();
+
+        for (FluidTankNTM tank : tanks)
+            tank.deserialize(buf);
+    }
+
+    public boolean canPump() {
+        return true;
+    }
+
+    public int getPowerReqEff() {
+        int req = this.getPowerReq();
+        return (req + (req / 4 * this.speedLevel) - (req / 4 * this.energyLevel)) * this.overLevel;
+    }
+
+    public int getDelayEff() {
+        int delay = getDelay();
+        return Math.max((delay - (delay / 4 * this.speedLevel) + (delay / 10 * this.energyLevel)) / this.overLevel, 1);
+    }
+
+    public abstract int getPowerReq();
+
+    public abstract int getDelay();
+
+    public void tryDrill(int y) {
+        BlockPos posD = new BlockPos(pos.getX(), y, pos.getZ());
+        Block b = world.getBlockState(posD).getBlock();
+
+        if (b.getExplosionResistance(null) < 1000) {
+            onDrill(y);
+            world.setBlockState(posD, ModBlocks.oil_pipe.getDefaultState());
+        } else {
+            this.indicator = 2;
+        }
+    }
+
+    public void onDrill(int y) {
+    }
+
+    public int getDrillDepth() {
+        return 5;
+    }
+
+    public boolean trySuck(int y) {
+        BlockPos startPos = new BlockPos(pos.getX(), y, pos.getZ());
+        Block startBlock = world.getBlockState(startPos).getBlock();
+        if (!canSuckBlock(startBlock)) return false;
+        if (!this.canPump()) return true;
+        Queue<BlockPos> queue = new ArrayDeque<>();
+        processed.clear();
+        queue.offer(startPos);
+        processed.add(startPos);
+
+        int nodesVisited = 0;
+        while (!queue.isEmpty() && nodesVisited < 256) {
+            BlockPos currentPos = queue.poll();
+            nodesVisited++;
+            Block currentBlock = world.getBlockState(currentPos).getBlock();
+            if (currentBlock == ModBlocks.ore_oil || currentBlock == ModBlocks.ore_bedrock_oil) {
+                doSuck(currentPos);
+                return true;
+            }
+            if (currentBlock != ModBlocks.ore_oil_empty) continue;
+            for (ForgeDirection dir : BobMathUtil.getShuffledDirs()) {
+                BlockPos neighborPos = currentPos.add(dir.offsetX, dir.offsetY, dir.offsetZ);
+                if (!processed.contains(neighborPos) && canSuckBlock(world.getBlockState(neighborPos).getBlock())) {
+                    processed.add(neighborPos);
+                    queue.offer(neighborPos);
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean canSuckBlock(Block b) {
+        return b == ModBlocks.ore_oil || b == ModBlocks.ore_oil_empty;
+    }
+
+    public void doSuck(BlockPos pos) {
+        Block b = world.getBlockState(pos).getBlock();
+
+        if (b == ModBlocks.ore_oil) {
+            onSuck(pos);
+        }
+    }
+
+    public abstract void onSuck(BlockPos pos);
+
+    @Override
+    public long getPower() {
+        return power;
+    }
+
+    @Override
+    public void setPower(long i) {
+        power = i;
+
+    }
+
+
+    @Override
+    public FluidTankNTM[] getSendingTanks() {
+        return tanks;
+    }
+
+    @Override
+    public FluidTankNTM[] getReceivingTanks() {
+        return new FluidTankNTM[0];
+    }
+
+    @Override
+    public FluidTankNTM[] getAllTanks() {
+        return tanks;
+    }
+
+    public abstract DirPos[] getConPos();
+
+    protected void updateConnections() {
+        for (DirPos pos : getConPos()) {
+            this.trySubscribe(world, pos.getPos().getX(), pos.getPos().getY(), pos.getPos().getZ(), pos.getDir());
+        }
+    }
+
+    @Override
+    public FluidTankNTM getTankToPaste() {
+        return null;
+    }
+
+    @Override
+    public boolean canProvideInfo(ItemMachineUpgrade.UpgradeType type, int level, boolean extendedInfo) {
+        return type == ItemMachineUpgrade.UpgradeType.SPEED || type == ItemMachineUpgrade.UpgradeType.POWER || type == ItemMachineUpgrade.UpgradeType.OVERDRIVE || type == ItemMachineUpgrade.UpgradeType.AFTERBURN;
+    }
+
+    @Override
+    public HashMap<ItemMachineUpgrade.UpgradeType, Integer> getValidUpgrades() {
+        HashMap<ItemMachineUpgrade.UpgradeType, Integer> upgrades = new HashMap<>();
+        upgrades.put(ItemMachineUpgrade.UpgradeType.SPEED, 3);
+        upgrades.put(ItemMachineUpgrade.UpgradeType.POWER, 3);
+        upgrades.put(ItemMachineUpgrade.UpgradeType.AFTERBURN, 3);
+        upgrades.put(ItemMachineUpgrade.UpgradeType.OVERDRIVE, 3);
+        return upgrades;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public double getMaxRenderDistanceSquared() {
+        return 65536.0D;
+    }
+
+}

@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "meta=0":  { "model": "hbm:steel_scaffold" },
+    "meta=1":  { "model": "hbm:steel_scaffold" },
+    "meta=2":  { "model": "hbm:steel_scaffold" },
+    "meta=3":  { "model": "hbm:steel_scaffold" }
+  }
+}

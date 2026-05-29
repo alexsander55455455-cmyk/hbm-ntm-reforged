@@ -1,0 +1,12 @@
+{
+	"variants": {
+		"normal": { "model": "hbm:ash" },
+		"meta=0": { "model": "hbm:ash" },
+		"meta=1": { "model": "hbm:ash" },
+		"meta=2": { "model": "hbm:ash" },
+		"meta=3": { "model": "hbm:ash" },
+		"meta=4": { "model": "hbm:ash" },
+		"meta=5": { "model": "hbm:ash" },
+		"meta=6": { "model": "hbm:ash" }
+	}
+}

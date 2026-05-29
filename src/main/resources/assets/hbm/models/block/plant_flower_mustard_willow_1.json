@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "hbm:blocks/plant_flower_mustard_willow_1"
+  }
+}

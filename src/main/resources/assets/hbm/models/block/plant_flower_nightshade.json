@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "hbm:blocks/plant_flower_nightshade"
+  }
+}

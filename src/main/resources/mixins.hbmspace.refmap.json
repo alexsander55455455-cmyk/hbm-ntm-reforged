@@ -1,0 +1,46 @@
+{
+  "mappings": {
+    "com/hbmspace/mixin/MixinEntityRenderer": {
+      "orientCamera": "Lnet/minecraft/client/renderer/EntityRenderer;func_78467_g(F)V",
+      "updateRenderer": "Lnet/minecraft/client/renderer/EntityRenderer;func_78464_a()V"
+    },
+    "com/hbmspace/mixin/mod/hbm/items/MixinItemBedrockOreNew": {
+      "getSubItems": "Lcom/hbm/items/special/ItemBedrockOreNew;func_150895_a(Lnet/minecraft/creativetab/CreativeTabs;Lnet/minecraft/util/NonNullList;)V"
+    },
+    "com/hbmspace/mixin/mod/hbm/items/MixinItemBedrockOreNewClient": {
+      "getItemStackDisplayName": "Lcom/hbm/items/special/ItemBedrockOreNew;func_77653_i(Lnet/minecraft/item/ItemStack;)Ljava/lang/String;"
+    },
+    "com/hbmspace/mixin/mod/hbm/items/MixinItemOreDensityScanner": {
+      "onUpdate": "Lcom/hbm/items/tool/ItemOreDensityScanner;func_77663_a(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Lnet/minecraft/entity/Entity;IZ)V"
+    },
+    "com/hbmspace/mixin/mod/hbm/particle/MixinParticleRocketFlame": {
+      "renderParticle": "Lcom/hbm/particle/ParticleRocketFlame;func_180434_a(Lnet/minecraft/client/renderer/BufferBuilder;Lnet/minecraft/entity/Entity;FFFFFF)V"
+    },
+    "com/hbmspace/mixin/mod/hbm/tileentities/MixinTileEntityMachineOreSlopper": {
+      "update": "Lcom/hbm/tileentity/machine/TileEntityMachineOreSlopper;func_73660_a()V"
+    }
+  },
+  "data": {
+    "searge": {
+      "com/hbmspace/mixin/MixinEntityRenderer": {
+        "orientCamera": "Lnet/minecraft/client/renderer/EntityRenderer;func_78467_g(F)V",
+        "updateRenderer": "Lnet/minecraft/client/renderer/EntityRenderer;func_78464_a()V"
+      },
+      "com/hbmspace/mixin/mod/hbm/items/MixinItemBedrockOreNew": {
+        "getSubItems": "Lcom/hbm/items/special/ItemBedrockOreNew;func_150895_a(Lnet/minecraft/creativetab/CreativeTabs;Lnet/minecraft/util/NonNullList;)V"
+      },
+      "com/hbmspace/mixin/mod/hbm/items/MixinItemBedrockOreNewClient": {
+        "getItemStackDisplayName": "Lcom/hbm/items/special/ItemBedrockOreNew;func_77653_i(Lnet/minecraft/item/ItemStack;)Ljava/lang/String;"
+      },
+      "com/hbmspace/mixin/mod/hbm/items/MixinItemOreDensityScanner": {
+        "onUpdate": "Lcom/hbm/items/tool/ItemOreDensityScanner;func_77663_a(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Lnet/minecraft/entity/Entity;IZ)V"
+      },
+      "com/hbmspace/mixin/mod/hbm/particle/MixinParticleRocketFlame": {
+        "renderParticle": "Lcom/hbm/particle/ParticleRocketFlame;func_180434_a(Lnet/minecraft/client/renderer/BufferBuilder;Lnet/minecraft/entity/Entity;FFFFFF)V"
+      },
+      "com/hbmspace/mixin/mod/hbm/tileentities/MixinTileEntityMachineOreSlopper": {
+        "update": "Lcom/hbm/tileentity/machine/TileEntityMachineOreSlopper;func_73660_a()V"
+      }
+    }
+  }
+}
