@@ -12,6 +12,9 @@
   <a href="https://discord.gg/BgrqdWEK">
     <img src="https://img.shields.io/discord/901451468282941470?color=5865f2&label=Discord&style=flat&logo=discord&logoColor=white" alt="Discord">
   </a>
+  <a href="https://modrinth.com/mod/hbm-ntm-reforged">
+    <img src="https://img.shields.io/badge/Modrinth-HBM%20NTM%20Reforged-00AF5C?style=flat&logo=modrinth&logoColor=white" alt="Modrinth">
+  </a>
 </p>
 
 HBM NTM Reforged는 HBM's Nuclear Tech Mod의 비공식 Minecraft Forge 1.12.2 포트이자 지속 개발 프로젝트입니다.
