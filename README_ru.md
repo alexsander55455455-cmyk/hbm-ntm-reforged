@@ -12,6 +12,9 @@
   <a href="https://discord.gg/BgrqdWEK">
     <img src="https://img.shields.io/discord/901451468282941470?color=5865f2&label=Discord&style=flat&logo=discord&logoColor=white" alt="Discord">
   </a>
+  <a href="https://modrinth.com/mod/hbm-ntm-reforged">
+    <img src="https://img.shields.io/badge/Modrinth-HBM%20NTM%20Reforged-00AF5C?style=flat&logo=modrinth&logoColor=white" alt="Modrinth">
+  </a>
 </p>
 
 HBM NTM Reforged — это неофициальный порт и продолжение HBM's Nuclear Tech Mod для Minecraft Forge 1.12.2.
