@@ -12,12 +12,14 @@ import com.hbmspace.blocks.fluid.ModFluidsSpace;
 import com.hbmspace.blocks.generic.*;
 import com.hbmspace.blocks.machine.*;
 import com.hbmspace.blocks.machine.rbmk.RBMKBurner;
+import com.hbmspace.enums.EnumAddonTypes;
 import com.hbmspace.util.OreEnumUtilSpace;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,7 +83,7 @@ public class ModBlocksSpace {
     public static final Block ore_niobium = new BlockOre("ore_niobium", null, 2).setCreativeTab(MainRegistry.resourceTab).setHardness(5.0F).setResistance(10.0F);
     public static final Block ore_iodine = new BlockOre("ore_iodine", null, 2).setCreativeTab(MainRegistry.resourceTab).setHardness(5.0F).setResistance(10.0F);
     public static final Block ore_lanthanium = new BlockOre("ore_lanthanium", null, 2).setCreativeTab(MainRegistry.resourceTab).setHardness(5.0F).setResistance(10.0F);
-    public static final Block ore_oil_empty = new BlockOre("ore_oil_empty", null, 3).setCreativeTab(MainRegistry.blockTab).setHardness(5.0F).setResistance(10.0F);
+    // Unified with hbm:ore_oil_empty via ModBlocksReplaceHandler (do not register a hbmspace duplicate).
     public static final Block ore_gas_empty = new BlockOre("ore_gas_empty", null, 3).setCreativeTab(MainRegistry.blockTab).setHardness(5.0F).setResistance(10.0F);
     public static final Block ore_gas = new BlockOreFluid("ore_gas", ore_gas_empty, BlockOreFluid.ReserveType.GAS).setCreativeTab(MainRegistry.blockTab).setHardness(5.0F).setResistance(10.0F);
     public static final Block ore_brine_empty = new BlockOre("ore_brine_empty", null, 3).setCreativeTab(MainRegistry.blockTab).setHardness(5.0F).setResistance(10.0F);
@@ -185,6 +187,16 @@ public class ModBlocksSpace {
 
     public static final Block furnace = new BlockFurnaceSpace(false).setHardness(3.5F).setSoundType(SoundType.STONE);
     public static final Block lit_furnace = new BlockFurnaceSpace(true).setHardness(3.5F).setSoundType(SoundType.STONE).setLightLevel(0.875F);
+
+    static {
+        setSpaceRegistryName(ore_copper, "ore_copper");
+        setSpaceRegistryName(cluster_aluminium, "cluster_aluminium");
+    }
+
+    private static void setSpaceRegistryName(Block block, String name) {
+        EnumAddonTypes.setInstanceField(IForgeRegistryEntry.Impl.class, "registryName", block, null);
+        block.setRegistryName("hbmspace", name);
+    }
 
     public static void preInit(){
         for(Block block : ALL_BLOCKS){

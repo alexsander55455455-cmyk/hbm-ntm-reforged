@@ -25,11 +25,18 @@ public class TextureAtlasSpriteMutatable extends TextureAtlasSprite implements I
 
     private RGBMutator mutator;
     public String basePath = "textures";
+    private String fixedBaseName = null;
     private int mipmap = 0;
 
     public TextureAtlasSpriteMutatable(String iconName, RGBMutator mutator) {
         super(iconName);
         this.mutator = mutator;
+    }
+
+    public TextureAtlasSpriteMutatable withFixedBase(String baseName) {
+        this.fixedBaseName = baseName;
+        this.basePath = "textures/items";
+        return this;
     }
 
 
@@ -108,10 +115,14 @@ public class TextureAtlasSpriteMutatable extends TextureAtlasSprite implements I
     @Override
     public boolean load(IResourceManager man, ResourceLocation resourcelocation, Function<ResourceLocation, TextureAtlasSprite> textureGetter) {
 
-        String pathName = resourcelocation.getPath();
-        String undashedPath = pathName.substring(0, pathName.indexOf('-')); // remove the dash and everything trailing it
-        String truncatedPath = undashedPath.substring(undashedPath.indexOf('/') + 1); // remove the slash and everything before it
-        resourcelocation = new ResourceLocation(resourcelocation.getNamespace(), truncatedPath);
+        if (fixedBaseName != null) {
+            resourcelocation = new ResourceLocation(resourcelocation.getNamespace(), fixedBaseName);
+        } else {
+            String pathName = resourcelocation.getPath();
+            String undashedPath = pathName.substring(0, pathName.indexOf('-')); // remove the dash and everything trailing it
+            String truncatedPath = undashedPath.substring(undashedPath.indexOf('/') + 1); // remove the slash and everything before it
+            resourcelocation = new ResourceLocation(resourcelocation.getNamespace(), truncatedPath);
+        }
         ResourceLocation resourcelocation1 = this.completeResourceLocation(resourcelocation);
         MainRegistry.logger.info("Loading texture " + resourcelocation1);
 

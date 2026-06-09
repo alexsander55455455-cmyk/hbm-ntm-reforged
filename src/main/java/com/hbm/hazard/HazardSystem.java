@@ -835,6 +835,29 @@ public class HazardSystem {
     }
 
     /**
+     * Applies inventory hazards every tick (EE parity).
+     */
+    public static void updatePlayerInventory(EntityPlayer player) {
+        for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
+            ItemStack stack = player.inventory.getStackInSlot(i);
+            if (!stack.isEmpty()) {
+                applyHazards(stack, player);
+                if (stack.isEmpty()) {
+                    player.inventory.setInventorySlotContents(i, ItemStack.EMPTY);
+                }
+            }
+        }
+        for (ItemStack offhand : player.inventory.offHandInventory) {
+            if (!offhand.isEmpty()) {
+                applyHazards(offhand, player);
+            }
+        }
+        if (player.inventoryContainer != null) {
+            player.inventoryContainer.detectAndSendChanges();
+        }
+    }
+
+    /**
      * Updates hazards emitted by a dropped {@link EntityItem}.
      *
      * @apiNote entry selection count insensitive; evaluated level may be count-sensitive via modifiers
@@ -935,37 +958,7 @@ public class HazardSystem {
         }
 
         void applyActiveHazards() {
-            if (player.isDead) return;
-            boolean sync = false;
-
-            if (!activeApplicators.isEmpty()) {
-                activeApplicators.values().forEach(applier -> applier.accept(this.player));
-                sync = true;
-            }
-            HbmLivingProps.setNeutron(player, 0);
-
-            // 1:1 moved from RadiationSystemNT, but now scales with RadiationConfig.hazardRate
-            if (RadiationConfig.neutronActivation) {
-                if (totalNeutronRads > 0) {
-                    ContaminationUtil.contaminate(player, ContaminationUtil.HazardType.NEUTRON, ContaminationUtil.ContaminationType.CREATIVE,
-                            totalNeutronRads * 0.05F * RadiationConfig.hazardRate);
-                }
-                if (!player.isCreative() && !player.isSpectator()) {
-                    double activationRate =
-                            ContaminationUtil.getNoNeutronPlayerRads(player) * 0.00004D - (0.00004D * RadiationConfig.neutronActivationThreshold);
-                    if (activationRate > minRadRate) {
-                        float totalActivationAmount = (float) activationRate * RadiationConfig.hazardRate;
-                        if (ContaminationUtil.neutronActivateInventory(player, totalActivationAmount, 1.0F)) {
-                            schedulePlayerUpdate(this.player);
-                            sync = true;
-                        }
-                    }
-                }
-            }
-
-            if (sync && this.player.inventoryContainer != null) {
-                this.player.inventoryContainer.detectAndSendChanges();
-            }
+            // Inventory hazards and neutron activation run per-tick via ModEventHandler / EntityEffectHandler (EE parity).
         }
 
         record HazardScanResult(Map<Integer, Consumer<EntityPlayer>> applicatorMap, float totalNeutronRads) {

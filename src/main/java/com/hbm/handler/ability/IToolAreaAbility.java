@@ -58,7 +58,7 @@ public interface IToolAreaAbility extends IBaseAbility {
             return ToolConfig.abilityVein;
         }
 
-        public final int[] radiusAtLevel = { 3, 4, 5, 6, 7, 9, 10 };
+        public final int[] radiusAtLevel = { 2, 3, 4, 5, 6, 7, 9, 10 };
 
         @Override
         public int levels() {

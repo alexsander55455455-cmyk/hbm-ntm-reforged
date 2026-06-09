@@ -220,7 +220,7 @@ public class DamageResistanceHandler {
         registerSet(ModItems.hazmat_paa_helmet, ModItems.hazmat_paa_plate, ModItems.hazmat_paa_legs, ModItems.hazmat_paa_boots,
                 new ResistanceStats());
         registerSet(ModItems.asbestos_helmet, ModItems.asbestos_plate, ModItems.asbestos_legs, ModItems.asbestos_boots,
-                new ResistanceStats().addCategory(CATEGORY_FIRE, 10F, 0.9F));
+                new ResistanceStats());
     }
 
     private static void registerSet(Item helmet, Item plate, Item legs, Item boots, ResistanceStats stats) {

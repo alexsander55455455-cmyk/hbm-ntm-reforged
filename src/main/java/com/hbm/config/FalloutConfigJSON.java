@@ -16,6 +16,7 @@ import com.hbm.main.MainRegistry;
 import com.hbm.util.ReferenceIntTuple;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDirt;
 import net.minecraft.block.BlockRotatedPillar;
 import net.minecraft.block.BlockSand;
 import net.minecraft.block.material.Material;
@@ -110,6 +111,7 @@ public class FalloutConfigJSON {
                 .preserve(BlockRotatedPillar.AXIS)
                 .addPrimary(ModBlocks.waste_log.getDefaultState(), 1)
                 .max(woodEffectRange)
+                .falloff(1.0)
                 .solid(true)
                 .build());
 
@@ -118,6 +120,7 @@ public class FalloutConfigJSON {
                 .preserve(BlockRotatedPillar.AXIS)
                 .addPrimary(ModBlocks.waste_log.getDefaultState(), 1)
                 .max(woodEffectRange)
+                .falloff(1.0)
                 .solid(true)
                 .build());
 
@@ -157,6 +160,7 @@ public class FalloutConfigJSON {
                 .matchesBlock(Blocks.PLANKS)
                 .addPrimary(ModBlocks.waste_planks.getDefaultState(), 1)
                 .max(woodEffectRange)
+                .falloff(1.0)
                 .solid(true)
                 .build());
 
@@ -228,6 +232,42 @@ public class FalloutConfigJSON {
                 .solid(true)
                 .build());
 
+        entries.add(FalloutEntry.builder()
+                .matchesBlock(Blocks.GRASS)
+                .addPrimary(ModBlocks.waste_earth.getDefaultState(), 1)
+                .solid(true)
+                .build());
+
+        entries.add(FalloutEntry.builder()
+                .matchesBlock(Blocks.GRAVEL)
+                .addPrimary(ModBlocks.waste_gravel.getDefaultState(), 1)
+                .solid(true)
+                .build());
+
+        entries.add(FalloutEntry.builder()
+                .matchesBlock(Blocks.FARMLAND)
+                .addPrimary(ModBlocks.waste_dirt.getDefaultState(), 1)
+                .solid(true)
+                .build());
+
+        entries.add(FalloutEntry.builder()
+                .matchesState(Blocks.DIRT.getDefaultState().withProperty(BlockDirt.VARIANT, BlockDirt.DirtType.DIRT))
+                .addPrimary(ModBlocks.waste_dirt.getDefaultState(), 1)
+                .solid(true)
+                .build());
+
+        entries.add(FalloutEntry.builder()
+                .matchesState(Blocks.DIRT.getDefaultState().withProperty(BlockDirt.VARIANT, BlockDirt.DirtType.COARSE_DIRT))
+                .addPrimary(ModBlocks.waste_gravel.getDefaultState(), 1)
+                .solid(true)
+                .build());
+
+        entries.add(FalloutEntry.builder()
+                .matchesState(Blocks.DIRT.getDefaultState().withProperty(BlockDirt.VARIANT, BlockDirt.DirtType.PODZOL))
+                .addPrimary(ModBlocks.waste_mycelium.getDefaultState(), 1)
+                .solid(true)
+                .build());
+
         for (int i = 1; i <= 10; i++) {
             int m = 10 - i;
 
@@ -287,79 +327,6 @@ public class FalloutConfigJSON {
                     .matchesBlock(Blocks.DIAMOND_ORE)
                     .build());
 
-            entries.add(FalloutEntry.builder()
-                    .addPrimary(ModBlocks.sellafield_bedrock.getStateFromMeta(m), 1)
-                    .max(i * 5)
-                    .opaque(true)
-                    .solid(true)
-                    .matchesBlock(Blocks.BEDROCK)
-                    .build());
-
-            entries.add(FalloutEntry.builder()
-                    .addPrimary(ModBlocks.sellafield_bedrock.getStateFromMeta(m), 1)
-                    .max(i * 5)
-                    .opaque(true)
-                    .solid(true)
-                    .matchesBlock(ModBlocks.ore_bedrock_block)
-                    .build());
-
-            entries.add(FalloutEntry.builder()
-                    .addPrimary(ModBlocks.sellafield_bedrock.getStateFromMeta(m), 1)
-                    .max(i * 5)
-                    .opaque(true)
-                    .solid(true)
-                    .matchesBlock(ModBlocks.ore_bedrock_oil)
-                    .build());
-
-            entries.add(FalloutEntry.builder()
-                    .addPrimary(ModBlocks.sellafield_bedrock.getStateFromMeta(m), 1)
-                    .max(i * 5)
-                    .opaque(true)
-                    .solid(true)
-                    .matchesBlock(ModBlocks.sellafield_bedrock)
-                    .build());
-
-            entries.add(FalloutEntry.builder()
-                    .addPrimary(ModBlocks.sellafield_slaked.getStateFromMeta(m), 1)
-                    .max(i * 5)
-                    .opaque(true)
-                    .solid(true)
-                    .matchingMaterial(Material.IRON)
-                    .build());
-
-            entries.add(FalloutEntry.builder()
-                    .addPrimary(ModBlocks.sellafield_slaked.getStateFromMeta(m), 1)
-                    .max(i * 5)
-                    .opaque(true)
-                    .solid(true)
-                    .matchingMaterial(Material.ROCK)
-                    .build());
-
-            entries.add(FalloutEntry.builder()
-                    .addPrimary(ModBlocks.sellafield_slaked.getStateFromMeta(m), 1)
-                    .max(i * 5)
-                    .opaque(true)
-                    .solid(true)
-                    .matchingMaterial(Material.SAND)
-                    .build());
-
-            entries.add(FalloutEntry.builder()
-                    .addPrimary(ModBlocks.sellafield_slaked.getStateFromMeta(m), 1)
-                    .max(i * 5)
-                    .opaque(true)
-                    .solid(true)
-                    .matchingMaterial(Material.GROUND)
-                    .build());
-
-            if (i <= 9) {
-                entries.add(FalloutEntry.builder()
-                        .addPrimary(ModBlocks.sellafield_slaked.getStateFromMeta(m), 1)
-                        .max(i * 5)
-                        .opaque(true)
-                        .solid(true)
-                        .matchingMaterial(Material.GRASS)
-                        .build());
-            }
         }
 
         entries.add(FalloutEntry.builder()
@@ -370,15 +337,15 @@ public class FalloutConfigJSON {
 
         entries.add(FalloutEntry.builder()
                 .matchesState(Blocks.SAND.getDefaultState())
+                .addPrimary(ModBlocks.waste_sand.getDefaultState(), 59)
                 .addPrimary(ModBlocks.waste_trinitite.getDefaultState(), 1)
-                .primaryChance(0.05)
                 .solid(true)
                 .build());
 
         entries.add(FalloutEntry.builder()
                 .matchesState(Blocks.SAND.getDefaultState().withProperty(BlockSand.VARIANT, BlockSand.EnumType.RED_SAND))
+                .addPrimary(ModBlocks.waste_sand_red.getDefaultState(), 59)
                 .addPrimary(ModBlocks.waste_trinitite_red.getDefaultState(), 1)
-                .primaryChance(0.05)
                 .solid(true)
                 .build());
 
@@ -909,10 +876,6 @@ public class FalloutConfigJSON {
 
             if (originalBlock == ModBlocks.sellafield_bedrock &&
                     conversion.block != ModBlocks.sellafield_bedrock) {
-                return null;
-            }
-
-            if (yGlobal == 0 && conversion.block != ModBlocks.sellafield_bedrock) {
                 return null;
             }
 

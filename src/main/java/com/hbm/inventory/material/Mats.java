@@ -154,6 +154,8 @@ public class Mats {
 	public static final NTMMaterial MAT_GUNMETAL	= makeSmeltable(_AS + 19,	GUNMETAL,		0xFFEF3F, 0xAD3600, 0xF9C62C).setAutogen(LIGHTBARREL, HEAVYBARREL, LIGHTRECEIVER, HEAVYRECEIVER, MECHANISM, STOCK, GRIP).n();
 	public static final NTMMaterial MAT_WEAPONSTEEL	= makeSmeltable(_AS + 20,	WEAPONSTEEL,	0xA0A0A0, 0x000000, 0x808080).setAutogen(CASTPLATE, SHELL, LIGHTBARREL, HEAVYBARREL, LIGHTRECEIVER, HEAVYRECEIVER, MECHANISM, STOCK, GRIP).n();
 	public static final NTMMaterial MAT_SATURN		= makeSmeltable(_AS + 4,	BIGMT,			0x3AC4DA, 0x09282C, 0x30A4B7).setAutogen(PLATE, CASTPLATE, SHELL, BLOCK, LIGHTBARREL, HEAVYBARREL, LIGHTRECEIVER, HEAVYRECEIVER, MECHANISM, STOCK, GRIP).m();
+	public static final NTMMaterial MAT_METEOR		= makeAdditive(	_ES + 06,	METEOR,			0x474747, 0x474747, 0xFFAAAA).setAutogen(DUST, BLOCK).n();
+	public static final NTMMaterial MAT_TUNGCAR		= makeSmeltable(_ES + 07,	TUNGCAR,		0x212121, 0x404040, 0x2288A2).setAutogen(PLATE).m();
 
 	//Extension
 	public static final NTMMaterial MAT_RAREEARTH	= makeNonSmeltable(_ES + 00, 		RAREEARTH,		0xC1BDBD, 0x384646, 0x7B7F7F).setAutogen(FRAGMENT).n();
@@ -253,6 +255,19 @@ public class Mats {
 		}
 	}
 	
+	public static List<ItemStack> matsToScrap(List<MaterialStack> mats, boolean liquid) {
+		List<ItemStack> scraps = new ArrayList<>();
+		for (MaterialStack stack : mats) scraps.add(ItemScraps.create(stack, liquid));
+		return scraps;
+	}
+
+	public static List<ItemStack> matsToScrap(MaterialStack[] mats, boolean liquid) {
+		List<ItemStack> scraps = new ArrayList<>();
+		if (mats == null) return scraps;
+		for (MaterialStack stack : mats) scraps.add(ItemScraps.create(stack, liquid));
+		return scraps;
+	}
+
 	public static String formatAmount(int amount, boolean showInMb) {
 		
 		if(showInMb) {

@@ -5,8 +5,8 @@ import com.google.gson.stream.JsonWriter;
 import com.hbm.blocks.ModBlocks;
 import com.hbm.interfaces.AutoRegister;
 import com.hbm.inventory.container.ContainerMachineOilWell;
-import com.hbm.inventory.fluid.Fluids;
 import com.hbm.inventory.gui.GUIMachineOilWell;
+import com.hbmspace.blocks.generic.BlockOreFluid;
 import com.hbm.items.machine.ItemMachineUpgrade;
 import com.hbm.lib.DirPos;
 import com.hbm.lib.Library;
@@ -15,7 +15,6 @@ import com.hbm.tileentity.IUpgradeInfoProvider;
 import com.hbm.util.BobMathUtil;
 import com.hbm.util.I18nUtil;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
@@ -99,24 +98,30 @@ public class TileEntityMachineOilWell extends TileEntityOilDrillBase {
     }
 
     @Override
-    public void onSuck(BlockPos pos) {
+    public void onSuck(BlockOreFluid block, BlockPos targetPos) {
+        super.onSuck(block, targetPos);
         world.playSound(null, this.pos.getX(), this.pos.getY(), this.pos.getZ(), SoundEvents.ENTITY_GENERIC_SWIM, SoundCategory.BLOCKS, 2.0F, 0.5F);
-        IBlockState state = world.getBlockState(pos);
-        Block block = state.getBlock();
+    }
 
-        if (block == ModBlocks.ore_oil) {
-            tanks[0].setTankType(Fluids.OIL);
-            tanks[1].setTankType(Fluids.GAS);
+    @Override
+    protected void onSuckDeposit(BlockPos targetPos) {
+        super.onSuckDeposit(targetPos);
+        world.playSound(null, this.pos.getX(), this.pos.getY(), this.pos.getZ(), SoundEvents.ENTITY_GENERIC_SWIM, SoundCategory.BLOCKS, 2.0F, 0.5F);
+    }
 
-            this.tanks[0].setFill(this.tanks[0].getFill() + oilPerDeposit);
-            if (this.tanks[0].getFill() > this.tanks[0].getMaxFill()) this.tanks[0].setFill(tanks[0].getMaxFill());
-            this.tanks[1].setFill(this.tanks[1].getFill() + (gasPerDepositMin + world.rand.nextInt((gasPerDepositMax - gasPerDepositMin + 1))));
-            if (this.tanks[1].getFill() > this.tanks[1].getMaxFill()) this.tanks[1].setFill(tanks[1].getMaxFill());
+    @Override
+    protected int getLegacyOilPerDeposit() {
+        return oilPerDeposit;
+    }
 
-            if (world.rand.nextDouble() < drainChance) {
-                world.setBlockState(pos, ModBlocks.ore_oil_empty.getDefaultState(), 3);
-            }
-        }
+    @Override
+    protected int getLegacyGasPerDeposit() {
+        return gasPerDepositMin + world.rand.nextInt(gasPerDepositMax - gasPerDepositMin + 1);
+    }
+
+    @Override
+    protected double getLegacyDrainChance() {
+        return drainChance;
     }
 
     @Override

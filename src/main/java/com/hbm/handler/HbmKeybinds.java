@@ -4,6 +4,7 @@ import com.hbm.capability.HbmCapability;
 import com.hbm.config.GeneralConfig;
 import com.hbm.inventory.gui.GUICalculator;
 import com.hbm.items.IKeybindReceiver;
+import com.hbm.items.weapon.ItemGunBase;
 import com.hbm.items.weapon.sedna.ItemGunBaseNT;
 import com.hbm.lib.internal.MethodHandleHelper;
 import com.hbm.main.MainRegistry;
@@ -121,8 +122,16 @@ public class HbmKeybinds {
 			}
 		}
 
-		if(!player.getHeldItemMainhand().isEmpty() && player.getHeldItemMainhand().getItem() instanceof ItemGunBaseNT
-				&& props.getKeyPressed(EnumKeybind.GUN_PRIMARY)) {
+		ItemStack mainhand = player.getHeldItemMainhand();
+		boolean suppressAttack = false;
+		if(!mainhand.isEmpty()) {
+			if(mainhand.getItem() instanceof ItemGunBaseNT && props.getKeyPressed(EnumKeybind.GUN_PRIMARY)) {
+				suppressAttack = true;
+			} else if(mainhand.getItem() instanceof ItemGunBase && (ItemGunBase.m1 || ItemGunBase.getIsMouseDown(mainhand))) {
+				suppressAttack = true;
+			}
+		}
+		if(suppressAttack) {
 			Minecraft mc = Minecraft.getMinecraft();
 			KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), false);
 			mc.leftClickCounter = 2;
@@ -192,7 +201,8 @@ public class HbmKeybinds {
 
 			EntityPlayer player = mc.player;
 
-			if(!player.getHeldItemMainhand().isEmpty() && player.getHeldItemMainhand().getItem() instanceof ItemGunBaseNT) {
+			if(!player.getHeldItemMainhand().isEmpty() && (player.getHeldItemMainhand().getItem() instanceof ItemGunBaseNT
+					|| player.getHeldItemMainhand().getItem() instanceof ItemGunBase)) {
 
 				/* Shoot in favor of attacking */
 				if(gunKey && keyCode == mc.gameSettings.keyBindAttack.getKeyCode()) {

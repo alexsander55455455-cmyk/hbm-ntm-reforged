@@ -16,8 +16,10 @@ import com.hbm.tileentity.IUpgradeInfoProvider;
 import com.hbm.util.BobMathUtil;
 import com.hbm.util.I18nUtil;
 import com.hbm.world.feature.OilSpot;
+import com.hbmspace.blocks.generic.BlockOreFluid;
+import com.hbmspace.dim.SolarSystem;
+import com.hbmspace.world.feature.OilSpotSpace;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -92,50 +94,22 @@ public class TileEntityMachineFrackingTower extends TileEntityOilDrillBase {
 
     @Override
     public boolean canSuckBlock(Block b) {
-        return super.canSuckBlock(b) || b == ModBlocks.ore_bedrock_oil;
+        return super.canSuckBlock(b) || b == ModBlocks.ore_bedrock_oil || matchesHbmOreRegistry(b, "ore_bedrock_oil");
     }
 
     @Override
-    public void doSuck(BlockPos pos) {
-        super.doSuck(pos);
+    public void onSuck(BlockOreFluid block, BlockPos targetPos) {
+        super.onSuck(block, targetPos);
 
-        if (world.getBlockState(pos).getBlock() == ModBlocks.ore_bedrock_oil) {
-            onSuck(pos);
+        tanks[2].setFill(tanks[2].getFill() - solutionRequired);
+
+        int meta = block.getMetaFromState(world.getBlockState(targetPos));
+
+        if (meta == SolarSystem.Body.TEKTO.ordinal()) {
+            OilSpotSpace.generateCrack(world, pos.getX(), pos.getZ(), destructionRange, 10);
+        } else {
+            OilSpot.generateOilSpot(world, pos.getX(), pos.getZ(), destructionRange, 10, false);
         }
-    }
-
-    @Override
-    public void onSuck(BlockPos pos) {
-        IBlockState state = world.getBlockState(pos);
-        Block b = state.getBlock();
-
-        int oil = 0;
-        int gas = 0;
-
-        if (b == ModBlocks.ore_oil) {
-            tanks[0].setTankType(Fluids.OIL);
-
-            oil = oilPerDeposit;
-            gas = gasPerDepositMin + world.rand.nextInt(gasPerDepositMax - gasPerDepositMin + 1);
-
-            if (world.rand.nextDouble() < drainChance) {
-                world.setBlockState(pos, ModBlocks.ore_oil_empty.getDefaultState(), 3);
-            }
-        }
-
-        if (b == ModBlocks.ore_bedrock_oil) {
-            oil = oilPerBedrockDepsoit;
-            gas = gasPerBedrockDepositMin + world.rand.nextInt(gasPerBedrockDepositMax - gasPerBedrockDepositMin + 1);
-        }
-
-        this.tanks[0].setFill(this.tanks[0].getFill() + oil);
-        if (this.tanks[0].getFill() > this.tanks[0].getMaxFill()) this.tanks[0].setFill(tanks[0].getMaxFill());
-        this.tanks[1].setFill(this.tanks[1].getFill() + gas);
-        if (this.tanks[1].getFill() > this.tanks[1].getMaxFill()) this.tanks[1].setFill(tanks[1].getMaxFill());
-
-        this.tanks[2].setFill(tanks[2].getFill() - solutionRequired);
-
-        OilSpot.generateOilSpot(world, this.pos.getX(), this.pos.getZ(), destructionRange, 10, false);
     }
 
     @Override

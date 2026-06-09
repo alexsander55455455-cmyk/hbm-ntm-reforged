@@ -56,6 +56,8 @@ public class LiquefactionRecipes extends SerializableRecipe {
         recipes.put(new RecipesCommon.ComparableStack(Items.SUGAR),				new FluidStack(100, Fluids.ETHANOL));
         recipes.put(new RecipesCommon.ComparableStack(ModBlocks.plant_flower, 1, 3),	new FluidStack(150, Fluids.ETHANOL));
         recipes.put(new RecipesCommon.ComparableStack(ModBlocks.plant_flower, 1, 4),	new FluidStack(50, Fluids.ETHANOL));
+        recipes.put(MUD.ingot(),													new FluidStack(16000, Fluids.WATZ));
+        recipes.put(new RecipesCommon.ComparableStack(ModBlocks.sellafield_core),	new FluidStack(500, Fluids.TOXIC));
         recipes.put(new RecipesCommon.ComparableStack(ModItems.biomass),			new FluidStack(125, Fluids.BIOGAS));
         recipes.put(new RecipesCommon.ComparableStack(ModItems.glyphid_gland_empty),	new FluidStack(2000, Fluids.BIOGAS));
         recipes.put(new RecipesCommon.ComparableStack(Items.FISH, 1, OreDictionary.WILDCARD_VALUE), new FluidStack(100, Fluids.FISHOIL));

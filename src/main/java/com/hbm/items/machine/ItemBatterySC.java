@@ -2,11 +2,12 @@ package com.hbm.items.machine;
 
 import com.hbm.api.energymk2.IBatteryItem;
 import com.hbm.items.ItemEnumMulti;
-import com.hbm.main.MainRegistry;
 import com.hbm.util.BobMathUtil;
 import com.hbm.util.EnumUtil;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
@@ -17,7 +18,7 @@ public class ItemBatterySC extends ItemEnumMulti<ItemBatterySC.EnumBatterySC> im
     public ItemBatterySC(String s) {
         super(s, EnumBatterySC.VALUES, true, true);
         this.setMaxStackSize(1);
-        this.setCreativeTab(MainRegistry.controlTab);
+        this.setCreativeTab(null);
     }
 
     public enum EnumBatterySC {
@@ -54,6 +55,10 @@ public class ItemBatterySC extends ItemEnumMulti<ItemBatterySC.EnumBatterySC> im
     public long getMaxCharge(ItemStack stack) {
         EnumBatterySC pack = EnumUtil.grabEnumSafely(EnumBatterySC.VALUES, stack.getItemDamage());
         return pack.power;
+    }
+
+    @Override
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
     }
 
     @Override

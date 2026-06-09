@@ -190,13 +190,10 @@ public class BeamPronter {
             GlStateManager.color(0.4F, 0.7F, 1F, 1F);
         }
 
-        Vec3d diff = pos1.subtract(pos2);
+        Vec3d diff = pos2.subtract(pos1);
         float len = (float) diff.length();
-        Vec3d angles = BobMathUtil.getEulerAngles(diff);
         GlStateManager.translate(pos1.x, pos1.y, pos1.z);
-
-        GL11.glRotated(angles.x + 90, 0, 1, 0);
-        GL11.glRotated(-angles.y, 0, 0, 1);
+        rotateBeamToDirection(diff);
 
         Minecraft.getMinecraft().getTextureManager().bindTexture(ResourceManager.noise_1);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
@@ -245,7 +242,7 @@ public class BeamPronter {
 
         buf.begin(GL11.GL_TRIANGLE_STRIP, DefaultVertexFormats.POSITION_TEX);
 
-        Vec3d vec = new Vec3d(billboardPos.x, billboardPos.y, billboardPos.z).crossProduct(new Vec3d(1, 0, 0)).normalize();
+        Vec3d vec = beamBillboardSide(new Vec3d(billboardPos.x, billboardPos.y, billboardPos.z));
         for (int i = 0; i <= subdivisions; i++) {
             float iN = ((float) i / (float) subdivisions);
             float pos = iN * len;
@@ -267,6 +264,34 @@ public class BeamPronter {
         GlStateManager.depthMask(prevDepthMask);
 
         GlStateManager.popMatrix();
+    }
+
+    private static void rotateBeamToDirection(Vec3d direction) {
+        if (direction.lengthSquared() < 1e-8) {
+            return;
+        }
+        Vec3d dir = direction.normalize();
+        Vec3d from = new Vec3d(1, 0, 0);
+        double dot = MathHelper.clamp(from.dotProduct(dir), -1.0, 1.0);
+        if (dot > 0.9999) {
+            return;
+        }
+        Vec3d axis = from.crossProduct(dir);
+        if (axis.lengthSquared() < 1e-8) {
+            axis = Math.abs(from.y) < 0.9 ? from.crossProduct(new Vec3d(0, 1, 0)) : from.crossProduct(new Vec3d(0, 0, 1));
+        }
+        GL11.glRotated(Math.toDegrees(Math.acos(dot)), axis.x, axis.y, axis.z);
+    }
+
+    private static Vec3d beamBillboardSide(Vec3d billboardPos) {
+        Vec3d side = billboardPos.crossProduct(new Vec3d(1, 0, 0));
+        if (side.lengthSquared() < 1e-8) {
+            side = billboardPos.crossProduct(new Vec3d(0, 1, 0));
+        }
+        if (side.lengthSquared() < 1e-8) {
+            return new Vec3d(0, 0, 1);
+        }
+        return side.normalize();
     }
 
     public enum EnumWaveType {

@@ -161,6 +161,12 @@ public class FluidType {
         return this;
     }
 
+    public FluidType setGuiTint(int tint) {
+        this.guiTint = tint;
+        this.renderWithTint = true;
+        return this;
+    }
+
     public boolean hasTrait(Class<? extends FluidTrait> trait) {
         return this.traits.containsKey(trait);
     }

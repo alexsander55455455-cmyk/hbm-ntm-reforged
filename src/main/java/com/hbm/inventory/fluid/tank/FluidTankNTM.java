@@ -7,6 +7,7 @@ import com.hbm.inventory.gui.GuiInfoContainer;
 import com.hbm.items.ModItems;
 import com.hbm.items.machine.IItemFluidIdentifier;
 import com.hbm.tileentity.IConnectionAnchors;
+import com.hbm.render.NTMRenderHelper;
 import com.hbm.util.RenderUtil;
 import net.minecraft.tileentity.TileEntity;
 import io.netty.buffer.ByteBuf;
@@ -14,6 +15,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
@@ -247,6 +249,62 @@ public class FluidTankNTM implements IFluidHandler, IFluidTank, Cloneable {
     }
 
     public void renderTank(int x, int y, double z, int width, int height, int orientation) {
+        if (type == Fluids.NONE || fluid <= 0) return;
+
+        Fluid forgeFluid = type.getFF();
+        if (forgeFluid != null) {
+            renderTankForgeFluid(x, y, z, width, height, orientation, forgeFluid);
+            return;
+        }
+
+        renderTankGuiTexture(x, y, z, width, height, orientation);
+    }
+
+    private void renderTankForgeFluid(int x, int y, double z, int width, int height, int orientation, Fluid forgeFluid) {
+        TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(forgeFluid.getStill().toString());
+        if (sprite == null) {
+            renderTankGuiTexture(x, y, z, width, height, orientation);
+            return;
+        }
+
+        boolean wasBlendEnabled = RenderUtil.isBlendEnabled();
+        if (!wasBlendEnabled) GlStateManager.enableBlend();
+
+        NTMRenderHelper.bindBlockTexture();
+        NTMRenderHelper.setColor(forgeFluid.getColor());
+
+        y -= height;
+        float zLevel = (float) z;
+
+        if (orientation == 0) {
+            int level = maxFluid != 0 ? (fluid * height) / maxFluid : 0;
+            NTMRenderHelper.startDrawingTexturedQuads();
+            for (int row = 0; row < level; row += 16) {
+                for (int col = 0; col < width; col += 16) {
+                    int drawX = Math.min(16, width - col);
+                    int drawY = Math.min(16, level - row);
+                    NTMRenderHelper.drawScaledTexture(sprite, x + col, y + height - row - drawY, drawX, drawY, zLevel);
+                }
+            }
+            NTMRenderHelper.draw();
+        } else if (orientation == 1) {
+            int level = maxFluid != 0 ? (fluid * width) / maxFluid : 0;
+            NTMRenderHelper.startDrawingTexturedQuads();
+            for (int col = 0; col < level; col += 16) {
+                for (int row = 0; row < height; row += 16) {
+                    int drawX = Math.min(16, level - col);
+                    int drawY = Math.min(16, height - row);
+                    NTMRenderHelper.drawScaledTexture(sprite, x + col, y + row, drawX, drawY, zLevel);
+                }
+            }
+            NTMRenderHelper.draw();
+        }
+
+        NTMRenderHelper.resetColor();
+        if (!wasBlendEnabled) GlStateManager.disableBlend();
+    }
+
+    private void renderTankGuiTexture(int x, int y, double z, int width, int height, int orientation) {
         boolean wasBlendEnabled = RenderUtil.isBlendEnabled();
         if (!wasBlendEnabled) GlStateManager.enableBlend();
 

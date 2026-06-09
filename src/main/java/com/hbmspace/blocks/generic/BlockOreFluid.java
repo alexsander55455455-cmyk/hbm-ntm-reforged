@@ -136,8 +136,15 @@ public class BlockOreFluid extends BlockOre {
         if (empty == null) return;
 
         if (world.rand.nextDouble() < getDrainChance(meta) * chanceMultiplier) {
-            world.setBlockState(pos, empty.getDefaultState().withProperty(META, meta), 3);
+            world.setBlockState(pos, getDepletedState(meta), 3);
         }
+    }
+
+    private IBlockState getDepletedState(int meta) {
+        if (empty instanceof BlockOre) {
+            return empty.getDefaultState().withProperty(META, meta);
+        }
+        return empty.getDefaultState();
     }
 
     @Override
@@ -150,7 +157,7 @@ public class BlockOreFluid extends BlockOre {
         if (downState.getBlock() == empty) {
             int currentMeta = state.getValue(META);
 
-            world.setBlockState(pos, empty.getDefaultState().withProperty(META, currentMeta), 3);
+            world.setBlockState(pos, getDepletedState(currentMeta), 3);
             world.setBlockState(downPos, this.getDefaultState().withProperty(META, currentMeta), 3);
         }
     }
@@ -165,8 +172,7 @@ public class BlockOreFluid extends BlockOre {
                 SolarSystem.Body[] bodies = SolarSystem.Body.values();
 
                 for (int i = 0; i < bodies.length; i++) {
-                    if (validBodies.contains(bodies[i]) && i != 1) {
-                        // Since I'm replacing the existing ore blocks for fluid variants instead of just adding, I'm leaving the earth 0 id here
+                    if (validBodies.contains(bodies[i]) && i != 0) {
                         items.add(new ItemStack(this, 1, i));
                     }
                 }

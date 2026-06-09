@@ -43,7 +43,6 @@ public class JeiRecipes {
 
 	private static List<CyclotronRecipe> cyclotronRecipes = null;
 	private static List<AlloyFurnaceRecipe> alloyFurnaceRecipes = null;
-    private static List<CMBFurnaceRecipe> cmbRecipes = null;
 	private static List<GasCentrifugeRecipe> gasCentRecipes = null;
     private static List<StorageDrumRecipe> storageDrumRecipes = null;
 	private static List<RBMKFuelRecipe> rbmkFuelRecipes = null;
@@ -51,6 +50,7 @@ public class JeiRecipes {
 	private static List<FluidRecipe> fluidEquivalences = null;
 	private static List<BookRecipe> bookRecipes = null;
 	private static List<BreederRecipe> breederRecipes = null;
+	private static List<SAFERecipe> safeRecipes = null;
     private static List<HadronRecipe> hadronRecipes = null;
 	private static List<SILEXRecipe> silexRecipes = null;
 	private static final Map<EnumWavelengths, List<SILEXRecipe>> waveSilexRecipes = new HashMap<>();
@@ -100,24 +100,6 @@ public class JeiRecipes {
 		
 	}
 	
-	public static class CMBFurnaceRecipe implements IRecipeWrapper {
-		
-		private final List<ItemStack> inputs;
-		private final ItemStack output;
-		
-		public CMBFurnaceRecipe(List<ItemStack> inputs, ItemStack output) {
-			this.inputs = inputs;
-			this.output = output; 
-		}
-		
-		@Override
-		public void getIngredients(IIngredients ingredients) {
-			ingredients.setInputs(VanillaTypes.ITEM, inputs);
-			ingredients.setOutput(VanillaTypes.ITEM, output);
-		}
-		
-	}
-
 	public static class GasCentrifugeRecipe implements IRecipeWrapper {
 		private final ItemStack input;
 		private final List<ItemStack> outputs;
@@ -318,6 +300,22 @@ public class JeiRecipes {
 
 	}
 	
+	public static class SAFERecipe implements IRecipeWrapper {
+		ItemStack input;
+		ItemStack output;
+		
+		public SAFERecipe(ItemStack input, ItemStack output) {
+			this.input = input;
+			this.output = output;
+		}
+		
+		@Override
+		public void getIngredients(IIngredients ingredients) {
+			ingredients.setInput(VanillaTypes.ITEM, input);
+			ingredients.setOutput(VanillaTypes.ITEM, output);
+		}
+	}
+
 	public static class FusionRecipe implements IRecipeWrapper {
 		ItemStack input;
 		ItemStack output;
@@ -637,19 +635,18 @@ public class JeiRecipes {
 		batteries.add(new ItemStack(ModItems.fusion_core));
 		batteries.add(new ItemStack(ModItems.energy_core));
 		for(ItemBatteryPack.EnumBatteryPack num : ItemBatteryPack.EnumBatteryPack.VALUES) batteries.add(new ItemStack(ModItems.battery_pack, 1, num.ordinal()));
-		for(ItemBatterySC.EnumBatterySC num : ItemBatterySC.EnumBatterySC.VALUES) batteries.add(new ItemStack(ModItems.battery_sc, 1, num.ordinal()));
+		batteries.add(new ItemStack(ModItems.battery_sc_uranium));
+		batteries.add(new ItemStack(ModItems.battery_sc_technetium));
+		batteries.add(new ItemStack(ModItems.battery_sc_plutonium));
+		batteries.add(new ItemStack(ModItems.battery_sc_polonium));
+		batteries.add(new ItemStack(ModItems.battery_sc_gold));
+		batteries.add(new ItemStack(ModItems.battery_sc_lead));
+		batteries.add(new ItemStack(ModItems.battery_sc_americium));
+		batteries.add(new ItemStack(ModItems.battery_sc_balefire));
+		batteries.add(new ItemStack(ModItems.battery_sc_schrabidium));
+		batteries.add(new ItemStack(ModItems.battery_sc_yharonite));
+		batteries.add(new ItemStack(ModItems.battery_sc_electronium));
 		return batteries;
-	}
-	
-	public static List<CMBFurnaceRecipe> getCMBRecipes() {
-		if(cmbRecipes != null)
-			return cmbRecipes;
-		cmbRecipes = new ArrayList<>();
-		
-		cmbRecipes.add(new CMBFurnaceRecipe(Arrays.asList(new ItemStack(ModItems.ingot_advanced_alloy), new ItemStack(ModItems.ingot_magnetized_tungsten)), new ItemStack(ModItems.ingot_combine_steel, 4)));
-		cmbRecipes.add(new CMBFurnaceRecipe(Arrays.asList(new ItemStack(ModItems.powder_advanced_alloy), new ItemStack(ModItems.powder_magnetized_tungsten)), new ItemStack(ModItems.ingot_combine_steel, 4)));
-		
-		return cmbRecipes;
 	}
 	
 	public static List<GasCentrifugeRecipe> getGasCentrifugeRecipes() {
@@ -674,6 +671,16 @@ public class JeiRecipes {
 			bookRecipes.add(new BookRecipe(m));
 		}
 		return bookRecipes;
+	}
+
+	public static List<SAFERecipe> getSAFERecipes(){
+		if(safeRecipes != null)
+			return safeRecipes;
+		safeRecipes = new ArrayList<>();
+		for(Entry<ItemStack, ItemStack> recipe : com.hbm.inventory.SAFERecipes.getAllRecipes().entrySet()){
+			safeRecipes.add(new SAFERecipe(recipe.getKey(), recipe.getValue()));
+		}
+		return safeRecipes;
 	}
 
 	public static List<BreederRecipe> getBreederRecipes(){

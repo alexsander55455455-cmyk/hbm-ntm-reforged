@@ -228,7 +228,10 @@ public class ExplosionLarge {
     }
 
     public static void explode(World world, Entity detonator, double x, double y, double z, float strength, boolean cloud, boolean rubble, boolean shrapnel) {
-        world.createExplosion(detonator, x, y, z, strength, true);
+        if (CompatibilityConfig.isWarDim(world)) {
+            world.spawnEntity(EntityNukeExplosionMK5.statFacNoRad(world, (int) strength, x, y, z).setDetonator(detonator));
+            ContaminationUtil.radiate(world, x, y, z, strength, 0, 0, 0, strength * 30F);
+        }
         if (cloud)
             spawnParticles(world, x, y + 2, z, cloudFunction((int) strength));
         if (rubble)
@@ -253,7 +256,7 @@ public class ExplosionLarge {
 
     public static void explodeFire(World world, Entity detonator, double x, double y, double z, float strength, boolean cloud, boolean rubble, boolean shrapnel) {
         if (CompatibilityConfig.isWarDim(world)) {
-            world.spawnEntity(EntityNukeExplosionMK5.statFacNoRad(world, (int) strength, x, y, z).setDetonator(detonator));
+            world.spawnEntity(EntityNukeExplosionMK5.statFacNoRadFire(world, (int) strength, x, y, z).setDetonator(detonator));
 
             ContaminationUtil.radiate(world, x, y, z, strength, 0, 0, strength * 20F, strength * 5F);
         }

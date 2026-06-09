@@ -15,9 +15,8 @@ import com.hbm.blocks.machine.BlockSeal;
 import com.hbm.blocks.machine.rbmk.RBMKDebrisRadiating;
 import com.hbm.command.CommandRadVisClient;
 import com.hbm.config.GeneralConfig;
-import com.hbm.entity.grenade.EntityDisperserCanister;
-import com.hbm.entity.grenade.EntityGrenadeBouncyGeneric;
-import com.hbm.entity.grenade.EntityGrenadeImpactGeneric;
+import com.hbm.entity.grenade.*;
+import com.hbm.entity.grenade.IGenericGrenade;
 import com.hbm.entity.particle.*;
 import com.hbm.entity.projectile.EntityAcidBomb;
 import com.hbm.entity.projectile.EntityDischarge;
@@ -50,6 +49,8 @@ import com.hbm.render.anim.sedna.BusAnimationSedna;
 import com.hbm.render.anim.sedna.BusAnimationSequenceSedna;
 import com.hbm.render.anim.sedna.HbmAnimationsSedna;
 import com.hbm.render.entity.ElectricityRenderer;
+import com.hbm.render.entity.RenderGenericGrenade;
+import com.hbm.render.entity.RenderGrenade;
 import com.hbm.render.entity.RenderMetaSensitiveItem;
 import com.hbm.render.item.ItemRenderMissile;
 import com.hbm.render.item.ItemRenderMissileGeneric;
@@ -164,6 +165,7 @@ public class ClientProxy extends ServerProxy {
     @Override
     public void init(FMLInitializationEvent evt) {
         FluidFogHandler.init();
+        ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(new QMAWLoader());
         // All previous color handler registrations here have been moved to ModEventHandlerClient#itemColorsEvent
         // and ModEventHandlerClient#blockColorsEvent
     }
@@ -194,7 +196,6 @@ public class ClientProxy extends ServerProxy {
         HbmKeybinds.register();
         Jars.initJars();
 
-        ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(new QMAWLoader());
 //        ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(new HFRModelReloader());
 
 //        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMachineAssembler.class, new RenderAssembler());
@@ -203,9 +204,51 @@ public class ClientProxy extends ServerProxy {
         });*/
         RenderingRegistry.registerEntityRenderingHandler(EntityDischarge.class, ElectricityRenderer.FACTORY);
         registerGrenadeRenderer(EntityAcidBomb.class, Items.SLIME_BALL);
-        registerGrenadeRenderer(EntityGrenadeBouncyGeneric.class, ModItems.stick_dynamite_fishing);
-        registerGrenadeRenderer(EntityGrenadeImpactGeneric.class, ModItems.stick_dynamite);
+        registerGenericGrenadeRenderer(EntityGrenadeBouncyGeneric.class);
+        registerGenericGrenadeRenderer(EntityGrenadeImpactGeneric.class);
         registerMetaSensitiveGrenade(EntityDisperserCanister.class, ModItems.disperser_canister);
+        registerGrenadeRenderer(EntityGrenadeGeneric.class, ModItems.grenade_generic);
+        registerGrenadeRenderer(EntityGrenadeStrong.class, ModItems.grenade_strong);
+        registerGrenadeRenderer(EntityGrenadeFrag.class, ModItems.grenade_frag);
+        registerGrenadeRenderer(EntityGrenadeFire.class, ModItems.grenade_fire);
+        registerGrenadeRenderer(EntityGrenadeCluster.class, ModItems.grenade_cluster);
+        registerGrenadeRenderer(EntityGrenadeFlare.class, ModItems.grenade_flare);
+        registerGrenadeRenderer(EntityGrenadeElectric.class, ModItems.grenade_electric);
+        registerGrenadeRenderer(EntityGrenadePoison.class, ModItems.grenade_poison);
+        registerGrenadeRenderer(EntityGrenadeGas.class, ModItems.grenade_gas);
+        registerGrenadeRenderer(EntityGrenadeSchrabidium.class, ModItems.grenade_schrabidium);
+        registerGrenadeRenderer(EntityGrenadePulse.class, ModItems.grenade_pulse);
+        registerGrenadeRenderer(EntityGrenadePlasma.class, ModItems.grenade_plasma);
+        registerGrenadeRenderer(EntityGrenadeTau.class, ModItems.grenade_tau);
+        registerGrenadeRenderer(EntityGrenadeCloud.class, ModItems.grenade_cloud);
+        registerGrenadeRenderer(EntityGrenadePC.class, ModItems.grenade_pink_cloud);
+        registerGrenadeRenderer(EntityGrenadeSmart.class, ModItems.grenade_smart);
+        registerGrenadeRenderer(EntityGrenadeMIRV.class, ModItems.grenade_mirv);
+        registerGrenadeRenderer(EntityGrenadeBreach.class, ModItems.grenade_breach);
+        registerGrenadeRenderer(EntityGrenadeBurst.class, ModItems.grenade_burst);
+        registerGrenadeRenderer(EntityGrenadeLemon.class, ModItems.grenade_lemon);
+        RenderingRegistry.registerEntityRenderingHandler(EntityGrenadeMk2.class, RenderGrenade.FACTORY);
+        RenderingRegistry.registerEntityRenderingHandler(EntityGrenadeASchrab.class, RenderGrenade.FACTORY);
+        registerGrenadeRenderer(EntityGrenadeZOMG.class, ModItems.grenade_zomg);
+        registerGrenadeRenderer(EntityGrenadeSolinium.class, ModItems.grenade_solinium);
+        registerGrenadeRenderer(EntityGrenadeShrapnel.class, ModItems.grenade_shrapnel);
+        registerGrenadeRenderer(EntityGrenadeBlackHole.class, ModItems.grenade_black_hole);
+        registerGrenadeRenderer(EntityGrenadeGascan.class, ModItems.grenade_gascan);
+        registerGrenadeRenderer(EntityGrenadeNuke.class, ModItems.grenade_nuke);
+        registerGrenadeRenderer(EntityGrenadeNuclear.class, ModItems.grenade_nuclear);
+        registerGrenadeRenderer(EntityGrenadeIFGeneric.class, ModItems.grenade_if_generic);
+        registerGrenadeRenderer(EntityGrenadeIFHE.class, ModItems.grenade_if_he);
+        registerGrenadeRenderer(EntityGrenadeIFBouncy.class, ModItems.grenade_if_bouncy);
+        registerGrenadeRenderer(EntityGrenadeIFSticky.class, ModItems.grenade_if_sticky);
+        registerGrenadeRenderer(EntityGrenadeIFImpact.class, ModItems.grenade_if_impact);
+        registerGrenadeRenderer(EntityGrenadeIFIncendiary.class, ModItems.grenade_if_incendiary);
+        registerGrenadeRenderer(EntityGrenadeIFToxic.class, ModItems.grenade_if_toxic);
+        registerGrenadeRenderer(EntityGrenadeIFConcussion.class, ModItems.grenade_if_concussion);
+        registerGrenadeRenderer(EntityGrenadeIFBrimstone.class, ModItems.grenade_if_brimstone);
+        registerGrenadeRenderer(EntityGrenadeIFMystery.class, ModItems.grenade_if_mystery);
+        registerGrenadeRenderer(EntityGrenadeIFSpark.class, ModItems.grenade_if_spark);
+        registerGrenadeRenderer(EntityGrenadeIFHopwire.class, ModItems.grenade_if_hopwire);
+        registerGrenadeRenderer(EntityGrenadeIFNull.class, ModItems.grenade_if_null);
         registerMetaSensitiveGrenade(EntityDisperserCanister.class, ModItems.glyphid_gland);
 
         ModelLoader.setCustomStateMapper(ModBlocks.door_bunker, new StateMap.Builder().ignore(BlockModDoor.POWERED).build());
@@ -248,6 +291,11 @@ public class ClientProxy extends ServerProxy {
     private <E extends Entity> void registerGrenadeRenderer(Class<E> clazz, Item grenade) {
         RenderingRegistry.registerEntityRenderingHandler(clazz, (RenderManager man) -> new RenderSnowball<>(man,
                 grenade, Minecraft.getMinecraft().getRenderItem()));
+    }
+
+    private <E extends Entity & IGenericGrenade> void registerGenericGrenadeRenderer(Class<E> clazz) {
+        RenderingRegistry.registerEntityRenderingHandler(clazz, (RenderManager man) -> new RenderGenericGrenade<>(man,
+                Minecraft.getMinecraft().getRenderItem()));
     }
 
     private <E extends Entity & RenderMetaSensitiveItem.IHasMetaSensitiveRenderer<E>> void registerMetaSensitiveGrenade(Class<E> clazz, Item grenade) {
@@ -348,6 +396,7 @@ public class ClientProxy extends ServerProxy {
         ModItems.starmetal_shield.setTileEntityItemStackRenderer(new com.hbm.render.item.ItemRenderShield("S7", new ResourceLocation("hbm", "textures/items/starmetal_shield.png"), new ResourceLocation("hbm", "textures/items/starmetal_shield_blank.png")));
         ModItems.steel_shield.setTileEntityItemStackRenderer(new com.hbm.render.item.ItemRenderShield("S2", new ResourceLocation("hbm", "textures/items/steel_shield.png"), new ResourceLocation("hbm", "textures/items/steel_shield_blank.png")));
         ModItems.titanium_shield.setTileEntityItemStackRenderer(new com.hbm.render.item.ItemRenderShield("S1", new ResourceLocation("hbm", "textures/items/titanium_shield.png"), new ResourceLocation("hbm", "textures/items/titanium_shield_blank.png")));
+        ModItems.crucible_template.setTileEntityItemStackRenderer(com.hbm.render.item.CrucibleTemplateRender.INSTANCE);
 
         // EE Guns Rendering (gun_flamer is already registered above with ItemRenderFlamer)
         com.hbm.render.item.weapon.ItemRenderWeaponObj objRenderer = new com.hbm.render.item.weapon.ItemRenderWeaponObj();
@@ -1789,6 +1838,38 @@ public class ClientProxy extends ServerProxy {
                                 }
                             }
                             default -> throw new IllegalStateException("Unexpected value: " + mode);
+                        }
+                    }
+                    case "hs_sword" -> {
+                        if ("equip".equals(mode)) {
+                            HbmAnimations.hotbar[slot] = new BlenderAnimation(player.getHeldItem(hand).getItem().getTranslationKey(), System.currentTimeMillis(), 1, ResourceManager.hs_sword_equip, new EndResult(EndType.STAY));
+                        } else if ("swing".equals(mode)) {
+                            BusAnimation animation = new BusAnimation()
+                                    .addBus("SWING", new BusAnimationSequence()
+                                            .addKeyframe(new BusAnimationKeyframe(120, 0, 0, 150))
+                                            .addKeyframe(new BusAnimationKeyframe(0, 0, 0, 500)));
+                            if (HbmAnimations.hotbar[slot] instanceof BlenderAnimation) {
+                                HbmAnimations.hotbar[slot].animation = animation;
+                                HbmAnimations.hotbar[slot].startMillis = System.currentTimeMillis();
+                            } else {
+                                HbmAnimations.hotbar[slot] = new Animation(player.getHeldItem(hand).getItem().getTranslationKey(), System.currentTimeMillis(), animation);
+                            }
+                        }
+                    }
+                    case "hf_sword" -> {
+                        if ("equip".equals(mode)) {
+                            HbmAnimations.hotbar[slot] = new BlenderAnimation(player.getHeldItem(hand).getItem().getTranslationKey(), System.currentTimeMillis(), 1, ResourceManager.hf_sword_equip, new EndResult(EndType.STAY));
+                        } else if ("swing".equals(mode)) {
+                            BusAnimation animation = new BusAnimation()
+                                    .addBus("SWING", new BusAnimationSequence()
+                                            .addKeyframe(new BusAnimationKeyframe(120, 0, 0, 150))
+                                            .addKeyframe(new BusAnimationKeyframe(0, 0, 0, 500)));
+                            if (HbmAnimations.hotbar[slot] instanceof BlenderAnimation) {
+                                HbmAnimations.hotbar[slot].animation = animation;
+                                HbmAnimations.hotbar[slot].startMillis = System.currentTimeMillis();
+                            } else {
+                                HbmAnimations.hotbar[slot] = new Animation(player.getHeldItem(hand).getItem().getTranslationKey(), System.currentTimeMillis(), animation);
+                            }
                         }
                     }
                 }

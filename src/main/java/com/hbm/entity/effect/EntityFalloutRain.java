@@ -2,8 +2,18 @@ package com.hbm.entity.effect;
 
 import com.hbm.blocks.ModBlocks;
 import com.hbm.blocks.bomb.BlockVolcano;
+import com.hbm.blocks.generic.BlockFallout;
+import com.hbm.blocks.generic.BlockPowder;
+import com.hbm.blocks.generic.WasteEarth;
+import com.hbm.blocks.generic.WasteGrassTall;
+import com.hbm.blocks.generic.WasteHazardMeta;
+import com.hbm.blocks.generic.WasteLeaves;
+import com.hbm.blocks.generic.WasteLog;
+import com.hbm.blocks.generic.WasteSand;
 import com.hbm.config.BombConfig;
 import com.hbm.config.CompatibilityConfig;
+import com.hbm.config.RadiationConfig;
+import com.hbm.saveddata.AuxSavedData;
 import com.hbm.config.FalloutConfigJSON;
 import com.hbm.config.FalloutConfigJSON.FalloutEntry;
 import com.hbm.config.FalloutConfigJSON.LookupResult;
@@ -25,6 +35,12 @@ import it.unimi.dsi.fastutil.longs.*;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLeaves;
+import net.minecraft.block.BlockLog;
+import net.minecraft.block.BlockOre;
+import net.minecraft.block.BlockPlanks;
+import net.minecraft.block.BlockStone;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.init.Blocks;
@@ -81,6 +97,10 @@ public class EntityFalloutRain extends EntityExplosionChunkloading implements Bo
     static final long OFF_JOB_REGISTERED = fieldOffset(EntityFalloutRain.class, "jobRegistered");
     static final int WORKER_BATCH = 32;
     public UUID detonator;
+    public boolean doFallout = false;
+    public boolean doFlood = false;
+    boolean doDrop = false;
+    public int waterLevel = 0;
     NonBlockingHashMapLong<Chunk> mirror;
     LongArrayList chunksToProcess;
     LongArrayList outerChunksToProcess;
@@ -106,11 +126,32 @@ public class EntityFalloutRain extends EntityExplosionChunkloading implements Bo
     int tickDelay = BombConfig.falloutDelay;
     boolean biomeChange = true;
 
+    private double s0;
+    private double s1;
+    private double s2;
+    private double s3;
+    private double s4;
+    private double s5;
+    private double s6;
+    private double s7;
+    private int fallingRadius;
+
     public EntityFalloutRain(World worldIn) {
         super(worldIn);
         setSize(4.0F, 20.0F);
         ignoreFrustumCheck = true;
         isImmuneToFire = true;
+        initWaterLevel();
+    }
+
+    private void initWaterLevel() {
+        Integer configured = CompatibilityConfig.fillCraterWithWater.get(world.provider.getDimension());
+        waterLevel = configured == null ? 0 : configured;
+        if (waterLevel == 0) {
+            waterLevel = world.getSeaLevel();
+        } else if (waterLevel < 0 && waterLevel > -world.getSeaLevel()) {
+            waterLevel = world.getSeaLevel() - waterLevel;
+        }
     }
 
     public EntityFalloutRain(World worldIn, int ignored) {
@@ -397,12 +438,32 @@ public class EntityFalloutRain extends EntityExplosionChunkloading implements Bo
                 double distance = Math.hypot(x - cx, z - cz);
                 if (clampToRadius && distance > (double) scale) continue;
 
+                if (distance > s0 && rand.nextFloat() > 0.05F + (5F * (float) (s0 / distance) - 4F)) {
+                    continue;
+                }
+
                 double percent = (double) scale <= 0 ? 100.0 : (distance * 100.0 / (double) scale);
 
                 Biome target = getBiomeChange(percent, scale, world.getBiome(TL_POS.get().setPos(x, 0, z)));
                 if (biomeChange && target != null) biomeChanges.put(ChunkPos.asLong(x, z), Biome.getIdForBiome(target));
 
-                stompColumnToUpdates(s, ebs, x, z, percent, updates, spawnFalling, rand);
+                int[] gapData;
+                if (doFallout) {
+                    gapData = stompColumnToUpdates(s, ebs, x, z, percent, distance, updates, spawnFalling, rand);
+                } else {
+                    gapData = scanColumnGaps(ebs, x, z, 6);
+                }
+
+                if (distance < fallingRadius) {
+                    if (doDrop && gapData[0] == 1) {
+                        letFallColumnToUpdates(ebs, x, z, gapData[1], gapData[2], updates, rand);
+                    }
+                    if (doFlood) {
+                        floodColumnToUpdates(ebs, x, z, updates);
+                    } else {
+                        drainColumnToUpdates(ebs, x, z, updates);
+                    }
+                }
             }
         }
 
@@ -665,6 +726,8 @@ public class EntityFalloutRain extends EntityExplosionChunkloading implements Bo
 
         finished = 1;
 
+        applyFloodWeather();
+
         releasePool();
 
         if (U.getAndSetInt(this, OFF_MAP_ACQUIRED, 0) != 0) {
@@ -674,11 +737,98 @@ public class EntityFalloutRain extends EntityExplosionChunkloading implements Bo
         setDead();
     }
 
-    void stompColumnToUpdates(WorkerScratch scratch, ExtendedBlockStorage[] ebs, int x, int z, double distPercent,
-                              Long2ObjectOpenHashMap<IBlockState> updates, Long2ObjectOpenHashMap<IBlockState> spawnFalling,
-                              ThreadLocalRandom rand) {
+    static IBlockState getEffectiveState(ExtendedBlockStorage[] ebs, Long2ObjectOpenHashMap<IBlockState> updates,
+                                         int x, int y, int z, int lx, int lz) {
+        IBlockState upd = updates.get(Library.blockPosToLong(x, y, z));
+        if (upd != null) return upd;
+        int subY = y >>> 4;
+        ExtendedBlockStorage storage = ebs[subY];
+        if (storage == null || storage == Chunk.NULL_BLOCK_STORAGE || storage.isEmpty()) {
+            return Blocks.AIR.getDefaultState();
+        }
+        return storage.get(lx, y & 15, lz);
+    }
+
+    static int[] scanColumnGaps(ExtendedBlockStorage[] ebs, int x, int z, int maxStoneDepth) {
+        int contactHeight = 420;
+        int lastGapHeight = 420;
+        boolean gapFound = false;
+        int stoneDepth = 0;
+        boolean reachedStone = false;
+        boolean lastReachedStone = false;
+        int lx = x & 15;
+        int lz = z & 15;
+
+        for (int y = 255; y >= 0; y--) {
+            int subY = y >>> 4;
+            ExtendedBlockStorage storage = ebs[subY];
+            IBlockState state = storage == null || storage == Chunk.NULL_BLOCK_STORAGE || storage.isEmpty()
+                    ? Blocks.AIR.getDefaultState() : storage.get(lx, y & 15, lz);
+            Block block = state.getBlock();
+            Material material = state.getMaterial();
+            lastReachedStone = reachedStone;
+
+            if (block.isCollidable() && contactHeight == 420) {
+                contactHeight = Math.min(y + 1, 255);
+            }
+
+            if (reachedStone && material != Material.AIR) {
+                stoneDepth++;
+            } else {
+                reachedStone = material == Material.ROCK;
+            }
+            if (reachedStone && stoneDepth > maxStoneDepth) break;
+
+            if (material == Material.AIR || material.isLiquid()) {
+                if (y < contactHeight) {
+                    gapFound = true;
+                    lastGapHeight = y;
+                }
+            }
+        }
+        return new int[]{gapFound ? 1 : 0, lastGapHeight, contactHeight};
+    }
+
+    void letFallColumnToUpdates(ExtendedBlockStorage[] ebs, int x, int z, int lastGapHeight, int contactHeight,
+                                Long2ObjectOpenHashMap<IBlockState> updates, ThreadLocalRandom rand) {
+        int fallChance = RadiationConfig.blocksFallCh;
+        if (fallChance < 1) return;
+        if (fallChance < 100 && rand.nextInt(100) < fallChance) return;
+
+        int lx = x & 15;
+        int lz = z & 15;
+        MutableBlockPos pos = TL_POS.get();
+        int bottomHeight = lastGapHeight;
+
+        for (int y = lastGapHeight; y <= contactHeight; y++) {
+            pos.setPos(x, y, z);
+            IBlockState state = getEffectiveState(ebs, updates, x, y, z, lx, lz);
+            Block block = state.getBlock();
+            if (!block.isReplaceable(world, pos)) {
+                float hardness = block.getExplosionResistance(null);
+                if (hardness >= 0.0F && hardness < 50.0F && y != bottomHeight) {
+                    long dest = Library.blockPosToLong(x, bottomHeight, z);
+                    updates.put(dest, state);
+                    updates.put(Library.blockPosToLong(x, y, z), Blocks.AIR.getDefaultState());
+                }
+                bottomHeight++;
+            }
+        }
+    }
+
+    int[] stompColumnToUpdates(WorkerScratch scratch, ExtendedBlockStorage[] ebs, int x, int z, double distPercent,
+                               double dist, Long2ObjectOpenHashMap<IBlockState> updates,
+                               Long2ObjectOpenHashMap<IBlockState> spawnFalling, ThreadLocalRandom rand) {
 
         int solidDepth = 0;
+        int stoneDepth = 0;
+        int scale = getScale();
+        int maxStoneDepth = getMaxStoneDepth(dist, scale);
+        boolean reachedStone = false;
+        boolean lastReachedStone = false;
+        int contactHeight = 420;
+        int lastGapHeight = 420;
+        boolean gapFound = false;
         boolean useOreDict = FalloutConfigJSON.hasOreDictMatchers();
         int lx = x & 15;
         int lz = z & 15;
@@ -686,13 +836,34 @@ public class EntityFalloutRain extends EntityExplosionChunkloading implements Bo
         float stonebrickRes = Blocks.STONEBRICK.getExplosionResistance(null);
 
         for (int y = 255; y >= 0; y--) {
-            if (solidDepth >= MAX_SOLID_DEPTH) return;
-
             int subY = y >>> 4;
             ExtendedBlockStorage storage = ebs[subY];
-            IBlockState state = storage == Chunk.NULL_BLOCK_STORAGE || storage.isEmpty() ? Blocks.AIR.getDefaultState() : storage.get(lx, y & 15, lz);
+            IBlockState state = storage == null || storage == Chunk.NULL_BLOCK_STORAGE || storage.isEmpty()
+                    ? Blocks.AIR.getDefaultState() : storage.get(lx, y & 15, lz);
             Block block = state.getBlock();
-            if (block.isAir(state, world, pos.setPos(x, y, z)) || block == ModBlocks.fallout) continue;
+            Material material = state.getMaterial();
+            lastReachedStone = reachedStone;
+
+            if (!block.isAir(state, world, pos.setPos(x, y, z)) && contactHeight == 420) {
+                contactHeight = Math.min(y + 1, 255);
+            }
+
+            if (reachedStone && material != Material.AIR && !material.isLiquid()) {
+                stoneDepth++;
+            } else if (!reachedStone) {
+                reachedStone = material == Material.ROCK;
+            }
+            if (reachedStone && stoneDepth > maxStoneDepth) break;
+
+            if (material == Material.AIR || material.isLiquid()) {
+                if (y < contactHeight) {
+                    gapFound = true;
+                    lastGapHeight = y;
+                }
+                continue;
+            }
+
+            if (block == ModBlocks.fallout) continue;
 
             if (block == ModBlocks.volcano_core) {
                 updates.put(Library.blockPosToLong(x, y, z), ModBlocks.volcano_rad_core.getDefaultState().withProperty(BlockVolcano.META, state.getValue(BlockVolcano.META)));
@@ -701,7 +872,15 @@ public class EntityFalloutRain extends EntityExplosionChunkloading implements Bo
 
             IBlockState stateUp = null;
             int upY = y + 1;
-            if (solidDepth == 0 && upY < 256) {
+            if (contactHeight != 420 && y == contactHeight - 1 && block != ModBlocks.fallout
+                    && Math.abs(rand.nextGaussian() * (dist * dist) / (s0 * s0)) < 0.05D && rand.nextDouble() < 0.05D
+                    && upY < 256) {
+                pos.setPos(x, upY, z);
+                if (ModBlocks.fallout.canPlaceBlockAt(world, pos)) {
+                    updates.put(Library.blockPosToLong(x, upY, z),
+                            applyFalloutMetaTier(ModBlocks.fallout.getDefaultState(), distPercent, rand));
+                }
+            } else if (contactHeight == 420 && solidDepth == 0 && upY < 256) {
                 int upSub = upY >>> 4;
                 ExtendedBlockStorage su = ebs[upSub];
                 stateUp = su == Chunk.NULL_BLOCK_STORAGE || su.isEmpty() ? Blocks.AIR.getDefaultState() : su.get(lx, upY & 15, lz);
@@ -712,7 +891,8 @@ public class EntityFalloutRain extends EntityExplosionChunkloading implements Bo
                     double d = distPercent / 100.0;
                     double chance = 0.1 - Math.pow(d - 0.7, 2.0);
                     if (chance >= rand.nextDouble()) {
-                        updates.put(Library.blockPosToLong(x, upY, z), ModBlocks.fallout.getDefaultState());
+                        updates.put(Library.blockPosToLong(x, upY, z),
+                                applyFalloutMetaTier(ModBlocks.fallout.getDefaultState(), distPercent, rand));
                     }
                 }
             }
@@ -733,6 +913,80 @@ public class EntityFalloutRain extends EntityExplosionChunkloading implements Bo
             }
 
             boolean transformed = false;
+
+            if (block == Blocks.BEDROCK || block == ModBlocks.ore_bedrock_oil || block == ModBlocks.ore_bedrock_block) {
+                int bedrockUpY = y + 1;
+                if (bedrockUpY < 256) {
+                    int upSub = bedrockUpY >>> 4;
+                    ExtendedBlockStorage su = ebs[upSub];
+                    IBlockState bedrockStateUp = su == Chunk.NULL_BLOCK_STORAGE || su.isEmpty()
+                            ? Blocks.AIR.getDefaultState()
+                            : su.get(lx, bedrockUpY & 15, lz);
+                    if (bedrockStateUp.getBlock().isAir(bedrockStateUp, world, pos.setPos(x, bedrockUpY, z))) {
+                        updates.put(Library.blockPosToLong(x, bedrockUpY, z), ModBlocks.toxic_block.getDefaultState());
+                    }
+                }
+                continue;
+            } else if (block instanceof BlockOre && reachedStone && !lastReachedStone && distPercent < 65) {
+                updates.put(Library.blockPosToLong(x, y, z), ModBlocks.toxic_block.getDefaultState());
+                continue;
+            } else if (block == ModBlocks.sellafield_4) {
+                updates.put(Library.blockPosToLong(x, y, z), ModBlocks.sellafield_core.getStateFromMeta(rand.nextInt(4)));
+                if (state.isNormalCube()) solidDepth++;
+                continue;
+            } else if (block == ModBlocks.sellafield_3) {
+                updates.put(Library.blockPosToLong(x, y, z), ModBlocks.sellafield_4.getStateFromMeta(rand.nextInt(4)));
+                if (state.isNormalCube()) solidDepth++;
+                continue;
+            } else if (block == ModBlocks.sellafield_2) {
+                updates.put(Library.blockPosToLong(x, y, z), ModBlocks.sellafield_3.getStateFromMeta(rand.nextInt(4)));
+                if (state.isNormalCube()) solidDepth++;
+                continue;
+            } else if (block == ModBlocks.sellafield_1) {
+                updates.put(Library.blockPosToLong(x, y, z), ModBlocks.sellafield_2.getStateFromMeta(rand.nextInt(4)));
+                if (state.isNormalCube()) solidDepth++;
+                continue;
+            } else if (block == ModBlocks.sellafield_0) {
+                updates.put(Library.blockPosToLong(x, y, z), ModBlocks.sellafield_1.getStateFromMeta(rand.nextInt(4)));
+                if (state.isNormalCube()) solidDepth++;
+                continue;
+            } else if (block == ModBlocks.sellafield_slaked) {
+                updates.put(Library.blockPosToLong(x, y, z), ModBlocks.sellafield_0.getStateFromMeta(rand.nextInt(4)));
+                if (state.isNormalCube()) solidDepth++;
+                continue;
+            } else if (block instanceof BlockStone || block == Blocks.COBBLESTONE) {
+                updates.put(Library.blockPosToLong(x, y, z), pickSellafieldTier(distPercent, stoneDepth, maxStoneDepth, rand));
+                solidDepth++;
+                continue;
+            } else if (block == ModBlocks.waste_leaves) {
+                if (!(distPercent > 65 || (fallingRadius > 0 && dist < fallingRadius && rand.nextFloat() < (-5F * (fallingRadius / dist) + 5F)))) {
+                    updates.put(Library.blockPosToLong(x, y, z), Blocks.AIR.getDefaultState());
+                }
+                continue;
+            } else if (block instanceof BlockLeaves && !(block instanceof WasteLeaves)) {
+                if (distPercent > 65 || (fallingRadius > 0 && dist < fallingRadius && rand.nextFloat() < (-5F * (fallingRadius / dist) + 5F))) {
+                    BlockPlanks.EnumType type = BlockPlanks.EnumType.OAK;
+                    try {
+                        type = ((BlockLeaves) block).getWoodType(block.getMetaFromState(state));
+                    } catch (UnsupportedOperationException ignored) {
+                    }
+                    updates.put(Library.blockPosToLong(x, y, z), ModBlocks.waste_leaves.getDefaultState().withProperty(WasteLeaves.VARIANT, type));
+                } else {
+                    updates.put(Library.blockPosToLong(x, y, z), Blocks.AIR.getDefaultState());
+                }
+                continue;
+            } else if (block instanceof BlockLog) {
+                if (distPercent < 65) {
+                    updates.put(Library.blockPosToLong(x, y, z), ((WasteLog) ModBlocks.waste_log).getSameRotationState(state));
+                }
+                continue;
+            } else if (state.getMaterial() == Material.WOOD && block != ModBlocks.waste_log && block != ModBlocks.waste_planks) {
+                if (distPercent < 65) {
+                    updates.put(Library.blockPosToLong(x, y, z), ModBlocks.waste_planks.getDefaultState());
+                }
+                continue;
+            }
+
             List<FalloutEntry> entries = FalloutConfigJSON.entries;
             LookupResult lookup = scratch.lookup(state);
             //noinspection ForLoopReplaceableByForEach
@@ -741,8 +995,11 @@ public class EntityFalloutRain extends EntityExplosionChunkloading implements Bo
                 int[] oreIds = useOreDict && entry.usesOreDict() ? scratch.lookupOreIds(state, lookup) : null;
                 IBlockState result = entry.eval(y, state, lookup, oreIds, distPercent, rand);
                 if (result != null) {
+                    result = applyFalloutMetaTier(result, distPercent, rand);
                     updates.put(Library.blockPosToLong(x, y, z), result);
-                    if (entry.isSolid()) solidDepth++;
+                    if (entry.isSolid() && lookup.material != Material.WOOD && lookup.material != Material.LEAVES) {
+                        solidDepth++;
+                    }
                     transformed = true;
                     break;
                 }
@@ -776,6 +1033,7 @@ public class EntityFalloutRain extends EntityExplosionChunkloading implements Bo
 
             if (!transformed && state.isNormalCube()) solidDepth++;
         }
+        return new int[]{gapFound ? 1 : 0, lastGapHeight, contactHeight};
     }
 
     @Override
@@ -788,6 +1046,8 @@ public class EntityFalloutRain extends EntityExplosionChunkloading implements Bo
     protected void readEntityFromNBT(NBTTagCompound tag) {
         markChunkLoaderRestoredFromNBT();
         setScale(tag.getInteger("scale"));
+        doFallout = tag.getBoolean("doFallout");
+        doFlood = tag.getBoolean("doFlood");
 
         LongArrayList in = new LongArrayList();
         LongArrayList out = new LongArrayList();
@@ -802,6 +1062,8 @@ public class EntityFalloutRain extends EntityExplosionChunkloading implements Bo
     @Override
     protected void writeEntityToNBT(NBTTagCompound tag) {
         tag.setInteger("scale", getScale());
+        tag.setBoolean("doFallout", doFallout);
+        tag.setBoolean("doFlood", doFlood);
         tag.setIntArray("chunks", toPairsArray(chunksToProcess));
         tag.setIntArray("outerChunks", toPairsArray(outerChunksToProcess));
     }
@@ -844,19 +1106,139 @@ public class EntityFalloutRain extends EntityExplosionChunkloading implements Bo
     }
 
     public void setScale(int i) {
-        dataManager.set(SCALE, i);
+        setScale(i, 0);
     }
 
-    public void setScale(int i, int ignored) {
+    public void setScale(int i, int craterRadius) {
         dataManager.set(SCALE, i);
+        this.s0 = 0.8D * i;
+        this.s1 = 0.65D * i;
+        this.s2 = 0.5D * i;
+        this.s3 = 0.4D * i;
+        this.s4 = 0.3D * i;
+        this.s5 = 0.2D * i;
+        this.s6 = 0.1D * i;
+        this.s7 = 0.05D * i;
+        this.fallingRadius = craterRadius > 15 ? craterRadius : 0;
+        this.doDrop = this.fallingRadius > 20;
+    }
+
+    static boolean usesFalloutDistanceMeta(Block block) {
+        return block instanceof WasteEarth
+                || block instanceof WasteSand
+                || block instanceof WasteHazardMeta
+                || block instanceof WasteGrassTall
+                || block instanceof BlockPowder
+                || block instanceof BlockFallout;
+    }
+
+    static int falloutMetaFromDistPercent(double distPercent, ThreadLocalRandom rand) {
+        double ranPercent = distPercent * (1D + rand.nextDouble() * 0.2D);
+        if (ranPercent > 65) return 0;
+        if (ranPercent > 50) return 1;
+        if (ranPercent > 40) return 2;
+        if (ranPercent > 30) return 3;
+        if (ranPercent > 20) return 4;
+        if (ranPercent > 10) return 5;
+        return 6;
+    }
+
+    static IBlockState applyFalloutMetaTier(IBlockState state, double distPercent, ThreadLocalRandom rand) {
+        Block block = state.getBlock();
+        if (!usesFalloutDistanceMeta(block)) return state;
+        return block.getStateFromMeta(falloutMetaFromDistPercent(distPercent, rand));
+    }
+
+    static int getMaxStoneDepth(double dist, double scale) {
+        if (scale <= 0) return 0;
+        double percent = dist * 100.0 / scale;
+        if (percent > 65) return 0;
+        if (percent > 50) return 1;
+        if (percent > 40) return 2;
+        if (percent > 30) return 3;
+        if (percent > 20) return 4;
+        if (percent > 10) return 5;
+        return 6;
+    }
+
+    static IBlockState pickSellafieldTier(double distPercent, int stoneDepth, int maxStoneDepth, ThreadLocalRandom rand) {
+        double ranPercent = distPercent * (1D + rand.nextDouble() * 0.1D);
+        if (ranPercent > 65 || stoneDepth == maxStoneDepth)
+            return ModBlocks.sellafield_slaked.getStateFromMeta(rand.nextInt(4));
+        if (ranPercent > 50 || stoneDepth == maxStoneDepth - 1)
+            return ModBlocks.sellafield_0.getStateFromMeta(rand.nextInt(4));
+        if (ranPercent > 40 || stoneDepth == maxStoneDepth - 2)
+            return ModBlocks.sellafield_1.getStateFromMeta(rand.nextInt(4));
+        if (ranPercent > 30 || stoneDepth == maxStoneDepth - 3)
+            return ModBlocks.sellafield_2.getStateFromMeta(rand.nextInt(4));
+        if (ranPercent > 20 || stoneDepth == maxStoneDepth - 4)
+            return ModBlocks.sellafield_3.getStateFromMeta(rand.nextInt(4));
+        if (ranPercent > 10 || stoneDepth == maxStoneDepth - 5)
+            return ModBlocks.sellafield_4.getStateFromMeta(rand.nextInt(4));
+        return ModBlocks.sellafield_core.getStateFromMeta(rand.nextInt(4));
     }
 
     public void noBiomeChange() {
         biomeChange = false;
     }
 
+    void floodColumnToUpdates(ExtendedBlockStorage[] ebs, int x, int z, Long2ObjectOpenHashMap<IBlockState> updates) {
+        if (!CompatibilityConfig.doFillCraterWithWater || waterLevel <= 1) return;
+
+        int lx = x & 15;
+        int lz = z & 15;
+        MutableBlockPos pos = TL_POS.get();
+
+        for (int y = waterLevel - 1; y > 1; y--) {
+            int subY = y >>> 4;
+            ExtendedBlockStorage storage = ebs[subY];
+            IBlockState state = storage == Chunk.NULL_BLOCK_STORAGE || storage.isEmpty()
+                    ? Blocks.AIR.getDefaultState()
+                    : storage.get(lx, y & 15, lz);
+            Block block = state.getBlock();
+            pos.setPos(x, y, z);
+
+            if (block.isAir(state, world, pos) || block == Blocks.FLOWING_WATER) {
+                updates.put(Library.blockPosToLong(x, y, z), Blocks.WATER.getDefaultState());
+            } else if (block.getExplosionResistance(null) > 600_000) {
+                return;
+            }
+        }
+    }
+
+    void drainColumnToUpdates(ExtendedBlockStorage[] ebs, int x, int z, Long2ObjectOpenHashMap<IBlockState> updates) {
+        int lx = x & 15;
+        int lz = z & 15;
+
+        for (int y = 255; y > 1; y--) {
+            int subY = y >>> 4;
+            ExtendedBlockStorage storage = ebs[subY];
+            IBlockState state = storage == Chunk.NULL_BLOCK_STORAGE || storage.isEmpty()
+                    ? Blocks.AIR.getDefaultState()
+                    : storage.get(lx, y & 15, lz);
+            Block block = state.getBlock();
+
+            if (block == Blocks.WATER || block == Blocks.FLOWING_WATER) {
+                updates.put(Library.blockPosToLong(x, y, z), Blocks.AIR.getDefaultState());
+            }
+        }
+    }
+
+    private void applyFloodWeather() {
+        if (!doFlood || RadiationConfig.rain <= 0) return;
+        int scale = getScale();
+        if ((doFallout && scale > 160) || scale > 200) {
+            world.getWorldInfo().setThundering(true);
+            world.getWorldInfo().setThunderTime(RadiationConfig.rain);
+            AuxSavedData.setThunder(world, RadiationConfig.rain);
+        } else if ((doFallout && scale > 80) || scale > 100) {
+            world.getWorldInfo().setRaining(true);
+            world.getWorldInfo().setRainTime(RadiationConfig.rain);
+        }
+    }
+
     void gatherChunks() {
-        int radius = getScale();
+        int radius = doFallout ? getScale() : (fallingRadius > 0 ? fallingRadius : getScale());
         int angleSteps = 20 * radius / 32;
         if (angleSteps < MIN_ANGLE_STEPS) angleSteps = MIN_ANGLE_STEPS;
 

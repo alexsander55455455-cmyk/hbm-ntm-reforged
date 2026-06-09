@@ -334,7 +334,7 @@ public class ExplosionNukeGeneric {
                 world.setBlockState(pos,
 						ModBlocks.sellafield_slaked.getDefaultState());
             } else if (b == Blocks.BEDROCK) {
-                world.setBlockState(pos, ModBlocks.sellafield_bedrock.getDefaultState());
+                world.setBlockState(pos.up(), ModBlocks.toxic_block.getDefaultState());
             } else if (b == Blocks.RED_MUSHROOM_BLOCK) {
                 if (bs.getValue(BlockHugeMushroom.VARIANT) == BlockHugeMushroom.EnumType.STEM) {
                     world.setBlockState(pos, ModBlocks.waste_log.getDefaultState());
@@ -425,7 +425,7 @@ public class ExplosionNukeGeneric {
                 world.setBlockState(pos,
 						ModBlocks.sellafield_slaked.getDefaultState());
             } else if (b == Blocks.BEDROCK) {
-                world.setBlockState(pos, ModBlocks.sellafield_bedrock.getDefaultState());
+                world.setBlockState(pos.up(), ModBlocks.toxic_block.getDefaultState());
             } else if (b == Blocks.MOSSY_COBBLESTONE) {
                 world.setBlockState(pos, Blocks.COAL_ORE.getDefaultState());
             } else if (b == Blocks.COAL_ORE) {
@@ -545,7 +545,27 @@ public class ExplosionNukeGeneric {
                 else world.setBlockState(pos, Blocks.DIRT.getDefaultState());
                 return;
             }
-            if(b.getBlock() == ModBlocks.sellafield || b.getBlock() == ModBlocks.sellafield_slaked){
+            if(b.getBlock() == ModBlocks.sellafield_slaked) {
+                world.setBlockState(pos, Blocks.STONE.getDefaultState());
+                return;
+            }
+
+            if(b.getBlock() == ModBlocks.sellafield_0 || b.getBlock() == ModBlocks.sellafield_1) {
+                world.setBlockState(pos, Blocks.STONE.getStateFromMeta(5));
+                return;
+            }
+
+            if(b.getBlock() == ModBlocks.sellafield_2 || b.getBlock() == ModBlocks.sellafield_3) {
+                world.setBlockState(pos, Blocks.STONE.getStateFromMeta(3));
+                return;
+            }
+
+            if(b.getBlock() == ModBlocks.sellafield_4 || b.getBlock() == ModBlocks.sellafield_core) {
+                world.setBlockState(pos, Blocks.STONE.getStateFromMeta(1));
+                return;
+            }
+
+            if(b.getBlock() == ModBlocks.sellafield) {
                 world.setBlockState(pos, Blocks.STONE.getDefaultState());
                 return;
             }

@@ -2,6 +2,8 @@ package com.hbm.blocks.generic;
 
 import com.google.common.collect.ImmutableMap;
 import com.hbm.blocks.BlockBase;
+import com.hbm.handler.radiation.ChunkRadiationManager;
+import com.hbm.hazard.HazardSystem;
 import com.hbm.items.IDynamicModels;
 import com.hbm.render.block.BlockBakeFrame;
 import com.hbm.render.extended_blockstate.PropertyRandomVariant;
@@ -20,6 +22,7 @@ import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -27,6 +30,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
+import java.util.Random;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
@@ -59,10 +64,50 @@ public class BlockSellafieldSlaked extends BlockBase implements IDynamicModels {
     public static final PropertyInteger SHADE = PropertyInteger.create("shade", 0, 15);
     public static final IUnlistedProperty<Integer> VARIANT = new PropertyRandomVariant(sellafieldTextures.length);
 
+    private float radIn = 0.0F;
+    private float radMax = 0.0F;
+
     public BlockSellafieldSlaked(Material mat, SoundType type, String s) {
         super(mat, type, s);
         INSTANCES.add(this);
         this.setDefaultState(this.blockState.getBaseState().withProperty(SHADE, 0));
+    }
+
+    public BlockSellafieldSlaked addChunkRadiation(float radiation) {
+        this.radIn = radiation * 0.1F;
+        this.radMax = radiation;
+        return this;
+    }
+
+    @Override
+    public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
+        super.onBlockAdded(worldIn, pos, state);
+        if (this.radIn > 0) {
+            this.setTickRandomly(true);
+            worldIn.scheduleUpdate(pos, this, this.tickRate(worldIn));
+        }
+    }
+
+    @Override
+    public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand) {
+        if (!worldIn.isRemote && this.radIn > 0) {
+            ChunkRadiationManager.proxy.incrementRad(worldIn, pos, radIn, radMax);
+            worldIn.scheduleUpdate(pos, this, this.tickRate(worldIn));
+        }
+    }
+
+    @Override
+    public int tickRate(World world) {
+        if (this.radIn > 0)
+            return 60 + world.rand.nextInt(500);
+        return super.tickRate(world);
+    }
+
+    @Override
+    public void onEntityWalk(World worldIn, BlockPos pos, Entity entityIn) {
+        if (entityIn instanceof EntityLivingBase livingBase) {
+            HazardSystem.applyHazards(this, livingBase);
+        }
     }
 
     public static int getVariantForPos(BlockPos pos) {

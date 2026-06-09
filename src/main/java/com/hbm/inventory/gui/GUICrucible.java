@@ -4,9 +4,6 @@ import com.hbm.Tags;
 import com.hbm.inventory.container.ContainerCrucible;
 import com.hbm.inventory.material.Mats;
 import com.hbm.inventory.material.NTMMaterial;
-import com.hbm.inventory.recipes.CrucibleRecipe;
-import com.hbm.inventory.recipes.CrucibleRecipes;
-import com.hbm.inventory.recipes.loader.GenericRecipe;
 import com.hbm.tileentity.machine.TileEntityCrucible;
 import com.hbm.util.I18nUtil;
 import net.minecraft.client.Minecraft;
@@ -14,12 +11,10 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -42,33 +37,17 @@ public class GUICrucible extends GuiInfoContainer {
         super.drawScreen(x, y, partialTicks);
         super.renderHoveredToolTip(x, y);
 
-        drawStackInfo(crucible.wasteStack, x, y, 16, 17);
-        drawStackInfo(crucible.recipeStack, x, y, 61, 17);
+        drawStackInfo(crucible.wasteStack, x, y, 16, 16, "gui.crucible.side.smelt");
+        drawStackInfo(crucible.recipeStack, x, y, 61, 16, "gui.crucible.side.alloy");
 
         this.drawCustomInfoStat(x, y, guiLeft + 125, guiTop + 81, 34, 7, x, y, new String[] { String.format(Locale.US, "%,d", crucible.progress) + " / " + String.format(Locale.US, "%,d", crucible.processTime) + "TU" });
         this.drawCustomInfoStat(x, y, guiLeft + 125, guiTop + 90, 34, 7, x, y, new String[] { String.format(Locale.US, "%,d", crucible.heat) + " / " + String.format(Locale.US, "%,d", crucible.maxHeat) + "TU" });
-
-        if(guiLeft + 106 <= x && guiLeft + 106 + 18 > x && guiTop + 80 < y && guiTop + 80 + 18 >= y) {
-            if(this.crucible.recipe != null && CrucibleRecipes.INSTANCE.recipeNameMap.containsKey(this.crucible.recipe)) {
-                CrucibleRecipe recipe = CrucibleRecipes.INSTANCE.recipeNameMap.get(this.crucible.recipe);
-                this.drawHoveringText(recipe.print(), x, y);
-            } else {
-                this.drawHoveringText(TextFormatting.YELLOW + I18nUtil.resolveKey("gui.recipe.setRecipe"), x, y);
-            }
-        }
-    }
-
-    @Override
-    protected void mouseClicked(int x, int y, int button) throws IOException {
-        super.mouseClicked(x, y, button);
-
-        if(this.checkClick(x, y, 106, 80, 18, 18)) {
-            GUIScreenRecipeSelector.openSelector(CrucibleRecipes.INSTANCE, crucible, crucible.recipe, 0, null, this);
-        }
     }
 
     @Override
     protected void drawGuiContainerForegroundLayer(int i, int j) {
+        String name = I18n.format(this.crucible.getName());
+        this.fontRenderer.drawString(name, this.xSize / 2 - this.fontRenderer.getStringWidth(name) / 2, 6, 0xffffff);
         this.fontRenderer.drawString(I18n.format("container.inventory"), 8, this.ySize - 96 + 2, 4210752);
     }
 
@@ -84,23 +63,22 @@ public class GUICrucible extends GuiInfoContainer {
         int hGauge = crucible.heat * 33 / TileEntityCrucible.maxHeat;
         if(hGauge > 0) drawTexturedModalRect(guiLeft + 126, guiTop + 91, 176, 5, hGauge, 5);
 
-        GenericRecipe recipe = CrucibleRecipes.INSTANCE.recipeNameMap.get(crucible.recipe);
-        this.renderItem(recipe != null ? recipe.getIcon() : TEMPLATE_FOLDER, 107, 81);
-
-        Minecraft.getMinecraft().getTextureManager().bindTexture(texture);
         if(!crucible.recipeStack.isEmpty()) drawStack(crucible.recipeStack, TileEntityCrucible.recipeZCapacity, 62, 97);
         if(!crucible.wasteStack.isEmpty()) drawStack(crucible.wasteStack, TileEntityCrucible.wasteZCapacity, 17, 97);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
     }
 
-    protected void drawStackInfo(List<Mats.MaterialStack> stack, int mouseX, int mouseY, int x, int y) {
+    protected void drawStackInfo(List<Mats.MaterialStack> stack, int mouseX, int mouseY, int x, int y, String side) {
         List<String> tempList = new ArrayList<>();
+        tempList.add("§6" + I18nUtil.resolveKey(side));
 
         if (stack.isEmpty())
-            tempList.add(TextFormatting.RED + "Empty");
-
-        for (Mats.MaterialStack sta : stack) {
-            tempList.add(TextFormatting.YELLOW + I18nUtil.resolveKey(sta.material.getTranslationKey()) + ": " + Mats.formatAmount(sta.amount, Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)));
-        }
+            tempList.add("§cEmpty");
+        else
+            for (int i = stack.size() - 1; i >= 0; i--) {
+                Mats.MaterialStack sta = stack.get(i);
+                tempList.add("§e" + I18nUtil.resolveKey(sta.material.getTranslationKey()) + ": " + Mats.formatAmount(sta.amount, Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)));
+            }
 
         String[] list = tempList.toArray(new String[0]);
         this.drawCustomInfoStat(mouseX, mouseY, guiLeft + x, guiTop + y, 36, 81, mouseX, mouseY, list);
@@ -118,12 +96,11 @@ public class GUICrucible extends GuiInfoContainer {
 
             int targetHeight = (lastQuant + sta.amount) * 79 / capacity;
 
-            if(lastHeight == targetHeight) continue; //skip draw calls that would be 0 pixels high
+            if(lastHeight == targetHeight) continue;
 
-            int offset = sta.material.smeltable == NTMMaterial.SmeltingBehavior.ADDITIVE ? 34 : 0; //additives use a differnt texture
+            int offset = sta.material.smeltable == NTMMaterial.SmeltingBehavior.ADDITIVE ? 34 : 0;
 
             int hex = sta.material.moltenColor;
-            //hex = 0xC18336;
             Color color = new Color(hex);
             GlStateManager.color(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F);
             drawTexturedModalRect(guiLeft + x, guiTop + y - targetHeight, 176 + offset, 89 - targetHeight, 34, targetHeight - lastHeight);

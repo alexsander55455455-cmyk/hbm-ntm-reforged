@@ -50,6 +50,10 @@ public class ItemSwordAbility extends ItemSword implements IDynamicModels, IClai
 	String texturePath;
 
 	public ItemSwordAbility(float damage, double attackSpeed, double movement, ToolMaterial material, String s) {
+		this(damage, attackSpeed, movement, material, s, true);
+	}
+
+	public ItemSwordAbility(float damage, double attackSpeed, double movement, ToolMaterial material, String s, boolean useDynamicItemModel) {
 		super(material);
 		this.damage = damage;
 		this.movement = movement;
@@ -57,29 +61,19 @@ public class ItemSwordAbility extends ItemSword implements IDynamicModels, IClai
 		this.setTranslationKey(s);
 		this.setRegistryName(s);
 		this.texturePath = s;
-		INSTANCES.add(this);
-
 		ModItems.ALL_ITEMS.add(this);
-        ClaimedModelLocationRegistry.register(this);
-	}
-	public ItemSwordAbility(float damage, double attackSpeed, double movement, ToolMaterial material, String s, boolean useBakedModel) {
-		super(material);
-		this.damage = damage;
-		this.movement = movement;
-		this.attackSpeed = attackSpeed;
-		this.setTranslationKey(s);
-		this.setRegistryName(s);
-
-		ModItems.ALL_ITEMS.add(this);
-        ClaimedModelLocationRegistry.register(this);
+		if (useDynamicItemModel) {
+			INSTANCES.add(this);
+			ClaimedModelLocationRegistry.register(this);
+		}
 	}
 
-	public ItemSwordAbility(float damage, double movement, ToolMaterial material, String s, boolean useBakedModel) {
-		this(damage, -2.4, movement, material, s, false);
+	public ItemSwordAbility(float damage, double movement, ToolMaterial material, String s, boolean useDynamicItemModel) {
+		this(damage, -2.4, movement, material, s, useDynamicItemModel);
 	}
 
 	public ItemSwordAbility(float damage, double movement, ToolMaterial material, String s) {
-		this(damage, -2.4, movement, material, s);
+		this(damage, -2.4, movement, material, s, true);
 	}
 
 	@Override

@@ -316,6 +316,16 @@ public class CraftingManager {
 		addRecipeAuto(new ItemStack(ModItems.battery_pack, 1, ItemBatteryPack.EnumBatteryPack.CAPACITOR_COPPER.ordinal()), "IRI", "PRP", "IRI", 'I', STEEL.plate(), 'R', CU.block(), 'P', ModItems.plate_polymer);
 
 		addRecipeAuto(new ItemStack(ModItems.battery_sc, 1, ItemBatterySC.EnumBatterySC.EMPTY.ordinal()), "PGP", "L L", "PGP", 'P', ANY_PLASTIC.ingot(), 'G', GOLD.wireFine(), 'L', PB.plate());
+		addRecipeAuto(new ItemStack(ModItems.battery_sc_uranium), "NBN", "PCP", "NBN", 'N', GOLD.nugget(), 'B', U238.billet(), 'P', PB.plate(), 'C', ModItems.thermo_element);
+		addRecipeAuto(new ItemStack(ModItems.battery_sc_technetium), "NBN", "PCP", "NBN", 'N', GOLD.nugget(), 'B', TC99.billet(), 'P', PB.plate(), 'C', ModItems.battery_sc_uranium);
+		addRecipeAuto(new ItemStack(ModItems.battery_sc_plutonium), "NBN", "PCP", "NBN", 'N', TC99.nugget(), 'B', PU238.billet(), 'P', PB.plate(), 'C', ModItems.battery_sc_technetium);
+		addRecipeAuto(new ItemStack(ModItems.battery_sc_polonium), "NBN", "PCP", "NBN", 'N', TC99.nugget(), 'B', PO210.billet(), 'P', ANY_PLASTIC.ingot(), 'C', ModItems.battery_sc_plutonium);
+		addRecipeAuto(new ItemStack(ModItems.battery_sc_gold), "NBN", "PCP", "NBN", 'N', TA.nugget(), 'B', AU198.billet(), 'P', ANY_PLASTIC.ingot(), 'C', ModItems.battery_sc_polonium);
+		addRecipeAuto(new ItemStack(ModItems.battery_sc_lead), "NBN", "PCP", "NBN", 'N', TA.nugget(), 'B', PB209.billet(), 'P', ANY_PLASTIC.ingot(), 'C', ModItems.battery_sc_gold);
+		addRecipeAuto(new ItemStack(ModItems.battery_sc_americium), "NBN", "PCP", "NBN", 'N', TA.nugget(), 'B', AM241.billet(), 'P', ANY_PLASTIC.ingot(), 'C', ModItems.battery_sc_lead);
+		addRecipeAuto(new ItemStack(ModItems.battery_sc_balefire), "NBN", "PCP", "NBN", 'N', ModItems.nugget_radspice, 'B', ModItems.pellet_rtg_balefire, 'P', ANY_PLASTIC.ingot(), 'C', ModItems.battery_sc_americium);
+		addRecipeAuto(new ItemStack(ModItems.battery_sc_schrabidium), "NBN", "PCP", "NBN", 'N', ModItems.nugget_unobtainium_greater, 'B', SA326.billet(), 'P', ANY_PLASTIC.ingot(), 'C', ModItems.battery_sc_balefire);
+		addRecipeAuto(new ItemStack(ModBlocks.block_coal_infernal), "CCC", "CCC", "CCC", 'C', ModItems.coal_infernal);
 		addShapelessAuto(new ItemStack(ModItems.battery_sc, 1, ItemBatterySC.EnumBatterySC.WASTE.ordinal()), DictFrame.fromOne(ModItems.battery_sc, ItemBatterySC.EnumBatterySC.EMPTY), ModItems.billet_nuclear_waste, ModItems.billet_nuclear_waste);
 		addShapelessAuto(new ItemStack(ModItems.battery_sc, 1, ItemBatterySC.EnumBatterySC.RA226.ordinal()), DictFrame.fromOne(ModItems.battery_sc, ItemBatterySC.EnumBatterySC.EMPTY), RA226.billet(), RA226.billet());
 		addShapelessAuto(new ItemStack(ModItems.battery_sc, 1, ItemBatterySC.EnumBatterySC.TC99.ordinal()), DictFrame.fromOne(ModItems.battery_sc, ItemBatterySC.EnumBatterySC.EMPTY), TC99.billet(), TC99.billet());
@@ -772,6 +782,10 @@ public class CraftingManager {
 		addRecipeAuto(new ItemStack(ModBlocks.barrel_antimatter, 1), "IPI", "I I", "IPI", 'I', BIGMT.plate(), 'P', ModItems.coil_advanced_torus);
 		addRecipeAuto(new ItemStack(ModBlocks.tesla, 1), "CCC", "PIP", "WTW", 'C', ModItems.coil_copper, 'I', IRON.ingot(), 'P', ANY_PLASTIC.ingot(), 'T', ModBlocks.machine_transformer, 'W', KEY_PLANKS );
 		addRecipeAuto(new ItemStack(ModBlocks.struct_watz_core, 1), "CBC", "BHB", "CBC", 'C', DictFrame.fromOne(ModItems.circuit, EnumCircuitType.ADVANCED), 'B', ANY_RESISTANTALLOY.plateCast(), 'H', ModBlocks.watz_cooler );
+		addRecipeAuto(new ItemStack(ModBlocks.fwatz_cooler, 2), "III", "IPI", "III", 'I', SBD.ingot(), 'P', ModItems.thermo_unit_endo);
+		addRecipeAuto(new ItemStack(ModBlocks.fwatz_tank, 1), "CGC", "GGG", "CGC", 'C', CMB.plate(), 'G', KEY_ANYPANE);
+		addRecipeAuto(new ItemStack(ModBlocks.fwatz_scaffold, 2), "IPI", "P P", "IPI", 'I', W.ingot(), 'P', getReflector());
+		addRecipeAuto(new ItemStack(ModBlocks.fwatz_conductor, 2), "IPI", "PFP", "IPI", 'I', TI.plate(), 'P', ModItems.coil_magnetized_tungsten, 'F', ModBlocks.hadron_coil_neodymium);
 		addShapelessAuto(new ItemStack(ModBlocks.fusion_heater), ModBlocks.fusion_hatch );
 		addShapelessAuto(new ItemStack(ModItems.energy_core), ModItems.fusion_core, ModItems.fuse );
 		addRecipeAuto(new ItemStack(ModItems.catalytic_converter, 1), "PCP", "PBP", "PCP", 'P', ANY_HARDPLASTIC.ingot(), 'C', CO.dust(), 'B', ANY_BISMOID.ingot() );

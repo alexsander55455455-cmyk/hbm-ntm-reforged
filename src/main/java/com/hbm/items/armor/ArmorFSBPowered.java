@@ -108,6 +108,7 @@ public class ArmorFSBPowered extends ArmorFSB implements IBatteryItem {
     		}
     		this.dischargeBattery(stack, netto_drain);
     	}
+		super.onArmorTick(world, player, stack);
     }
 	
 	@Override

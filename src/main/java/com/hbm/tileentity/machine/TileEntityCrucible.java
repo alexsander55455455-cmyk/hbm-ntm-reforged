@@ -5,8 +5,9 @@ import com.google.gson.stream.JsonWriter;
 import com.hbm.api.block.ICrucibleAcceptor;
 import com.hbm.api.tile.IHeatSource;
 import com.hbm.blocks.BlockDummyable;
-import com.hbm.config.ServerConfig;
 import com.hbm.handler.pollution.PollutionHandler;
+import com.hbm.items.ModItems;
+import com.hbm.items.machine.ItemCrucibleTemplate;
 import com.hbm.handler.threading.PacketThreading;
 import com.hbm.interfaces.AutoRegister;
 import com.hbm.interfaces.IControlReceiver;
@@ -42,7 +43,6 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -57,8 +57,6 @@ public class TileEntityCrucible extends TileEntityMachineBase implements IGUIPro
 
     public int heat;
     public int progress;
-
-    public String recipe = "null";
 
     public volatile List<Mats.MaterialStack> recipeStack = new ArrayList<>();
     public volatile List<Mats.MaterialStack> wasteStack = new ArrayList<>();
@@ -259,8 +257,6 @@ public class TileEntityCrucible extends TileEntityMachineBase implements IGUIPro
         buf.writeInt(progress);
         buf.writeInt(heat);
 
-        ByteBufUtils.writeUTF8String(buf, recipe);
-
         buf.writeShort(recipeStack.size());
         for(Mats.MaterialStack sta : recipeStack) {
             if (sta.material == null)
@@ -286,8 +282,6 @@ public class TileEntityCrucible extends TileEntityMachineBase implements IGUIPro
         progress = buf.readInt();
         heat = buf.readInt();
 
-        recipe = ByteBufUtils.readUTF8String(buf);
-
         int rLen = buf.readShort() & 0xFFFF;
         List<Mats.MaterialStack> newRecipe = new ArrayList<>(rLen);
         for (int i = 0; i < rLen; i++) {
@@ -310,7 +304,7 @@ public class TileEntityCrucible extends TileEntityMachineBase implements IGUIPro
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
 
-        this.recipe = nbt.getString("recipe");
+        String legacyRecipe = nbt.getString("recipe");
 
         int[] rec = nbt.getIntArray("rec");
         for(int i = 0; i < rec.length / 2; i++) {
@@ -324,13 +318,20 @@ public class TileEntityCrucible extends TileEntityMachineBase implements IGUIPro
 
         this.progress = nbt.getInteger("progress");
         this.heat = nbt.getInteger("heat");
+
+        if (inventory.getStackInSlot(0).isEmpty() && legacyRecipe != null && !legacyRecipe.isEmpty() && !"null".equals(legacyRecipe)
+                && CrucibleRecipes.INSTANCE.recipeNameMap.containsKey(legacyRecipe)) {
+            CrucibleRecipe migrated = CrucibleRecipes.INSTANCE.recipeNameMap.get(legacyRecipe);
+            int meta = ItemCrucibleTemplate.getMeta(migrated);
+            if (meta >= 0) {
+                inventory.setStackInSlot(0, new ItemStack(ModItems.crucible_template, 1, meta));
+            }
+        }
     }
 
     @NotNull
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-
-        nbt.setString("recipe", this.recipe);
 
         int[] rec = new int[recipeStack.size() * 2];
         int[] was = new int[wasteStack.size() * 2];
@@ -394,7 +395,7 @@ public class TileEntityCrucible extends TileEntityMachineBase implements IGUIPro
             for(Mats.MaterialStack material : materials) {
                 boolean recipeMaterial = recipe != null && (getQuantaFromType(recipe.input, material.material) > 0 || getQuantaFromType(recipe.output, material.material) > 0);
 
-                if((recipe == null && !ServerConfig.LEGACY_CRUCIBLE_RULES.get()) || recipeMaterial) {
+                if(recipeMaterial) {
                     this.addToStack(this.recipeStack, material);
                 } else {
                     this.addToStack(this.wasteStack, material);
@@ -451,64 +452,48 @@ public class TileEntityCrucible extends TileEntityMachineBase implements IGUIPro
 
     @Override
     public boolean isItemValidForSlot(int i, ItemStack stack) {
+        if(i == 0) {
+            return stack.getItem() == ModItems.crucible_template;
+        }
+
         return isItemSmeltable(stack);
     }
 
     public boolean isItemSmeltable(ItemStack stack) {
+        if(stack.isEmpty()) return false;
 
         List<Mats.MaterialStack> materials = Mats.getSmeltingMaterialsFromItem(stack);
 
-        //if there's no materials in there at all, don't smelt
         if(materials.isEmpty())
             return false;
+
         CrucibleRecipe recipe = getLoadedRecipe();
-
-        //needs to be true, will always be true if there's no recipe loaded
-        boolean matchesRecipe = recipe == null;
-
-        //the amount of material in the entire recipe input
         int recipeContent = recipe != null ? recipe.getInputAmount() : 0;
-        //the total amount of the current waste stack, used for simulation
         int recipeAmount = getQuantaFromType(this.recipeStack, null);
         int wasteAmount = getQuantaFromType(this.wasteStack, null);
 
         for(Mats.MaterialStack mat : materials) {
-            //if no recipe is loaded, everything will land in the waste stack
             int recipeInputRequired = recipe != null ? getQuantaFromType(recipe.input, mat.material) : 0;
 
-            //this allows pouring the output material back into the crucible
             if(recipe != null && getQuantaFromType(recipe.output, mat.material) > 0) {
                 recipeAmount += mat.amount;
-                matchesRecipe = true;
                 continue;
             }
 
             if(recipeInputRequired == 0) {
-                // if no recipe is set and legacy support is turned off, throw everything into the recipe stack
-                if(recipe == null && !ServerConfig.LEGACY_CRUCIBLE_RULES.get()) {
-                    recipeAmount += mat.amount;
-                } else {
-                    //if this type isn't required by the recipe, add it to the waste stack
-                    wasteAmount += mat.amount;
-                }
+                wasteAmount += mat.amount;
             } else {
-
-                //the maximum is the recipe's ratio scaled up to the recipe stack's capacity
                 int matMaximum = recipeInputRequired * recipeZCapacity / recipeContent;
                 int amountStored = getQuantaFromType(recipeStack, mat.material);
 
-                matchesRecipe = true;
-
                 recipeAmount += mat.amount;
 
-                //if the amount of that input would exceed the amount dictated by the recipe, return false
                 if(amountStored + mat.amount > matMaximum)
                     return false;
             }
         }
 
-        //if the amount doesn't exceed the capacity and the recipe matches (or isn't null), return true
-        return recipeAmount <= recipeZCapacity && wasteAmount <= wasteZCapacity && matchesRecipe;
+        return recipeAmount <= recipeZCapacity && wasteAmount <= wasteZCapacity;
     }
 
     public void addToStack(List<Mats.MaterialStack> stack, Mats.MaterialStack matStack) {
@@ -524,7 +509,12 @@ public class TileEntityCrucible extends TileEntityMachineBase implements IGUIPro
     }
 
     public CrucibleRecipe getLoadedRecipe() {
-        return CrucibleRecipes.INSTANCE.recipeNameMap.get(recipe);
+        ItemStack template = inventory.getStackInSlot(0);
+        if(!template.isEmpty() && template.getItem() == ModItems.crucible_template) {
+            return ItemCrucibleTemplate.getRecipe(template);
+        }
+
+        return null;
     }
 
     /* "Arrays and Lists don't have a common ancestor" my fucking ass */
@@ -666,13 +656,5 @@ public class TileEntityCrucible extends TileEntityMachineBase implements IGUIPro
 
     @Override
     public void receiveControl(NBTTagCompound data) {
-        if(data.hasKey("index") && data.hasKey("selection")) {
-            int index = data.getInteger("index");
-            String selection = data.getString("selection");
-            if(index == 0) {
-                this.recipe = selection;
-                this.markDirty();
-            }
-        }
     }
 }

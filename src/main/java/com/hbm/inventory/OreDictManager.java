@@ -229,6 +229,8 @@ public class OreDictManager {
     public static final DictFrame LATEX = new DictFrame("Latex");
     public static final DictFrame RUBBER = new DictFrame("Rubber");
     public static final DictFrame MAGTUNG = new DictFrame("MagnetizedTungsten");
+    public static final DictFrame TUNGCAR = new DictFrame("TungCar");
+    public static final DictFrame METEOR = new DictFrame("Meteor");
     public static final DictFrame CMB = new DictFrame("CMBSteel");
     public static final DictFrame DESH = new DictFrame("WorkersAlloy");
     public static final DictFrame STAR = new DictFrame("Starmetal");
@@ -412,7 +414,7 @@ public class OreDictManager {
     public static void registerOres() {
 
         //VANILLA - Fixed
-        COAL.gem(Items.COAL).dustSmall(powder_coal_tiny).dust(powder_coal);
+        COAL.coal(1F).gem(Items.COAL).dustSmall(powder_coal_tiny).dust(powder_coal).block(Blocks.COAL_BLOCK).crystal(crystal_coal);
         IRON.crystal(crystal_iron).plate(plate_iron).dust(powder_iron).ore(ore_gneiss_iron);
         GOLD.crystal(crystal_gold).plate(plate_gold).dust(powder_gold).ore(ore_gneiss_gold);
         LAPIS.crystal(crystal_lapis).dust(powder_lapis);
@@ -452,7 +454,7 @@ public class OreDictManager {
         SBD.rad(HazardRegistry.sb).blinding(50F).ingot(ingot_schrabidate).dust(powder_schrabidate).block(block_schrabidate);
         SRN.rad(HazardRegistry.sr).blinding(50F).ingot(ingot_schraranium).block(block_schraranium).crystal(crystal_schraranium);
         GH336.rad(HazardRegistry.gh336).nugget(nugget_gh336).billet(billet_gh336).ingot(ingot_gh336);
-        MUD.rad(HazardRegistry.mud).ingot(ingot_mud);
+        MUD.rad(HazardRegistry.mud).toxic(200F).ingot(ingot_mud);
 
         /*
          * STABLE
@@ -464,14 +466,14 @@ public class OreDictManager {
         W.ingot(ingot_tungsten).dust(powder_tungsten).crystal(crystal_tungsten).block(block_tungsten).ore(ore_tungsten, ore_nether_tungsten).oreNether(ore_nether_tungsten);
         AL.ingot(ingot_aluminium).dust(powder_aluminium).crystal(crystal_aluminium).plate(plate_aluminium).block(block_aluminium).ore(ore_aluminium);
         STEEL.ingot(ingot_steel).dustSmall(powder_steel_tiny).dust(powder_steel).plate(plate_steel).block(block_steel);
-        TCALLOY.ingot(ingot_tcalloy).dust(powder_tcalloy).block(block_tcalloy);
+        TCALLOY.rad(HazardRegistry.tcalloy).ingot(ingot_tcalloy).dust(powder_tcalloy).block(block_tcalloy);
         CDALLOY.ingot(ingot_cdalloy).block(block_cdalloy);
         BBRONZE.ingot(ingot_bismuth_bronze);
         ABRONZE.ingot(ingot_arsenic_bronze);
         BSCCO.ingot(ingot_bscco);
-        PB.nugget(nugget_lead).ingot(ingot_lead).crystal(crystal_lead).dust(powder_lead).plate(plate_lead).block(block_lead).ore(ore_lead);
+        PB.toxic(1F).nugget(nugget_lead).ingot(ingot_lead).crystal(crystal_lead).dust(powder_lead).plate(plate_lead).block(block_lead).ore(ore_lead);
         BI.nugget(nugget_bismuth).billet(billet_bismuth).ingot(ingot_bismuth).dust(powder_bismuth).block(block_bismuth);
-        AS.nugget(nugget_arsenic).ingot(ingot_arsenic);
+        AS.toxic(50F).nugget(nugget_arsenic).ingot(ingot_arsenic);
         CA.ingot(ingot_calcium).dust(powder_calcium);
         CD.ingot(ingot_cadmium).dust(powder_cadmium).block(block_cadmium);
         TA.nugget(nugget_tantalium).gem(gem_tantalium).ingot(ingot_tantalium).dust(powder_tantalium).block(block_tantalium);
@@ -491,14 +493,16 @@ public class OreDictManager {
         //PET																	.ingot(ingot_pet); Oh yeah this one was commented by HBM himself for some reason
         PC.ingot(ingot_pc);
         PVC.ingot(ingot_pvc);
-        MAGTUNG.ingot(ingot_magnetized_tungsten).dust(powder_magnetized_tungsten).block(block_magnetized_tungsten);
+        MAGTUNG.rad(HazardRegistry.magt).ingot(ingot_magnetized_tungsten).dust(powder_magnetized_tungsten).block(block_magnetized_tungsten);
+        TUNGCAR.plate(neutron_reflector);
+        METEOR.dust(powder_meteorite).dustSmall(powder_meteorite_tiny).block(block_meteor_broken).gem(fragment_meteorite);
         CMB.ingot(ingot_combine_steel).dust(powder_combine_steel).plate(plate_combine_steel).block(block_combine_steel);
         DESH.nugget(nugget_desh).ingot(ingot_desh).dust(powder_desh).block(block_desh);
         STAR.ingot(ingot_starmetal).block(block_starmetal).crystal(crystal_starmetal);
         GUNMETAL.ingot(ingot_gunmetal).plate(plate_gunmetal);
         WEAPONSTEEL.ingot(ingot_weaponsteel).plate(plate_weaponsteel);
         BIGMT.ingot(ingot_saturnite).plate(plate_saturnite);
-        FERRO.ingot(ingot_ferrouranium);
+        FERRO.rad(HazardRegistry.ferro).ingot(ingot_ferrouranium);
         EUPH.nugget(nugget_euphemium).ingot(ingot_euphemium).dust(powder_euphemium).block(block_euphemium);
         DNT.nugget(nugget_dineutronium).ingot(ingot_dineutronium).dust(powder_dineutronium).block(block_dineutronium);
         FIBER.ingot(ingot_fiberglass).block(block_fiberglass);
@@ -511,7 +515,9 @@ public class OreDictManager {
         S.dust(sulfur).block(block_sulfur).crystal(crystal_sulfur).ore(ore_sulfur, ore_nether_sulfur ,DictFrame.fromOne(basalt_ore, EnumBasaltOreType.SULFUR), DictFrame.fromOne(stone_resource, EnumStoneType.SULFUR)).oreNether(ore_nether_sulfur);
         KNO.dust(niter).block(block_niter).crystal(crystal_niter).ore(ore_niter);
         F.dust(fluorite).block(block_fluorite).crystal(crystal_fluorite).ore(ore_fluorite, DictFrame.fromOne(basalt_ore, EnumBasaltOreType.FLUORITE));
-        LIGNITE.gem(lignite).dust(powder_lignite).ore(ore_lignite);
+        LIGNITE.coal(1F).gem(lignite).dust(powder_lignite).ore(ore_lignite);
+        INFERNAL.hot(4F).coal(20F).block(block_coal_infernal).gem(coal_infernal).ore(ore_nether_coal);
+        ANY_COKE.coal(1F);
         COALCOKE.gem(fromOne(coke, EnumCokeType.COAL)).block(fromOne(block_coke, EnumCokeType.COAL));
         PETCOKE.gem(fromOne(coke, EnumCokeType.PETROLEUM)).block(fromOne(block_coke, EnumCokeType.PETROLEUM));
         LIGCOKE.gem(fromOne(coke, EnumCokeType.LIGNITE)).block(fromOne(block_coke, EnumCokeType.LIGNITE));
@@ -565,7 +571,7 @@ public class OreDictManager {
         AT.ingot(ingot_astatine).dust(powder_astatine);
         CS.ingot(ingot_caesium).dust(powder_caesium);
 //        SR.ingot(ingot_strontium).dust(powder_strontium);
-        BR.ingot(ingot_bromine).dust(powder_bromine);
+        BR.toxic(5F).ingot(ingot_bromine).dust(powder_bromine);
         TS.ingot(ingot_tennessine).dust(powder_tennessine);
 
         /*
@@ -1087,6 +1093,10 @@ public class OreDictManager {
 
         public DictFrame coal(float h) {
             return this.haz(new HazardEntry(HazardRegistry.COAL, h));
+        }
+
+        public DictFrame toxic(float h) {
+            return this.haz(new HazardEntry(HazardRegistry.TOXIC, h));
         }
 
         public DictFrame exposive(float h) {

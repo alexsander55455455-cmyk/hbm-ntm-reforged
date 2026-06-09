@@ -47,8 +47,10 @@ import com.hbm.render.anim.HbmAnimations;
 import com.hbm.render.anim.HbmAnimations.Animation;
 import com.hbm.render.anim.HbmAnimations.BlenderAnimation;
 import com.hbm.render.anim.sedna.HbmAnimationsSedna;
+
 import com.hbm.render.item.weapon.ItemRenderGunEgon;
 import com.hbm.render.item.weapon.sedna.ItemRenderWeaponBase;
+
 import com.hbm.render.misc.BeamPronter;
 import com.hbm.render.misc.RenderAccessoryUtility;
 import com.hbm.render.misc.RenderScreenOverlay;
@@ -93,6 +95,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
@@ -103,6 +106,7 @@ import net.minecraft.util.MovementInput;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.*;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -691,43 +695,23 @@ public class ModEventHandlerClient {
             //GLUON GUN//
             if (player.getHeldItemMainhand().getItem() == ModItems.gun_egon && ItemGunEgon.activeTicks > 0 && Minecraft.getMinecraft().gameSettings.thirdPersonView == 0) {
                 GlStateManager.pushMatrix();
-                float[] angles = ItemGunEgon.getBeamDirectionOffset(player.world.getTotalWorldTime() + partialTicks);
-                Vec3d look = Library.changeByAngle(player.getLook(partialTicks), angles[0], angles[1]);
-                RayTraceResult r = Library.rayTraceIncludeEntitiesCustomDirection(player, look, 50, partialTicks);
-                Vec3d pos = player.getPositionEyes(partialTicks);
-                Vec3d hitPos = pos.add(look.scale(50));
-                if (r != null && r.typeOfHit != Type.MISS) {
-                    hitPos = r.hitVec.add(look.scale(-0.1));
-                }
-                float[] offset = ItemRenderGunEgon.getOffset(player.world.getTotalWorldTime() + partialTicks);
-                //I'll at least attempt to make it look consistent at different fovs
-                float fovDiff = (currentFOV - 70) * 0.0002F;
-                Vec3d start = new Vec3d(-0.18 + offset[0] * 0.075F - fovDiff, -0.2 + offset[1] * 0.1F, 0.35 - fovDiff * 30);
-                start = start.rotatePitch((float) Math.toRadians(-(player.prevRotationPitch + (player.rotationPitch - player.prevRotationPitch) * partialTicks)));
-                start = start.rotateYaw((float) Math.toRadians(-(player.prevRotationYaw + (player.rotationYaw - player.prevRotationYaw) * partialTicks)));
-
-                start = start.add(0, player.getEyeHeight(), 0);
-                GlStateManager.translate(start.x, start.y, start.z);
-                BeamPronter.gluonBeam(new Vec3d(0, 0, 0), hitPos.subtract(pos).subtract(start.subtract(0, player.getEyeHeight(), 0)), 0.4F);
+                ItemRenderGunEgon.renderGluonBeam(player, partialTicks, true);
                 GlStateManager.popMatrix();
-
             }
         }
 
         for (EntityPlayer player : Minecraft.getMinecraft().world.playerEntities) {
 
             //FSB world rendering
-//            if (ArmorFSB.hasFSBArmor(player)) {
-//                ItemStack plate = player.inventory.armorInventory.get(2);
-//                ArmorFSB chestplate = (ArmorFSB) plate.getItem();
-//                if (chestplate.flashlightPosition != null && plate.hasTagCompound() && plate.getTagCompound().getBoolean("flActive")) {
-//                    Vec3d start = chestplate.flashlightPosition.rotatePitch(-(float) Math.toRadians(player.rotationPitch)).rotateYaw(-(float) Math.toRadians(player.rotationYaw)).add(player.getPositionEyes(partialTicks));
-//                    boolean volume = true;
-//                    if (player == Minecraft.getMinecraft().player && Minecraft.getMinecraft().gameSettings.thirdPersonView == 0)
-//                        volume = false;
-//                    LightRenderer.addFlashlight(start, start.add(player.getLook(partialTicks).scale(30)), 30, 200, ResourceManager.fl_cookie, volume, true, true, true);
-//                }
-//            }
+            if (ArmorFSB.hasFSBArmor(player)) {
+                ItemStack plate = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+                ArmorFSB chestplate = (ArmorFSB) plate.getItem();
+                if (chestplate.flashlightPosition != null && plate.hasTagCompound() && plate.getTagCompound().getBoolean("flActive")) {
+                    Vec3d start = chestplate.flashlightPosition.rotatePitch(-(float) Math.toRadians(player.rotationPitch)).rotateYaw(-(float) Math.toRadians(player.rotationYaw)).add(player.getPositionEyes(partialTicks));
+                    boolean volume = player != Minecraft.getMinecraft().player || Minecraft.getMinecraft().gameSettings.thirdPersonView != 0;
+                    LightRenderer.addFlashlight(start, start.add(player.getLook(partialTicks).scale(30)), 30, 200, ResourceManager.fl_cookie, volume, true, true, true);
+                }
+            }
 
             //Gun world rendering
             if (player.getHeldItemMainhand().getItem() instanceof ItemGunBase) {
@@ -822,7 +806,7 @@ public class ModEventHandlerClient {
             ItemStack plate = player.inventory.armorInventory.get(2);
             ArmorFSB chestplate = (ArmorFSB) plate.getItem();
 
-            if (chestplate.vats && ClientConfig.HEALTHBAR_HUD.get()) {
+            if (chestplate.vats) {
 
                 int count = (int) Math.min(event.getEntity().getMaxHealth(), 100);
 
@@ -1049,10 +1033,6 @@ public class ModEventHandlerClient {
         }
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         ItemStack helmet = player.inventory.armorInventory.get(3);
-
-        if (helmet.getItem() instanceof ArmorFSB) {
-            ((ArmorFSB) helmet.getItem()).handleOverlay(event, player);
-        }
 
         // NUKE GUI SHAKE //
         if (event.getType() == ElementType.HOTBAR && (ModEventHandlerClient.shakeTimestamp + ModEventHandlerClient.shakeDuration - System.currentTimeMillis()) > 0 && ClientConfig.NUKE_HUD_SHAKE.get()) {
@@ -1302,27 +1282,11 @@ public class ModEventHandlerClient {
     public void postRenderPlayer(RenderPlayerEvent.Post event) {
         JetpackHandler.postRenderPlayer(event.getEntityPlayer());
         EntityPlayer player = event.getEntityPlayer();
-        //GLUON GUN//
         boolean firing = player == Minecraft.getMinecraft().player ? ItemGunEgon.m1 && Library.countInventoryItem(player.inventory, ItemGunEgon.getBeltType(player, player.getHeldItemMainhand(), true)) >= 2 : ItemGunEgon.getIsFiring(player.getHeldItemMainhand());
         EgonBackpackRenderer.showBackpack = false;
         if (player.getHeldItemMainhand().getItem() == ModItems.gun_egon && firing) {
             GlStateManager.pushMatrix();
-            float partialTicks = event.getPartialRenderTick();
-            float[] angles = ItemGunEgon.getBeamDirectionOffset(player.world.getTotalWorldTime() + partialTicks);
-            Vec3d look = Library.changeByAngle(player.getLook(partialTicks), angles[0], angles[1]);
-            RayTraceResult r = Library.rayTraceIncludeEntitiesCustomDirection(player, look, 50, event.getPartialRenderTick());
-            Vec3d pos = player.getPositionEyes(event.getPartialRenderTick());
-            Vec3d hitPos = pos.add(look.scale(50));
-            if (r != null && r.typeOfHit != Type.MISS) {
-                hitPos = r.hitVec.add(look.scale(-0.1));
-            }
-            Vec3d start = new Vec3d(-0.18, -0.1, 0.35);
-            start = start.rotatePitch((float) Math.toRadians(-(player.prevRotationPitch + (player.rotationPitch - player.prevRotationPitch) * partialTicks)));
-            start = start.rotateYaw((float) Math.toRadians(-(player.prevRotationYaw + (player.rotationYaw - player.prevRotationYaw) * partialTicks)));
-
-            Vec3d diff = player.getPositionEyes(partialTicks).subtract(TileEntityRendererDispatcher.staticPlayerX, TileEntityRendererDispatcher.staticPlayerY, TileEntityRendererDispatcher.staticPlayerZ);
-            GlStateManager.translate(start.x + diff.x, start.y + diff.y, start.z + diff.z);
-            BeamPronter.gluonBeam(new Vec3d(0, 0, 0), hitPos.subtract(pos).subtract(start), 0.4F);
+            ItemRenderGunEgon.renderGluonBeam(player, event.getPartialRenderTick(), false);
             GlStateManager.popMatrix();
         }
     }
@@ -1342,18 +1306,12 @@ public class ModEventHandlerClient {
 
         boolean m1 = ItemGunBase.m1;
         boolean m2 = ItemGunBase.m2;
-        if (!player.getHeldItem(EnumHand.MAIN_HAND).isEmpty() && (player.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemGunBase ||
-                player.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemGunBaseNT)) {
-
-            if (event.getButton() >= 0 && event.getButton() <= 2) {
-                BlockPos selected = Minecraft.getMinecraft().objectMouseOver.getBlockPos();
-                //mlbv: the suppression below has to be added to avoid IntelliJ thinking it's NotNull
-                //noinspection ConstantValue
-                if (selected != null && !(player.world.getBlockState(selected).getBlock() instanceof IGunClickable))
-                    event.setCanceled(true);
-            }
+        if (!player.getHeldItem(EnumHand.MAIN_HAND).isEmpty()) {
             Item item = player.getHeldItem(EnumHand.MAIN_HAND).getItem();
             if (item instanceof ItemGunBase weapon) {
+                if (event.getButton() == 0)
+                    event.setCanceled(true);
+
                 if (event.getButton() == 0 && !m1 && !m2) {
                     ItemGunBase.m1 = true;
                     PacketDispatcher.wrapper.sendToServer(new GunButtonPacket(true, (byte) 0, EnumHand.MAIN_HAND));
@@ -1362,6 +1320,14 @@ public class ModEventHandlerClient {
                     ItemGunBase.m2 = true;
                     PacketDispatcher.wrapper.sendToServer(new GunButtonPacket(true, (byte) 1, EnumHand.MAIN_HAND));
                     weapon.startActionClient(player.getHeldItemMainhand(), player.world, player, false, EnumHand.MAIN_HAND);
+                }
+            } else if (item instanceof ItemGunBaseNT) {
+                if (event.getButton() >= 0 && event.getButton() <= 2) {
+                    RayTraceResult mouseOver = Minecraft.getMinecraft().objectMouseOver;
+                    boolean allowClick = mouseOver != null && mouseOver.typeOfHit == RayTraceResult.Type.BLOCK
+                            && player.world.getBlockState(mouseOver.getBlockPos()).getBlock() instanceof IGunClickable;
+                    if (!allowClick)
+                        event.setCanceled(true);
                 }
             }
         }
@@ -1544,6 +1510,12 @@ public class ModEventHandlerClient {
                     }
                 }
             }
+        }
+
+        /// FLUIDS ///
+        net.minecraftforge.fluids.FluidStack fluidStack = net.minecraftforge.fluids.FluidUtil.getFluidContained(stack);
+        if (fluidStack != null) {
+            com.hbm.forgefluid.FFUtils.addFluidInfo(fluidStack.getFluid(), list, event.getFlags().isAdvanced());
         }
 
         /// NEUTRON RADS ///

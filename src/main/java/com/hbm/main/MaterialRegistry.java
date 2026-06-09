@@ -15,6 +15,7 @@ public final class MaterialRegistry {
     // Armor Materials
     // Drillgon200: I have no idea what the two strings and the number at the
     // end are.
+    public static ArmorMaterial enumArmorMaterialT45;
     public static ArmorMaterial enumArmorMaterialT51;
     public static ArmorMaterial aMatBJ;
     public static ArmorMaterial aMatAJR;
@@ -72,6 +73,7 @@ public final class MaterialRegistry {
     public static ToolMaterial matHF;
 
     public static void init() {
+         enumArmorMaterialT45 = EnumHelper.addArmorMaterial(Tags.MODID + ":T45", Tags.MODID + ":T45", 150, new int[]{3, 6, 8, 3}, 0, SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 2.0F);
          enumArmorMaterialT51 = EnumHelper.addArmorMaterial(Tags.MODID + ":T51", Tags.MODID + ":T51", 150, new int[]{3, 8, 6, 3}, 0, SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 2.0F);
          aMatBJ = EnumHelper.addArmorMaterial(Tags.MODID + ":BLACKJACK", Tags.MODID + ":HBM_BLACKJACK", 150, new int[]{3, 6, 8, 3}, 100, SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 2.0F);
          aMatAJR = EnumHelper.addArmorMaterial(Tags.MODID + ":T45AJR", Tags.MODID + ":T45AJR", 150, new int[]{3, 6, 8, 3}, 100, SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 2.0F);
@@ -134,6 +136,7 @@ public final class MaterialRegistry {
        MaterialRegistry.aMatHaz.setRepairItem(new ItemStack(ModItems.hazmat_cloth));
        MaterialRegistry.aMatHaz2.setRepairItem(new ItemStack(ModItems.hazmat_cloth_red));
        MaterialRegistry.aMatHaz3.setRepairItem(new ItemStack(ModItems.hazmat_cloth_grey));
+       MaterialRegistry.enumArmorMaterialT45.setRepairItem(new ItemStack(ModItems.plate_titanium));
        MaterialRegistry.aMatBJ.setRepairItem(new ItemStack(ModItems.plate_armor_lunar));
        MaterialRegistry.aMatAJR.setRepairItem(new ItemStack(ModItems.plate_armor_ajr));
        MaterialRegistry.aMatHEV.setRepairItem(new ItemStack(ModItems.plate_armor_hev));

@@ -45,6 +45,7 @@ import com.hbm.items.weapon.sedna.ItemGunBaseNT;
 import com.hbm.items.weapon.sedna.factory.XFactory12ga;
 import com.hbm.lib.HBMSoundHandler;
 import com.hbm.lib.Library;
+import com.hbm.util.ContaminationUtil;
 import com.hbm.lib.ModDamageSource;
 import com.hbm.packet.PacketDispatcher;
 import com.hbm.packet.threading.ThreadedPacket;
@@ -367,7 +368,7 @@ public class ModEventHandler {
                         entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, new ItemStack(ModItems.mask_of_infamy, 1, world.rand.nextInt(100)));
                 }
                 if (!(hasHat || hasChest || hasLegs || hasFeet)) {
-/*                    if (randomArmorNumber < 2) { //1:32768
+                    if (randomArmorNumber < 2) { //1:32768
                         entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, new ItemStack(ModItems.dns_helmet, 1));
                         entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(ModItems.dns_plate, 1));
                         entity.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(ModItems.dns_legs, 1));
@@ -377,12 +378,7 @@ public class ModEventHandler {
                         entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(ModItems.rpa_plate, 1));
                         entity.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(ModItems.rpa_legs, 1));
                         entity.setItemStackToSlot(EntityEquipmentSlot.FEET, new ItemStack(ModItems.rpa_boots, 1));
-                    } else if (randomArmorNumber < 2 << 8) { //1:256                                            // MetalloloM: Man that's fucking unbalanced, people just gonna farm these instead of normal crafting. Can we have a config option for this? Like the chances of drop
-                        entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, new ItemStack(ModItems.ajr_helmet, 1));
-                        entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(ModItems.ajr_plate, 1));
-                        entity.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(ModItems.ajr_legs, 1));
-                        entity.setItemStackToSlot(EntityEquipmentSlot.FEET, new ItemStack(ModItems.ajr_boots, 1));
-                    }*/ if (randomArmorNumber < 2 << 8) { //1:256
+                    } else if (randomArmorNumber < 2 << 8) { //1:256
                         entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, new ItemStack(ModItems.t51_helmet, 1));
                         entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(ModItems.t51_plate, 1));
                         entity.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(ModItems.t51_legs, 1));
@@ -694,6 +690,11 @@ public class ModEventHandler {
     @SubscribeEvent
     public void onEntityHurt(LivingHurtEvent event) {
         EntityLivingBase e = event.getEntityLiving();
+        ArmorT45.handleT45Hurt(event);
+        ArmorPAA.handlePAAHurt(event);
+        ArmorAsbestosFSB.handleAsbestosHurt(event);
+        ArmorLiquidator.handleLiquidatorHurt(event);
+        ArmorFSB.handleFSBHurt(event);
         if (event.getEntityLiving() instanceof EntityPlayer player) {
             IHBMData props = HbmCapability.getData(player);
             if(props.getShield() > 0) {
@@ -746,10 +747,6 @@ public class ModEventHandler {
 
         if(e instanceof EntityPlayer player) {
 
-            /// FSB ARMOR ///
-            if(player.getItemStackFromSlot(EntityEquipmentSlot.CHEST).getItem() instanceof ArmorFSB fsb)
-                fsb.handleHurt(event);
-
             for(ItemStack stack : player.inventory.armorInventory) {
                 if(stack != null && stack.getItem() instanceof IDamageHandler) {
                     ((IDamageHandler)stack.getItem()).handleDamage(event, stack);
@@ -761,6 +758,12 @@ public class ModEventHandler {
     @SubscribeEvent
     public void onEntityAttacked(LivingAttackEvent event) {
         EntityLivingBase e = event.getEntityLiving();
+        ArmorT45.handleT45Attack(event);
+        ArmorPAA.handlePAAAttack(event);
+        ArmorAsbestosFSB.handleAsbestosAttack(event);
+        ArmorLiquidator.handleLiquidatorAttack(event);
+        ArmorFSB.handleFSBAttack(event);
+        if (event.isCanceled()) return;
 
         if (e instanceof EntityPlayer player) {
             if (ArmorUtil.checkArmor(e, ModItems.euphemium_helmet, ModItems.euphemium_plate, ModItems.euphemium_legs, ModItems.euphemium_boots)) {
@@ -769,9 +772,6 @@ public class ModEventHandler {
                     event.setCanceled(true);
                 }
             } else {
-                if (player.getItemStackFromSlot(EntityEquipmentSlot.CHEST).getItem() instanceof ArmorFSB fsb){
-                    fsb.handleAttack(event);
-                }
                 for(ItemStack stack : player.inventory.armorInventory) {
                     if(stack != null && stack.getItem() instanceof IAttackHandler) {
                         ((IAttackHandler)stack.getItem()).handleAttack(event, stack);
@@ -788,8 +788,8 @@ public class ModEventHandler {
 
     @SubscribeEvent
     public void onEntityFall(LivingFallEvent event) {
-        if (event.getEntityLiving() instanceof EntityPlayerMP playerMP)
-            ArmorFSB.handleFall(playerMP);
+        ArmorT45.handleT45Fall(event);
+        ArmorFSB.handleFall(event.getEntityLiving());
     }
 
     // only for the ballistic gauntlet! contains dangerous conditional returns!
@@ -885,6 +885,8 @@ public class ModEventHandler {
             }
             /// BETA HEALTH END ///
 
+            HazardSystem.updatePlayerInventory(player);
+
             /// PU RADIATION START ///
 
             if(player.getUniqueID().equals(ShadyUtil.Pu_238)) {
@@ -904,6 +906,10 @@ public class ModEventHandler {
             /// SYNC START ///
             if(!player.world.isRemote && player instanceof EntityPlayerMP playerMP) PacketThreading.createSendToThreadedPacket(new PermaSyncPacket(playerMP), playerMP);
             /// SYNC END ///
+        }
+
+        if (!player.world.isRemote && event.phase == Phase.END) {
+            ContaminationUtil.updatePlayerItemContamination(player);
         }
         // Alcater addition on June 2023
         if (!player.world.isRemote && event.phase == Phase.START) {
@@ -1165,6 +1171,11 @@ public class ModEventHandler {
     public void onLivingUpdate(LivingUpdateEvent event) {
         if (event.isCancelable() && event.isCanceled())
             return;
+        ArmorT45.handleLivingTick(event.getEntityLiving());
+        ArmorPAA.handleLivingTick(event.getEntityLiving());
+        if (!(event.getEntityLiving() instanceof EntityPlayer)) {
+            ArmorFSB.handleTick(event.getEntityLiving());
+        }
         if(event.getEntityLiving() instanceof EntityCreeper creeper && creeper.getEntityData().getBoolean("hfr_defused")) {
             ItemModDefuser.defuse(creeper, null, false);
         }
@@ -1229,10 +1240,7 @@ public class ModEventHandler {
     public void onEntityJump(LivingJumpEvent event) {
         if (event.isCancelable() && event.isCanceled())
             return;
-        if (event.getEntityLiving() instanceof EntityPlayer player){
-            if (player.getItemStackFromSlot(EntityEquipmentSlot.CHEST).getItem() instanceof ArmorFSB)
-                ArmorFSB.handleJump(player);
-        }
+        ArmorFSB.handleJump(event.getEntityLiving());
     }
 
     @SubscribeEvent
@@ -1566,6 +1574,7 @@ public class ModEventHandler {
         else if (fuel.getItem() == Item.getItemFromBlock(ModBlocks.block_coke)) event.setBurnTime(single * 160);
         else if (fuel.getItem() == ModItems.book_guide) event.setBurnTime(single);
         else if (fuel.getItem() == ModItems.coal_infernal) event.setBurnTime(4800);
+        else if (fuel.getItem() == Item.getItemFromBlock(ModBlocks.block_coal_infernal)) event.setBurnTime(84000);
         else if (fuel.getItem() == ModItems.crystal_coal) event.setBurnTime(6400);
         else if (fuel.getItem() == ModItems.powder_sawdust) event.setBurnTime(single / 2);
         else if (fuel.getItem() == ModItems.briquette) {

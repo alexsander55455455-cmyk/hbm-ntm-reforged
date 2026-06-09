@@ -44,6 +44,10 @@ public class TEISRBase extends TileEntityItemStackRenderer {
 		return false;
 	}
 
+	public boolean useRegistryPerspective(Item item) {
+		return false;
+	}
+
 	protected void drawDebugAxes() {
 		GlStateManager.pushMatrix();
 		GlStateManager.disableTexture2D();

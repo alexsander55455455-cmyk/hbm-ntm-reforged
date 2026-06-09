@@ -236,6 +236,8 @@ public class ModEventHandlerClient {
     // TODO deal with that shit later
     @SubscribeEvent
     public static void onModelRegistry(ModelRegistryEvent event) {
+        registerReplacedBlockItemModel(ModBlocks.ore_oil_empty);
+
         List<ResourceLocation> extraVariants = new ArrayList<>();
         for (NTMMaterial mat : MatsSpace.SPACE_MATERIALS) {
             if (mat.smeltable == NTMMaterial.SmeltingBehavior.SMELTABLE
@@ -426,6 +428,19 @@ public class ModEventHandlerClient {
         } else {
             mc.entityRenderer.thirdPersonDistance = 4.0F;
         }
+    }
+
+    private static void registerReplacedBlockItemModel(Block block) {
+        Item item = Item.getItemFromBlock(block);
+        if (item == null || item.getRegistryName() == null) {
+            return;
+        }
+
+        ModelLoader.setCustomModelResourceLocation(
+                item,
+                0,
+                new ModelResourceLocation(block.getRegistryName(), "inventory")
+        );
     }
 
 }

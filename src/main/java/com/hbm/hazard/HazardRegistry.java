@@ -8,6 +8,9 @@ import com.hbm.hazard.modifier.HazardModifierRBMKRadiation;
 import com.hbm.hazard.modifier.HazardModifierRTGRadiation;
 import com.hbm.hazard.transformer.HazardTransformerForgeFluid;
 import com.hbm.hazard.transformer.HazardTransformerPostCustom;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import com.hbm.hazard.transformer.HazardTransformerRadiationContainer;
 import com.hbm.hazard.transformer.HazardTransformerRadiationME;
 import com.hbm.hazard.transformer.HazardTransformerRadiationNBT;
@@ -114,7 +117,10 @@ public class HazardRegistry {
 	public static final float saf = 5.85F;
 	public static final float sas3 = 5F;
 	public static final float gh336 = 5.0F;
-	public static final float mud = 1.0F;
+	public static final float radspice = 20_000.0F;
+	public static final float unof = 10_000.0F;
+	public static final float ts = 120.0F;
+	public static final float mud = 15.0F;
 	public static final float radsource_mult = 3.0F;
 	public static final float pobe = po210 * radsource_mult;
 	public static final float rabe = ra226 * radsource_mult;
@@ -126,12 +132,12 @@ public class HazardRegistry {
 	public static final float bfb = 500_000.0F;
 
 	public static final float sr = sa326 * 0.1F;
-	public static final float sb = sa326 * 0.1F;
+	public static final float sb = sa326 * 0.2F;
 	public static final float trx = 25.0F;
 	public static final float trn = 0.1F;
-	public static final float wst = 15.0F;
-	public static final float wstv = 7.5F;
-	public static final float yc = u;
+	public static final float wst = 450F;
+	public static final float wstv = 150F;
+	public static final float yc = u * 1.2F;
 	public static final float fo = 10F;
 
 	public static final float nugget = 0.1F;
@@ -151,6 +157,10 @@ public class HazardRegistry {
 	public static final float rod_dual = rod * 2;
 	public static final float rod_quad = rod * 4;
 	public static final float rod_rbmk = rod * 8;
+	public static final float magt = nugget * 0.5F * sa326 * ingot;
+	public static final float tcalloy = 0.07F * ingot;
+	public static final float ferro = u238 * 0.7F * ingot;
+	public static final float wire = ingot * 0.1F;
 
 	public static final IHazardType RADIATION = new HazardTypeRadiation();
 	public static final IHazardType CONTAMINATING = new HazardTypeContaminating();
@@ -192,13 +202,13 @@ public class HazardRegistry {
                 entityItem.world.spawnEntity(new EntityItem(entityItem.world, entityItem.posX, entityItem.posY, entityItem.posZ, new ItemStack(ModItems.screwdriver)));
             }
         })));
-		HazardSystem.register(demon_core_closed, makeData(RADIATION, 100_000F));
-		HazardSystem.register(lamp_demon, makeData(RADIATION, 100_000F));
+		HazardSystem.register(demon_core_closed, makeData(RADIATION, 10_000_000F));
+		HazardSystem.register(lamp_demon, makeData(RADIATION, 10_000_000F));
 
 		HazardSystem.register(new ItemStack(cell, 1, Fluids.TRITIUM.getID()), makeData(RADIATION, 0.001F));
 		HazardSystem.register(new ItemStack(cell, 1, Fluids.SAS3.getID()), makeData().addEntry(RADIATION, sas3).addEntry(BLINDING, 60F));
         HazardSystem.register(cell_balefire, makeData(RADIATION, 50F));
-        HazardSystem.register(powder_balefire, makeData(RADIATION, 500F));
+        HazardSystem.register(powder_balefire, makeData(RADIATION, bf * powder).addEntry(HOT, 6F).addEntry(CONTAMINATING, 500F));
         HazardSystem.register(egg_balefire_shard, makeData(RADIATION, bf * nugget));
         HazardSystem.register(egg_balefire, makeData(RADIATION, bf * ingot));
 
@@ -206,40 +216,155 @@ public class HazardRegistry {
 		HazardSystem.register(solid_fuel_presto_bf, makeData(RADIATION, 2000));
 		HazardSystem.register(solid_fuel_presto_triplet_bf, makeData(RADIATION, 6000));
 
-		HazardSystem.register(nuclear_waste_long, makeData(RADIATION, 5F));
-		HazardSystem.register(nuclear_waste_long_tiny, makeData(RADIATION, 0.5F));
-		HazardSystem.register(nuclear_waste_short, makeData().addEntry(RADIATION, 30F).addEntry(HOT, 5F));
-		HazardSystem.register(nuclear_waste_short_tiny, makeData().addEntry(RADIATION, 3F).addEntry(HOT, 5F));
-		HazardSystem.register(nuclear_waste_long_depleted, makeData(RADIATION, 0.5F));
-		HazardSystem.register(nuclear_waste_long_depleted_tiny, makeData(RADIATION, 0.05F));
-		HazardSystem.register(nuclear_waste_short_depleted, makeData(RADIATION, 3F));
-		HazardSystem.register(nuclear_waste_short_depleted_tiny, makeData(RADIATION, 0.3F));
+		HazardSystem.register(nuclear_waste_long, makeData(RADIATION, 50F).addEntry(CONTAMINATING, 7F));
+		HazardSystem.register(nuclear_waste_long_tiny, makeData(RADIATION, 5F).addEntry(CONTAMINATING, 2F));
+		HazardSystem.register(nuclear_waste_short, makeData(RADIATION, 300F).addEntry(HOT, 5F).addEntry(CONTAMINATING, 17F));
+		HazardSystem.register(nuclear_waste_short_tiny, makeData(RADIATION, 30F).addEntry(HOT, 5F).addEntry(CONTAMINATING, 5F));
+		HazardSystem.register(nuclear_waste_long_depleted, makeData(RADIATION, 5F).addEntry(CONTAMINATING, 4F));
+		HazardSystem.register(nuclear_waste_long_depleted_tiny, makeData(RADIATION, 0.5F).addEntry(CONTAMINATING, 2F));
+		HazardSystem.register(nuclear_waste_short_depleted, makeData(RADIATION, 30F).addEntry(CONTAMINATING, 5F));
+		HazardSystem.register(nuclear_waste_short_depleted_tiny, makeData(RADIATION, 3F).addEntry(CONTAMINATING, 2F));
 
 		HazardSystem.register(scrap_nuclear, makeData(RADIATION, 1F));
 		HazardSystem.register(trinitite, makeData(RADIATION, trn * ingot).addEntry(CONTAMINATING, 5));
 		HazardSystem.register(block_trinitite, makeData(RADIATION, trn * block));
-		HazardSystem.register(nuclear_waste, makeData(RADIATION, wst * ingot).addEntry(CONTAMINATING, wst * powder));
+		HazardSystem.register(nuclear_waste, makeData(RADIATION, wst * powder).addEntry(CONTAMINATING, 21F));
 		HazardSystem.register(yellow_barrel, makeData(RADIATION, wst * ingot * 10));
 		HazardSystem.register(billet_nuclear_waste, makeData(RADIATION, wst * billet).addEntry(CONTAMINATING, wst * billet));
-		HazardSystem.register(nuclear_waste_tiny, makeData(RADIATION, wst * nugget).addEntry(CONTAMINATING, wst * powder_tiny));
-		HazardSystem.register(nuclear_waste_vitrified, makeData(RADIATION, wstv * ingot).addEntry(CONTAMINATING, wstv * powder));
-		HazardSystem.register(nuclear_waste_vitrified_tiny, makeData(RADIATION, wstv * nugget).addEntry(CONTAMINATING, wstv * powder_tiny));
+		HazardSystem.register(nuclear_waste_tiny, makeData(RADIATION, wst * powder_tiny).addEntry(CONTAMINATING, 7F));
+		HazardSystem.register(nuclear_waste_vitrified, makeData(RADIATION, wstv * powder).addEntry(CONTAMINATING, 15F));
+		HazardSystem.register(nuclear_waste_vitrified_tiny, makeData(RADIATION, wstv * powder_tiny).addEntry(CONTAMINATING, 5F));
 		HazardSystem.register(block_waste, makeData(RADIATION, wst * block));
 		HazardSystem.register(block_waste_painted, makeData(RADIATION, wst * block));
 		HazardSystem.register(block_waste_vitrified, makeData(RADIATION, wstv * block));
 		HazardSystem.register(ancient_scrap, makeData(RADIATION, 150F));
-		HazardSystem.register(block_corium, makeData(RADIATION, 150F));
-		HazardSystem.register(block_corium_cobble, makeData(RADIATION, 150F));
+		HazardSystem.register(block_corium, makeData(RADIATION, 10000F));
+		HazardSystem.register(block_corium_cobble, makeData(RADIATION, 1000F));
 
-		HazardSystem.register(new ItemStack(sellafield, 1, 0), makeData(RADIATION, 0.5F));
-		HazardSystem.register(new ItemStack(sellafield, 1, 1), makeData(RADIATION, 1F));
-		HazardSystem.register(new ItemStack(sellafield, 1, 2), makeData(RADIATION, 2.5F));
-		HazardSystem.register(new ItemStack(sellafield, 1, 3), makeData(RADIATION, 4F));
-		HazardSystem.register(new ItemStack(sellafield, 1, 4), makeData(RADIATION, 5F));
-		HazardSystem.register(new ItemStack(sellafield, 1, 5), makeData(RADIATION, 10F));
+		HazardSystem.register(new ItemStack(sellafield, 1, 0), makeData(RADIATION, 5F));
+		HazardSystem.register(new ItemStack(sellafield, 1, 1), makeData(RADIATION, 10F));
+		HazardSystem.register(new ItemStack(sellafield, 1, 2), makeData(RADIATION, 20F));
+		HazardSystem.register(new ItemStack(sellafield, 1, 3), makeData(RADIATION, 40F).addEntry(HOT, 5F));
+		HazardSystem.register(new ItemStack(sellafield, 1, 4), makeData(RADIATION, 80F).addEntry(HOT, 5F));
+		HazardSystem.register(new ItemStack(sellafield, 1, 5), makeData(RADIATION, 500F).addEntry(HOT, 5F));
+
+		HazardSystem.register(baleonitite_slaked, makeData(RADIATION, 25F));
+		HazardSystem.register(baleonitite_0, makeData(RADIATION, 50F));
+		HazardSystem.register(baleonitite_1, makeData(RADIATION, 100F));
+		HazardSystem.register(baleonitite_2, makeData(RADIATION, 200F));
+		HazardSystem.register(baleonitite_3, makeData(RADIATION, 400F).addEntry(HOT, 5F));
+		HazardSystem.register(baleonitite_4, makeData(RADIATION, 800F).addEntry(HOT, 5F));
+		HazardSystem.register(baleonitite_core, makeData(RADIATION, 5000F).addEntry(HOT, 5F));
 
 		HazardSystem.register(new ItemStack(ModBlocks.ore_sellafield_radgem), makeData(RADIATION, 25F));
 		HazardSystem.register(new ItemStack(ModItems.gem_rad), makeData(RADIATION, 25F));
+
+		HazardSystem.register(sellafield_slaked, makeData(RADIATION, 2.5F));
+		HazardSystem.register(sellafield_bedrock, makeData(RADIATION, 2.5F));
+		HazardSystem.register(sellafield_0, makeData(RADIATION, 5F));
+		HazardSystem.register(sellafield_1, makeData(RADIATION, 10F));
+		HazardSystem.register(sellafield_2, makeData(RADIATION, 20F));
+		HazardSystem.register(sellafield_3, makeData(RADIATION, 40F).addEntry(HOT, 5F));
+		HazardSystem.register(sellafield_4, makeData(RADIATION, 80F).addEntry(HOT, 5F));
+		HazardSystem.register(sellafield_core, makeData(RADIATION, 500F).addEntry(HOT, 5F));
+
+		HazardSystem.register(glowing_stew, makeData(RADIATION, 2F));
+		HazardSystem.register(mush, makeData(RADIATION, 1F));
+		HazardSystem.register(mush_block, makeData(RADIATION, 4F));
+		HazardSystem.register(mush_block_stem, makeData(RADIATION, 4F));
+		HazardSystem.register(waste_leaves, makeData(RADIATION, 0.15F));
+
+		HazardSystem.register(waste_ice, makeData(RADIATION, 20F));
+
+		for (int i = 0; i < 7; i++) {
+			HazardSystem.register(new ItemStack(waste_mycelium, 1, i), makeData(RADIATION, (i + 1) * 7.5F));
+			HazardSystem.register(new ItemStack(waste_earth, 1, i), makeData(RADIATION, (i + 1) * 4F));
+			HazardSystem.register(new ItemStack(waste_dirt, 1, i), makeData(RADIATION, (i + 1) * 1F));
+			HazardSystem.register(new ItemStack(waste_gravel, 1, i), makeData(RADIATION, (i + 1) * 2.5F));
+			HazardSystem.register(new ItemStack(waste_sandstone, 1, i), makeData(RADIATION, (i + 1) * 2.5F));
+			HazardSystem.register(new ItemStack(waste_sand, 1, i), makeData(RADIATION, (i + 1) * 5F));
+			HazardSystem.register(new ItemStack(waste_grass_tall, 1, i), makeData(RADIATION, (i + 1) * 2.5F));
+			HazardSystem.register(new ItemStack(waste_sandstone_red, 1, i), makeData(RADIATION, (i + 1) * 2.5F));
+			HazardSystem.register(new ItemStack(waste_sand_red, 1, i), makeData(RADIATION, (i + 1) * 5F));
+			HazardSystem.register(new ItemStack(waste_terracotta, 1, i), makeData(RADIATION, (i + 1) * 2.5F));
+			HazardSystem.register(new ItemStack(waste_trinitite, 1, i), makeData(RADIATION, (i + 1) * 10F));
+			HazardSystem.register(new ItemStack(waste_trinitite_red, 1, i), makeData(RADIATION, (i + 1) * 10F));
+			HazardSystem.register(new ItemStack(waste_snow, 1, i), makeData(RADIATION, (i + 1) * 0.15F));
+			HazardSystem.register(new ItemStack(waste_snow_block, 1, i), makeData(RADIATION, (i + 1) * 1.5F));
+		}
+
+		HazardSystem.register(block_tritium, makeData(RADIATION, 4.5F));
+		HazardSystem.register(brick_jungle_ooze, makeData(RADIATION, 10F));
+		HazardSystem.register(sand_lead, makeData(TOXIC, 3F));
+		HazardSystem.register(glass_lead, makeData(TOXIC, 3F));
+		HazardSystem.register(glass_uranium, makeData(RADIATION, u * nugget));
+		HazardSystem.register(glass_trinitite, makeData(RADIATION, trn * 10F));
+		HazardSystem.register(glass_polonium, makeData(RADIATION, po210 * nugget));
+		HazardSystem.register(sand_uranium, makeData(RADIATION, u * nugget));
+		HazardSystem.register(sand_polonium, makeData(RADIATION, po210 * nugget).addEntry(HOT, 10F));
+		HazardSystem.register(sand_gold198, makeData(RADIATION, au198 * block * powder_mult).addEntry(HOT, 10F));
+		HazardSystem.register(block_schrabidium_cluster, makeData(RADIATION, 70F).addEntry(BLINDING, 30F));
+		HazardSystem.register(block_euphemium_cluster, makeData(RADIATION, 50F).addEntry(BLINDING, 20F));
+		HazardSystem.register(volcano_core, makeData(HOT, 20F));
+		HazardSystem.register(block_meteor_molten, makeData(HOT, 4F));
+		HazardSystem.register(arc_electrode_burnt, makeData(HOT, 2F));
+		HazardSystem.register(ore_tikite, makeData(RADIATION, trx * ore));
+
+		HazardSystem.register(insert_du, makeData(RADIATION, u238 * block));
+		HazardSystem.register(insert_ferrouranium, makeData(RADIATION, ferro * 4F));
+		HazardSystem.register(insert_ghiorsium, makeData(RADIATION, gh336 * 4F));
+		HazardSystem.register(nugget_unobtainium_greater, makeData(RADIATION, unof * nugget));
+		HazardSystem.register(billet_unobtainium, makeData(RADIATION, unof * billet));
+		HazardSystem.register(billet_zfb_bismuth, makeData(RADIATION, zfb_bi * billet));
+		HazardSystem.register(billet_zfb_pu241, makeData(RADIATION, zfb_pu241 * billet));
+		HazardSystem.register(billet_zfb_am_mix, makeData(RADIATION, zfb_am_mix * billet));
+
+		HazardSystem.register(bomb_waffle, makeData(RADIATION, 5F));
+		HazardSystem.register(schnitzel_vegan, makeData(RADIATION, 600F));
+		HazardSystem.register(cotton_candy, makeData(RADIATION, 0.25F));
+		HazardSystem.register(apple_schrabidium, makeData(RADIATION, 12F));
+		HazardSystem.register(balefire_scrambled, makeData(RADIATION, radspice * powder + bf));
+		HazardSystem.register(balefire_and_ham, makeData(RADIATION, 2F * radspice * powder + bf));
+		HazardSystem.register(levitation_unit, makeData(RADIATION, sa326 * nugget * 2F));
+
+		HazardSystem.register(part_plutonium, makeData(RADIATION, pu * powder * 0.25F));
+		HazardSystem.register(pellet_charged, makeData(RADIATION, 420F));
+		HazardSystem.register(particle_digamma, makeData(RADIATION, 100F));
+
+		HazardSystem.register(assembly_schrabidium, makeData(RADIATION, sa326 / 6F));
+		HazardSystem.register(assembly_lead, makeData(RADIATION, 0.1F));
+		HazardSystem.register(gun_revolver_schrabidium_ammo, makeData(RADIATION, sa326 / 6F));
+		HazardSystem.register(gun_revolver_lead_ammo, makeData(RADIATION, 0.1F));
+		HazardSystem.register(blades_schrabidium, makeData(RADIATION, sa326 * ingot * 5F));
+		HazardSystem.register(stamp_schrabidium_flat, makeData(RADIATION, sa326 * ingot * 3F));
+		HazardSystem.register(stamp_schrabidium_plate, makeData(RADIATION, sa326 * ingot * 3F));
+		HazardSystem.register(stamp_schrabidium_wire, makeData(RADIATION, sa326 * ingot * 3F));
+		HazardSystem.register(stamp_schrabidium_circuit, makeData(RADIATION, sa326 * ingot * 3F));
+
+		HazardSystem.register(drillbit_tcalloy, makeData(RADIATION, 20F * tcalloy));
+		HazardSystem.register(drillbit_tcalloy_diamond, makeData(RADIATION, 20F * tcalloy));
+		HazardSystem.register(drillbit_ferro, makeData(RADIATION, 24F * ferro));
+		HazardSystem.register(drillbit_ferro_diamond, makeData(RADIATION, 24F * ferro));
+		HazardSystem.register(anvil_ferrouranium, makeData(RADIATION, ferro * 10F));
+		HazardSystem.register(anvil_schrabidate, makeData(RADIATION, sb * 10F));
+		HazardSystem.register(hadron_coil_magtung, makeData(RADIATION, magt * 2F));
+		HazardSystem.register(hadron_coil_schrabidium, makeData(RADIATION, magt * 2F + sa326 * 2F));
+		HazardSystem.register(hadron_coil_schrabidate, makeData(RADIATION, sa326 * 2F + sb * 2F));
+
+		if (GeneralConfig.enable528) {
+			HazardSystem.register(gun_revolver_schrabidium, makeData(RADIATION, sa326 * block * 2F + sa326 * wire));
+			HazardSystem.register(schrabidium_hammer, makeData(RADIATION, sa326 * block * 35F));
+			HazardSystem.register(schrabidium_helmet, makeData(RADIATION, sa326 * ingot * 5F));
+			HazardSystem.register(schrabidium_plate, makeData(RADIATION, sa326 * ingot * 8F));
+			HazardSystem.register(schrabidium_legs, makeData(RADIATION, sa326 * ingot * 7F));
+			HazardSystem.register(schrabidium_boots, makeData(RADIATION, sa326 * ingot * 4F));
+			HazardSystem.register(schrabidium_sword, makeData(RADIATION, sa326 * block));
+			HazardSystem.register(balefire_and_steel, makeData(RADIATION, bf * nugget));
+		}
+
+		HazardSystem.register(nugget_mercury, makeData(TOXIC, 60F));
+		HazardSystem.register(bottle_mercury, makeData(TOXIC, 480F));
+		HazardSystem.register(pellet_mercury, makeData(TOXIC, 30F));
 
 
 
@@ -267,14 +392,20 @@ public class HazardRegistry {
 
 		HazardSystem.register(rod_zirnox_tritium, makeData(RADIATION, 0.001F * rod_dual));
 
+		HazardSystem.register(waste_uranium, makeData(RADIATION, 15F).addEntry(CONTAMINATING, 4F));
+		HazardSystem.register(waste_thorium, makeData(RADIATION, 10F).addEntry(CONTAMINATING, 3F));
+		HazardSystem.register(waste_plutonium, makeData(RADIATION, 20F).addEntry(CONTAMINATING, 5F));
+		HazardSystem.register(waste_mox, makeData(RADIATION, 17.5F).addEntry(CONTAMINATING, 3F));
+		HazardSystem.register(waste_schrabidium, makeData(RADIATION, 40F).addEntry(BLINDING, 50F).addEntry(CONTAMINATING, 6F));
+		HazardSystem.register(waste_uranium_hot, makeData(RADIATION, 15F).addEntry(HOT, 5F).addEntry(CONTAMINATING, 4F));
+		HazardSystem.register(waste_thorium_hot, makeData(RADIATION, 10F).addEntry(HOT, 5F).addEntry(CONTAMINATING, 3F));
+		HazardSystem.register(waste_plutonium_hot, makeData(RADIATION, 20F).addEntry(HOT, 5F).addEntry(CONTAMINATING, 5F));
+		HazardSystem.register(waste_mox_hot, makeData(RADIATION, 17.5F).addEntry(HOT, 5F).addEntry(CONTAMINATING, 3F));
+		HazardSystem.register(waste_schrabidium_hot, makeData(RADIATION, 40F).addEntry(HOT, 5F).addEntry(BLINDING, 50F).addEntry(CONTAMINATING, 6F));
+
 		registerOtherWasteContaminating(waste_natural_uranium, wst * billet * 11.5F, 15);
-		registerOtherWasteContaminating(waste_uranium, wst * billet * 10F, 15);
-		registerOtherWasteContaminating(waste_thorium, wst * billet * 7.5F, 10);
-		registerOtherWasteContaminating(waste_mox, wst * billet * 10F, 15);
-		registerOtherWasteContaminating(waste_plutonium, wst * billet * 12.5F, 15);
 		registerOtherWasteContaminating(waste_u233, wst * billet * 10F, 15);
 		registerOtherWasteContaminating(waste_u235, wst * billet * 11F, 15);
-		registerOtherWasteContaminating(waste_schrabidium, wst * billet * 15F, 40);
 		registerOtherWasteContaminating(waste_zfb_mox, wst * billet * 5F, 10);
 
 		registerOtherFuel(plate_fuel_u233, u233 * ingot, wst * ingot * 13F, false);
@@ -293,9 +424,9 @@ public class HazardRegistry {
 		registerRadSourceWaste(waste_plate_ra226be, pobe * nugget * 3);
 		registerRadSourceWaste(waste_plate_pu238be, pube * nugget * 1);
 
-		HazardSystem.register(debris_graphite, makeData().addEntry(RADIATION, 70F).addEntry(HOT, 5F));
-		HazardSystem.register(debris_metal, makeData(RADIATION, 5F));
-		HazardSystem.register(debris_fuel, makeData().addEntry(RADIATION, 500F).addEntry(HOT, 5F));
+		HazardSystem.register(debris_graphite, makeData().addEntry(RADIATION, 700F).addEntry(HOT, 5F));
+		HazardSystem.register(debris_metal, makeData(RADIATION, 50F));
+		HazardSystem.register(debris_fuel, makeData().addEntry(RADIATION, 150000F).addEntry(HOT, 5F));
 		HazardSystem.register(debris_concrete, makeData(RADIATION, 30F));
 		HazardSystem.register(debris_exchanger, makeData(RADIATION, 25F));
 		HazardSystem.register(debris_shrapnel, makeData(RADIATION, 2.5F));
@@ -349,21 +480,27 @@ public class HazardRegistry {
 		HazardSystem.register(billet_ra226be, makeData(RADIATION, rabe * billet));
 		HazardSystem.register(billet_pu238be, makeData(RADIATION, pube * billet));
 
-		registerRTGPellet(pellet_rtg, pu238 * rtg, 0, 3F);
-		registerRTGPellet(pellet_rtg_radium, ra226 * rtg, 0);
-		registerRTGPellet(pellet_rtg_weak, (pu238 + (u238 * 2)) * billet, 0);
-		registerRTGPellet(pellet_rtg_strontium, sr90 * rtg, 0);
-		registerRTGPellet(pellet_rtg_cobalt, co60 * rtg, 0);
-		registerRTGPellet(pellet_rtg_actinium, ac227 * rtg, 0);
-		registerRTGPellet(pellet_rtg_polonium, po210 * rtg, 0, 3F);
-		registerRTGPellet(pellet_rtg_lead, pb209 * rtg, 0, 7F, 50F);
-		registerRTGPellet(pellet_rtg_gold, au198 * rtg, 0, 5F);
-		registerRTGPellet(pellet_rtg_americium, am241 * rtg, 0);
+		HazardSystem.register(pellet_rtg, makeData(RADIATION, rtg * pu238).addEntry(HOT, 5F));
+		HazardSystem.register(pellet_rtg_weak, makeData(RADIATION, rtg * u238));
+		HazardSystem.register(pellet_rtg_radium, makeData(RADIATION, rtg * ra226));
+		HazardSystem.register(pellet_rtg_strontium, makeData(RADIATION, rtg * sr90).addEntry(HOT, 5F));
+		HazardSystem.register(pellet_rtg_cobalt, makeData(RADIATION, rtg * co60).addEntry(HOT, 5F));
+		HazardSystem.register(pellet_rtg_actinium, makeData(RADIATION, rtg * ac227).addEntry(HOT, 5F));
+		HazardSystem.register(pellet_rtg_polonium, makeData(RADIATION, rtg * po210).addEntry(HOT, 15F));
+		HazardSystem.register(pellet_rtg_lead, makeData(RADIATION, rtg * pb209).addEntry(HOT, 15F));
+		HazardSystem.register(pellet_rtg_gold, makeData(RADIATION, rtg * au198).addEntry(HOT, 15F));
+		HazardSystem.register(pellet_rtg_americium, makeData(RADIATION, rtg * am241).addEntry(HOT, 10F));
+		HazardSystem.register(pellet_rtg_balefire, makeData(RADIATION, rtg * bf * 2F).addEntry(HOT, 20F));
+		HazardSystem.register(pellet_rtg_depleted_bismuth, makeData(RADIATION, 1F));
+		HazardSystem.register(pellet_rtg_depleted_lead, makeData(RADIATION, 0.5F));
+		HazardSystem.register(pellet_rtg_depleted_mercury, makeData(RADIATION, 4.25F));
+		HazardSystem.register(pellet_rtg_depleted_neptunium, makeData(RADIATION, 3.75F).addEntry(HOT, 5F));
+		HazardSystem.register(pellet_rtg_depleted_zirconium, makeData(RADIATION, 2F));
 		HazardSystem.register(new ItemStack(pellet_rtg_depleted, 1, EnumDepletedRTGMaterial.NEPTUNIUM.ordinal()), makeData(RADIATION, np237 * rtg));
 
 		HazardSystem.register(pile_rod_uranium, makeData(RADIATION, u * billet * 3));
 		HazardSystem.register(pile_rod_pu239, makeData(RADIATION, !GeneralConfig.enable528 ? purg * billet + pu239 * billet + u * billet : purg * billet + pu239 * billet + wst * billet));
-		HazardSystem.register(pile_rod_plutonium, makeData(RADIATION, !GeneralConfig.enable528 ? purg * billet * 2 + u * billet : purg * billet * 2 + wst * billet));
+		HazardSystem.register(pile_rod_plutonium, makeData(RADIATION, pu * billet * 3F));
 		HazardSystem.register(pile_rod_source, makeData(RADIATION, rabe * billet * 3));
 
 		registerBreedingRodRadiation(ItemBreedingRod.BreedingRodType.TRITIUM, 0.001F);
@@ -478,9 +615,9 @@ public class HazardRegistry {
 
 		HazardSystem.register(powder_yellowcake, makeData(RADIATION, yc * powder).addEntry(CONTAMINATING, yc * powder));
 		HazardSystem.register(block_yellowcake, makeData(RADIATION, yc * block * powder_mult));
-		HazardSystem.register(ModItems.fallout, makeData(RADIATION, fo * powder).addEntry(CONTAMINATING, fo));
-		HazardSystem.register(ModBlocks.fallout, makeData(RADIATION, fo * powder * 2));
-		HazardSystem.register(block_fallout, makeData(RADIATION, yc * block * powder_mult));
+		HazardSystem.register(ModItems.fallout, makeData(RADIATION, fo * powder).addEntry(CONTAMINATING, 4F));
+		HazardSystem.register(ModBlocks.fallout, makeData(RADIATION, fo * powder * 2F));
+		HazardSystem.register(block_fallout, makeData(RADIATION, fo * powder * block));
 		HazardSystem.register(powder_caesium, makeData().addEntry(HYDROACTIVE, 1F).addEntry(HOT, 3F));
 
 		HazardSystem.register(brick_asbestos, makeData(ASBESTOS, 1F));
@@ -505,7 +642,7 @@ public class HazardRegistry {
 		HazardSystem.register(fleija_core, makeData(RADIATION, 10F));
 
 		HazardSystem.register(solinium_propellant, makeData(EXPLOSIVE, 10F));
-		HazardSystem.register(solinium_core, makeData().addEntry(RADIATION, sa327 * nugget * 8).addEntry(BLINDING, 45F));
+		HazardSystem.register(solinium_core, makeData().addEntry(RADIATION, ts * 5F + sa327 * 3F).addEntry(BLINDING, 45F));
 
 		HazardSystem.register(nuke_fstbmb, makeData(DIGAMMA, 0.01F));
 		//HazardSystem.register(DictFrame.fromOne(ModItems.holotape_image, EnumHoloImage.HOLO_RESTORED), makeData(DIGAMMA, 1F));
@@ -516,6 +653,50 @@ public class HazardRegistry {
 		 */
 		for(String ore : TH232.all(MaterialShapes.ORE)) HazardSystem.blacklist(ore);
 		for(String ore : U.all(MaterialShapes.ORE)) HazardSystem.blacklist(ore);
+	}
+
+	public static void registerFluids() {
+		registerFluid("radwater_fluid", 4, 0);
+		registerFluid("toxic_fluid", 1000, 0, 50, 0, 0);
+		registerFluid("mud_fluid", 400, 0, 800, 0, 0);
+		registerFluid("schrabidic", 700, 20);
+		registerFluid("corium_fluid", 10000, 0);
+		registerFluidTemps();
+	}
+
+	private static void registerFluid(String f, float rads, float blind) {
+		registerFluid(f, rads, blind, 0, 0, 0);
+	}
+
+	private static void registerFluid(String f, float rads, float blind, float tox, float expl, float dig) {
+		Fluid fluid = FluidRegistry.getFluid(f);
+		if (fluid == null) return;
+		int temp = fluid.getTemperature() - 273;
+		ObjectArrayList<HazardEntry> entries = new ObjectArrayList<>();
+
+		if (rads > 0) entries.add(new HazardEntry(RADIATION, rads));
+		if (temp > 100) entries.add(new HazardEntry(HOT, Math.min(50, temp / 50F)));
+		if (temp < -60) entries.add(new HazardEntry(COLD, Math.abs(temp / 20F)));
+		if (tox > 0) entries.add(new HazardEntry(TOXIC, tox));
+		if (blind > 0) entries.add(new HazardEntry(BLINDING, blind));
+		if (expl > 0) entries.add(new HazardEntry(EXPLOSIVE, expl));
+		if (dig > 0) entries.add(new HazardEntry(DIGAMMA, dig));
+		if (!entries.isEmpty())
+			HazardTransformerForgeFluid.FLUID_HAZARDS.put(f, entries);
+	}
+
+	private static void registerFluidTemps() {
+		for (Fluid fluid : FluidRegistry.getRegisteredFluids().values()) {
+			String name = fluid.getName();
+			if (HazardTransformerForgeFluid.FLUID_HAZARDS.containsKey(name)) continue;
+
+			int temp = fluid.getTemperature() - 273;
+			ObjectArrayList<HazardEntry> entries = new ObjectArrayList<>();
+			if (temp > 100) entries.add(new HazardEntry(HOT, Math.min(50, temp / 50F)));
+			if (temp < -60) entries.add(new HazardEntry(COLD, Math.abs(temp / 20F)));
+			if (!entries.isEmpty())
+				HazardTransformerForgeFluid.FLUID_HAZARDS.put(name, entries);
+		}
 	}
 
 	public static void registerTrafos() {

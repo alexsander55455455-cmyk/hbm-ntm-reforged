@@ -63,9 +63,19 @@ public class WasteSand extends BlockFalling {
 
     @Override
     public void onEntityWalk(World worldIn, BlockPos pos, Entity entity) {
-        if (entity instanceof EntityLivingBase && (this == ModBlocks.waste_trinitite || this == ModBlocks.waste_trinitite_red)) {
+        if (!(entity instanceof EntityLivingBase entityLiving)) return;
 
-            ((EntityLivingBase) entity).addPotionEffect(new PotionEffect(HbmPotion.radiation, 1 * 20, 49));
+        if (this == ModBlocks.waste_sand) {
+            entityLiving.addPotionEffect(new PotionEffect(HbmPotion.radiation, 15 * 20, 4));
+        }
+        if (this == ModBlocks.waste_sand_red) {
+            entityLiving.addPotionEffect(new PotionEffect(HbmPotion.radiation, 20 * 20, 3));
+        }
+        if (this == ModBlocks.waste_gravel) {
+            entityLiving.addPotionEffect(new PotionEffect(HbmPotion.radiation, 2 * 60 * 20, 2));
+        }
+        if (this == ModBlocks.waste_trinitite || this == ModBlocks.waste_trinitite_red) {
+            entityLiving.addPotionEffect(new PotionEffect(HbmPotion.radiation, 1 * 20, 49));
         }
     }
 

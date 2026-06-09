@@ -2,6 +2,8 @@ package com.hbm.world;
 
 import com.hbm.blocks.ModBlocks;
 import com.hbm.lib.Library;
+import com.hbmspace.blocks.generic.BlockOre;
+import com.hbmspace.dim.SolarSystem;
 import com.hbm.main.MainRegistry;
 import com.hbm.util.BufferUtil;
 import com.hbm.world.phased.AbstractPhasedStructure;
@@ -80,7 +82,7 @@ public class OilBubble extends AbstractPhasedStructure {
                     if (ZZ < r22) {
                         pos.setPos(X, Y, Z);
                         if (world.getBlockState(pos).getBlock() == Blocks.STONE)
-                            world.setBlockState(pos, ModBlocks.ore_oil.getDefaultState(), 2 | 16);
+                            world.setBlockState(pos, ModBlocks.ore_oil.getDefaultState().withProperty(BlockOre.META, SolarSystem.Body.KERBIN.ordinal()), 2 | 16);
                     }
                 }
             }

@@ -13,6 +13,7 @@ import com.hbm.inventory.recipes.DFCRecipes;
 import com.hbm.items.EffectItem;
 import com.hbm.items.ItemEnums;
 import com.hbm.items.ModItems;
+import com.hbm.items.machine.ItemBatterySC;
 import com.hbm.items.machine.ItemFELCrystal.EnumWavelengths;
 import com.hbm.items.machine.ItemFluidIcon;
 import com.hbm.items.special.ItemBedrockOreNew;
@@ -59,7 +60,6 @@ public class JEIConfig implements IModPlugin {
     public static final String BREEDER = "hbm.breeder";
     public static final String CENTRIFUGE = "hbm.centrifuge";
     public static final String CHEMICAL_PLANT = "hbm.chemical_plant";
-    public static final String CMB = "hbm.cmb_furnace";
     public static final String COKER = "hbm.coker";
     public static final String CONSTRUCTION = "hbm.construction";
     public static final String COMPRESSING = "hbm.compressor";
@@ -89,6 +89,7 @@ public class JEIConfig implements IModPlugin {
     public static final String PWR = "hbm.pwr";
     public static final String RBMKFUEL = "hbm.rbmkfueluncrafting";
     public static final String RBMKOUTGASSER = "hbm.rbmk_outgasser";
+    public static final String SAFE_REACTOR = "hbm.safe_reactor";
     public static final String REFINERY = "hbm.refinery";
     public static final String REFORMING = "hbm.reforming";
     public static final String ROTARY_FURNACE = "hbm.rotary_furnace";
@@ -254,6 +255,7 @@ public class JEIConfig implements IModPlugin {
         registry.addRecipeCatalyst(new ItemStack(ModBlocks.rbmk_outgasser), RBMKOUTGASSER);
         registry.addRecipeCatalyst(new ItemStack(Blocks.CRAFTING_TABLE), RBMKFUEL);
         registry.addRecipeCatalyst(new ItemStack(ModBlocks.crate_tungsten), DFC);
+        registry.addRecipeCatalyst(new ItemStack(ModBlocks.fwatz_core), SAFE_REACTOR);
         registry.addRecipeCatalyst(new ItemStack(ModBlocks.machine_ore_slopper), ORE_SLOPPER);
         registry.addRecipeCatalyst(new ItemStack(ModBlocks.pa_detector), PA);
         registry.addRecipeCatalyst(new ItemStack(ModBlocks.pa_source), PA);
@@ -265,10 +267,10 @@ public class JEIConfig implements IModPlugin {
 
         registry.addRecipes(assemblyMachineRecipeHandler.getRecipes(), ASSEMBLY_MACHINE);
         registry.addRecipes(JeiRecipes.getCyclotronRecipes(), CYCLOTRON);
+        registry.addRecipeCatalyst(new ItemStack(ModBlocks.machine_schrabidium_transmutator), TRANSMUTATION);
         registry.addRecipes(JeiRecipes.getTransmutationRecipes(), TRANSMUTATION);
         registry.addRecipes(PressRecipeHandler.getRecipes(), PRESS);
         registry.addRecipes(JeiRecipes.getAlloyRecipes(), ALLOY);
-        registry.addRecipes(JeiRecipes.getCMBRecipes(), CMB);
         registry.addRecipes(JeiRecipes.getGasCentrifugeRecipes(), GAS_CENT);
         registry.addRecipes(fuelPoolHandler.getRecipes(), WASTEDRUM);
         registry.addRecipes(JeiRecipes.getStorageDrumRecipes(), STORAGEDRUM);
@@ -327,6 +329,7 @@ public class JEIConfig implements IModPlugin {
         registry.addRecipes(JeiRecipes.getRBMKFuelRecipes(), RBMKFUEL);
         registry.addRecipes(JeiRecipes.getGrenadeRecipes(), VanillaRecipeCategoryUid.CRAFTING);
         registry.addRecipes(DFCRecipes.getDFCRecipes(), DFC);
+        registry.addRecipes(JeiRecipes.getSAFERecipes(), SAFE_REACTOR);
         registry.addRecipes(oreSlopperHandler.getRecipes(), ORE_SLOPPER);
         registry.addRecipes(particleAcceleratorHandler.getRecipes(), PA);
         registry.addRecipes(exposureChamberHandler.getRecipes(), EXPOSURE);
@@ -379,6 +382,7 @@ public class JEIConfig implements IModPlugin {
 		registry.addRecipeClickArea(GUISILEX.class, 45, 82, 113-45, 125-82, SILEX);
 		registry.addRecipeClickArea(GUIAnvil.class, 34, 26, 52-34, 44-26, ANVIL_SMITH);
 		registry.addRecipeClickArea(GUIAnvil.class, 12, 50, 48-12, 66-50, ANVIL_CON);
+		registry.addRecipeClickArea(GUIFWatzCore.class, 52, 64, 72, 19, SAFE_REACTOR);
 		registry.addRecipeClickArea(GUIRBMKOutgasser.class, 64, 53, 48, 16, RBMKOUTGASSER);
         registry.addRecipeClickArea(GUIMachineRTG.class, 134, 22, 16, 52, RTG);
         registry.addRecipeClickArea(GUIMachineArcWelder.class, 72, 38, 32, 13, ARC_WELDER);
@@ -484,6 +488,9 @@ public class JEIConfig implements IModPlugin {
         blacklist.addIngredientToBlacklist(new ItemStack(ModBlocks.dummy_plate_cargo));
         blacklist.addIngredientToBlacklist(new ItemStack(ModBlocks.dummy_block_silo_hatch));
 
+        for (int i = 0; i < ItemBatterySC.EnumBatterySC.VALUES.length; i++) {
+            blacklist.addIngredientToBlacklist(new ItemStack(ModItems.battery_sc, 1, i));
+        }
 
         for (Item item : ModItems.ALL_ITEMS) {
             if (item instanceof EffectItem) {
@@ -555,7 +562,6 @@ public class JEIConfig implements IModPlugin {
                 new BreederRecipeHandler(help),
                 new CyclotronRecipeHandler(help),
                 new TransmutationRecipeHandler(help),
-                new CMBFurnaceRecipeHandler(help),
                 new StorageDrumRecipeHandler(help),
                 new FluidRecipeHandler(help),
                 new SILEXRecipeHandler(help),
@@ -567,6 +573,7 @@ public class JEIConfig implements IModPlugin {
                 new RBMKFuelRecipeHandler(help),
                 new HadronRecipeHandler(help),
                 new DFCRecipeHandler(help),
+                new SAFERecipeHandler(help),
                 new BookRecipeHandler(help));
     }
 

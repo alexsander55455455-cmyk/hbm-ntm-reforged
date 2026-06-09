@@ -5,6 +5,7 @@ import com.hbm.blocks.fluid.ModFluids;
 import com.hbm.inventory.OreDictManager;
 import com.hbm.inventory.fluid.Fluids;
 import com.hbm.inventory.material.Mats;
+import com.hbm.items.tool.ItemCanister;
 import com.hbm.items.ItemAmmoEnums;
 import com.hbm.items.ItemAmmoEnums.Ammo240Shell;
 import com.hbm.items.ItemEnums;
@@ -177,8 +178,8 @@ public class WeaponRecipes {
         // TODO: ik modforgefluids is deprecated, I'm lazy to deal with it now
         CraftingManager.addShapelessAuto(new ItemStack(ModItems.missile_taint, 1), ModItems.missile_assembly, new CraftingManager.IngredientContainsTag(FluidUtil.getFilledBucket(new FluidStack(ModFluids.mud_fluid, 1000))), ModItems.powder_spark_mix, ModItems.powder_magic );
         CraftingManager.addShapelessAuto(new ItemStack(ModItems.missile_micro, 1), ModItems.missile_assembly, ModItems.ducttape, DictFrame.fromOne(ModItems.ammo_standard, GunFactory.EnumAmmo.NUKE_HIGH) );
-        CraftingManager.addShapelessAuto(new ItemStack(ModItems.missile_bhole, 1), ModItems.missile_assembly, ModItems.ducttape, ModItems.black_hole, DictFrame.fromOne(ModItems.circuit, EnumCircuitType.CONTROLLER_ADVANCED) );
-        CraftingManager.addShapelessAuto(new ItemStack(ModItems.missile_schrabidium, 1), ModItems.missile_assembly, ModItems.ducttape, ItemCell.getFullCell(Fluids.AMAT), ANY_HARDPLASTIC.ingot() );
+        CraftingManager.addShapelessAuto(new ItemStack(ModItems.missile_bhole, 1), ModItems.missile_assembly, ModItems.ducttape, ModItems.grenade_black_hole);
+        CraftingManager.addShapelessAuto(new ItemStack(ModItems.missile_schrabidium, 1), ModItems.missile_assembly, ModItems.ducttape, ModItems.grenade_aschrab);
         CraftingManager.addShapelessAuto(new ItemStack(ModItems.missile_emp, 1), ModItems.missile_assembly, ModItems.ducttape, ModBlocks.emp_bomb );
 
         //Missile fins
@@ -263,6 +264,41 @@ public class WeaponRecipes {
 
         //Grenades
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.disperser_canister_empty, 4), " P ", "PGP", " P ", 'P', ANY_HARDPLASTIC.ingot(), 'G', ModBlocks.glass_boron );
+
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.grenade_generic, 4), "RS ", "ITI", " I ", 'I', IRON.plate(), 'R', new ItemStack(ModItems.wire, 1, Mats.MAT_MINGRADE.id), 'S', STEEL.plate(), 'T', Item.getItemFromBlock(Blocks.TNT));
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.grenade_strong, 2), " G ", "SGS", " S ", 'G', ModItems.grenade_generic, 'S', Items.GUNPOWDER);
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.grenade_frag, 2), " G ", "WGW", " K ", 'G', ModItems.grenade_generic, 'W', Item.getItemFromBlock(Blocks.PLANKS), 'K', Item.getItemFromBlock(Blocks.GRAVEL));
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.grenade_poison, 2), " G ", "PGP", " P ", 'G', ModItems.grenade_generic, 'P', ModItems.powder_poison);
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.grenade_gas, 2), " G ", "CGC", " C ", 'G', ModItems.grenade_generic, 'C', ModItems.pellet_gas);
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.grenade_aschrab, 1), "RS ", "ITI", " S ", 'I', KEY_CLEARPANE, 'R', new ItemStack(ModItems.wire, 1, Mats.MAT_MINGRADE.id), 'S', STEEL.plate(), 'T', ItemCell.getFullCell(Fluids.ASCHRAB));
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.grenade_mk2, 2), " G ", "SGS", " S ", 'G', ModItems.grenade_strong, 'S', Items.GUNPOWDER);
+        CraftingManager.addShapelessAuto(new ItemStack(ModItems.grenade_gascan, 1), ItemCanister.getStackFromFluid(Fluids.DIESEL), Items.FLINT);
+        CraftingManager.addShapelessAuto(new ItemStack(ModItems.grenade_gascan, 1), ItemCanister.getStackFromFluid(Fluids.BIOFUEL), Items.FLINT);
+        CraftingManager.addShapelessAuto(new ItemStack(ModItems.grenade_gascan, 1), ItemCanister.getStackFromFluid(Fluids.PETROIL), Items.FLINT);
+        CraftingManager.addShapelessAuto(new ItemStack(ModItems.grenade_gascan, 1), ItemCanister.getStackFromFluid(Fluids.KEROSENE), Items.FLINT);
+        CraftingManager.addShapelessAuto(new ItemStack(ModItems.grenade_lemon, 1), ModItems.lemon, ModItems.grenade_strong);
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.grenade_smart, 4), " A ", "ACA", " A ", 'A', ModItems.grenade_strong, 'C', DictFrame.fromOne(ModItems.circuit, EnumCircuitType.CHIP));
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.grenade_mirv, 1), "GGG", "GCG", "GGG", 'G', ModItems.grenade_smart, 'C', ModItems.grenade_generic);
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.grenade_breach, 1), "G", "G", "P", 'G', ModItems.grenade_smart, 'P', BIGMT.plate());
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.grenade_burst, 1), "GGG", "GCG", "GGG", 'G', ModItems.grenade_breach, 'C', ModItems.grenade_generic);
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.grenade_if_generic, 1), " C ", "PTP", " P ", 'C', ModItems.coil_tungsten, 'P', STEEL.plate(), 'T', Blocks.TNT);
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.grenade_if_he, 1), "A", "G", "A", 'G', ModItems.grenade_if_generic, 'A', Items.GUNPOWDER);
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.grenade_if_bouncy, 1), "G", "A", 'G', ModItems.grenade_if_generic, 'A', ANY_RUBBER.ingot());
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.grenade_if_sticky, 1), "G", "A", 'G', ModItems.grenade_if_generic, 'A', Items.SLIME_BALL);
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.grenade_if_impact, 1), "G", "A", 'G', ModItems.grenade_if_generic, 'A', Items.REDSTONE);
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.grenade_if_concussion, 1), "G", "A", 'G', ModItems.grenade_if_generic, 'A', Items.GLOWSTONE_DUST);
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.grenade_if_toxic, 1), "G", "A", 'G', ModItems.grenade_if_generic, 'A', ModItems.powder_poison);
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.grenade_if_incendiary, 1), "G", "A", 'G', ModItems.grenade_if_generic, 'A', P_RED.dust());
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.grenade_if_brimstone, 1), "R", "G", "A", 'G', ModItems.grenade_if_generic, 'R', REDSTONE.dust(), 'A', ModItems.powder_power);
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.grenade_if_mystery, 1), " A ", "BGB", " A ", 'G', ModItems.grenade_if_generic, 'A', ModItems.powder_magic, 'B', ModItems.powder_cloud);
+        CraftingManager.addShapelessAuto(new ItemStack(ModItems.grenade_if_hopwire, 1), ModItems.grenade_if_generic, ModItems.singularity_counter_resonant);
+        CraftingManager.addShapelessAuto(new ItemStack(ModItems.grenade_if_spark, 1), ModItems.grenade_if_generic, ModItems.singularity_spark);
+        CraftingManager.addShapelessAuto(new ItemStack(ModItems.grenade_if_null, 1), ModItems.grenade_if_generic, ModItems.undefined);
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.grenade_nuke), "CGC", "CGC", "PAP", 'C', ModBlocks.det_charge, 'G', ModItems.grenade_mk2, 'P', ALLOY.plate(), 'A', Blocks.ANVIL);
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.grenade_cloud), "SPS", "CAC", "SPS", 'S', S.dust(), 'P', ModItems.powder_poison, 'C', CU.dust(), 'A', new ItemStack(ModItems.fluid_tank_full, 1, Fluids.SULFURIC_ACID.getID()));
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.grenade_pink_cloud), " S ", "ECE", " E ", 'S', ModItems.powder_spark_mix, 'E', ModItems.powder_magic, 'C', ModItems.grenade_cloud);
+        CraftingManager.addRecipeAuto(new ItemStack(ModBlocks.vent_cloud), "IGI", "ICI", "IDI", 'I', IRON.plate(), 'G', Blocks.IRON_BARS, 'C', ModItems.grenade_cloud, 'D', Blocks.DISPENSER);
+        CraftingManager.addRecipeAuto(new ItemStack(ModBlocks.vent_pink_cloud), "IGI", "ICI", "IDI", 'I', IRON.plate(), 'G', Blocks.IRON_BARS, 'C', ModItems.grenade_pink_cloud, 'D', Blocks.DISPENSER);
 
         // Shells
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.grenade_shell, 4, EnumGrenadeShell.FRAG.ordinal()),  "B", "P", "S", 'B', STEEL.bolt(), 'P', AL.plate(), 'S', STEEL.shell() );

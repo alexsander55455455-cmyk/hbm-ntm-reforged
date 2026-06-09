@@ -58,7 +58,7 @@ public class HazmatRegistry {
 		double hazYellow = 0.6D; // 50%
 		double hazRed = 1.0D; // 90%
 		double hazGray = 2D; // 99%
-		double paa = 1.7D; // 97%
+		double paa = 3.0D; // 99.9%
 		double liquidator = 2.4D; // 99.6%
 
 		double security = 0.825D; // 85%
@@ -87,6 +87,7 @@ public class HazmatRegistry {
 		HazmatRegistry.registerHazmat(ModItems.liquidator_legs, liquidator * legs);
 		HazmatRegistry.registerHazmat(ModItems.liquidator_boots, liquidator * boots);
 
+		HazmatRegistry.registerHazmat(ModItems.paa_helmet, paa * helmet);
 		HazmatRegistry.registerHazmat(ModItems.paa_plate, paa * chest);
 		HazmatRegistry.registerHazmat(ModItems.paa_legs, paa * legs);
 		HazmatRegistry.registerHazmat(ModItems.paa_boots, paa * boots);

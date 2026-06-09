@@ -398,6 +398,8 @@ public class TileMappings {
 
         put(TileEntityWatz.class, "tileentity_watz");
         put(TileEntityWatzPump.class, "tileentity_watz_pump");
+        put(TileEntityFWatzHatch.class, "tileentity_fwatz_hatch");
+        put(TileEntityFWatzCore.class, "tileentity_fwatz_core");
     }
 
     private static void putPile() {

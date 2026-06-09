@@ -41,7 +41,7 @@ public class FluidContainerRegistry {
 
         // Buckets for our fluids
         registerContainer(new FluidContainer(new ItemStack(ModFluids.mud_fluid.getBlock()), new ItemStack(Items.BUCKET), Fluids.WATZ, 1000));
-        registerContainer(new FluidContainer(new ItemStack(ModFluids.schrabidic_fluid.getBlock()), new ItemStack(Items.BUCKET), Fluids.SCHRABIDIC, 1000));
+        registerContainer(new FluidContainer(new ItemStack(ModFluids.schrabidic.getBlock()), new ItemStack(Items.BUCKET), Fluids.SCHRABIDIC, 1000));
         registerContainer(new FluidContainer(new ItemStack(ModFluids.sulfuric_acid_fluid.getBlock()), new ItemStack(Items.BUCKET), Fluids.SULFURIC_ACID, 1000));
         */
 

@@ -34,7 +34,7 @@
     "hbm.block.MixinBlockNTMFlower",
     "hbm.items.MixinItemBedrockOreBase",
     "hbm.items.MixinItemBedrockOreNew",
-    "hbm.items.MixinItemOilDetector",
+
     "hbm.items.MixinItemOreDensityScanner",
     "hbm.items.MixinItemRBMKRod",
     "hbm.jei.MixinOreSlopperHandler",
@@ -44,8 +44,7 @@
     "hbm.recipes.MixinSerializableRecipe",
     "hbm.tileentities.MixinTileEntityCondenser",
     "hbm.tileentities.MixinTileEntityMachineExcavator",
-    "hbm.tileentities.MixinTileEntityOilDrillBase",
-    "hbm.tileentities.MixinTileEntityMachineFrackingTower",
+
     "hbm.tileentities.MixinTileEntityMachineOreSlopper",
     "hbm.tileentities.MixinTileEntityMachinePumpBase"
   ],

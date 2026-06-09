@@ -8,11 +8,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Deprecated
 public class FluidTypeHandler {
 
 	private static Map<String, FluidProperties> fluidProperties = new HashMap<String, FluidProperties>();
 	public static final FluidProperties NONE = new FluidProperties(0, 0, 0, EnumSymbol.NONE);
+
+	public static void registerFluidProperties() {
+		fluidProperties.put("toxic_fluid", new FluidProperties(3, 0, 4, EnumSymbol.RADIATION, FluidTrait.CORROSIVE_2));
+		fluidProperties.put("radwater_fluid", new FluidProperties(2, 0, 0, EnumSymbol.RADIATION));
+		fluidProperties.put("mud_fluid", new FluidProperties(4, 0, 1, EnumSymbol.ACID, FluidTrait.CORROSIVE_2));
+		fluidProperties.put("corium_fluid", new FluidProperties(4, 0, 2, EnumSymbol.RADIATION, FluidTrait.CORROSIVE_2));
+		fluidProperties.put("volcanic_lava_fluid", new FluidProperties(4, 1, 1, EnumSymbol.NOWATER));
+	}
 	
 	public static FluidProperties getProperties(Fluid f){
 		if(f == null)

@@ -143,9 +143,9 @@ public class ArmorDNT extends ArmorFSBPowered implements IItemRendererProvider {
 	@Override
 	public void handleAttack(LivingAttackEvent event) {
 		EntityLivingBase e = event.getEntityLiving();
-		if(e instanceof EntityPlayer player && ArmorFSB.hasFSBArmor(player)) {
+		if(ArmorFSB.hasFSBArmor(e)) {
 			if(event.getSource().isExplosion()) return;
-			HbmCapability.plink(player, SoundEvents.ENTITY_ITEM_BREAK, 5F, 1.0F + e.getRNG().nextFloat() * 0.5F);
+			e.world.playSound(null, e.posX, e.posY, e.posZ, SoundEvents.BLOCK_ANVIL_BREAK, SoundCategory.PLAYERS, 5F, 1.0F + e.getRNG().nextFloat() * 0.5F);
 			event.setCanceled(true);
 		}
 	}
@@ -155,7 +155,7 @@ public class ArmorDNT extends ArmorFSBPowered implements IItemRendererProvider {
 
 		EntityLivingBase e = event.getEntityLiving();
 
-		if(e instanceof EntityPlayer player && hasFSBArmor(player)) {
+		if(ArmorFSB.hasFSBArmor(e)) {
 			if(event.getSource().isExplosion()) {
 				event.setAmount(event.getAmount()*0.001F);
 				return;
@@ -174,11 +174,15 @@ public class ArmorDNT extends ArmorFSBPowered implements IItemRendererProvider {
             for(PotionEffect effect : effects) {
                 list.add(ChatFormatting.AQUA + "  " + I18nUtil.resolveKey(effect.getEffectName()));
             }
-        }
+		}
 
+        list.add(ChatFormatting.YELLOW + "  " + I18nUtil.resolveKey("armor.explosionImmune"));
+        list.add(ChatFormatting.YELLOW + "  " + I18nUtil.resolveKey("armor.cap", 5));
+        list.add(ChatFormatting.YELLOW + "  " + I18nUtil.resolveKey("armor.modifier", 0.001F));
         list.add(ChatFormatting.RED + "  " + I18nUtil.resolveKey("armor.vats"));
         list.add(ChatFormatting.RED + "  " + I18nUtil.resolveKey("armor.thermal"));
         list.add(ChatFormatting.RED + "  " + I18nUtil.resolveKey("armor.hardLanding"));
+        list.add(ChatFormatting.DARK_RED + "  " + I18nUtil.resolveKey("armor.ignoreLimit"));
         list.add(ChatFormatting.AQUA + "  " + I18nUtil.resolveKey("armor.rocketBoots"));
         list.add(ChatFormatting.AQUA + "  " + I18nUtil.resolveKey("armor.fastFall"));
         list.add(ChatFormatting.AQUA + "  " + I18nUtil.resolveKey("armor.sprintBoost"));

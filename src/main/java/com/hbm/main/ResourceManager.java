@@ -57,6 +57,8 @@ public class ResourceManager {
     public static final WaveFrontObjectVAO ks23 = new HFRWavefrontObject(new ResourceLocation(Tags.MODID, "models/weapons/ks23.obj")).asVBO();
     public static final WaveFrontObjectVAO flamer = new HFRWavefrontObject(new ResourceLocation(Tags.MODID, "models/weapons/flamer.obj")).asVBO();
     public static final WaveFrontObjectVAO sauer = new HFRWavefrontObject(new ResourceLocation(Tags.MODID, "models/weapons/sauergun.obj")).asVBO();
+    public static final WaveFrontObjectVAO grenade_frag = new HFRWavefrontObject(new ResourceLocation(Tags.MODID, "models/weapons/grenade_frag.obj")).asVBO();
+    public static final WaveFrontObjectVAO grenade_aschrab = new HFRWavefrontObject(new ResourceLocation(Tags.MODID, "models/weapons/grenade_aschrab.obj")).asVBO();
 
     public static final ResourceLocation hk69_tex = new ResourceLocation(Tags.MODID, "textures/models/weapons/hk69.png");
     public static final ResourceLocation deagle_tex = new ResourceLocation(Tags.MODID, "textures/models/weapons/deagle.png");
@@ -225,12 +227,12 @@ public class ResourceManager {
     public static final WaveFrontObjectVAO drill = new HFRWavefrontObject(new ResourceLocation(Tags.MODID, "models/weapons/drill.obj")).asVBO();
     public static final WaveFrontObjectVAO lance = new HFRWavefrontObject(new ResourceLocation(Tags.MODID, "models/weapons/lance.obj")).asVBO();
     public static final WaveFrontObjectVAO grenades = new HFRWavefrontObject(new ResourceLocation(Tags.MODID, "models/weapons/grenades.obj")).asVBO();
-    public static final WaveFrontObjectVAO armor_bj = new HFRWavefrontObject(new ResourceLocation(Tags.MODID, "models/armor/BJ.obj")).asVBO();
+    public static final WaveFrontObjectVAO armor_bj = new HFRWavefrontObject(new ResourceLocation(Tags.MODID, "models/armor/bj.obj")).asVBO();
     public static final WaveFrontObjectVAO armor_hev = new HFRWavefrontObject(new ResourceLocation(Tags.MODID, "models/armor/hev.obj")).asVBO();
     public static final WaveFrontObjectVAO armor_hat = new HFRWavefrontObject(new ResourceLocation(Tags.MODID, "models/armor/hat.obj")).asVBO();
     public static final WaveFrontObjectVAO armor_no9 = new HFRWavefrontObject(new ResourceLocation(Tags.MODID, "models/armor/no9.obj")).asVBO();
     public static final WaveFrontObjectVAO armor_goggles = new HFRWavefrontObject(new ResourceLocation(Tags.MODID, "models/armor/goggles.obj")).asVBO();
-    public static final WaveFrontObjectVAO armor_ajr = new HFRWavefrontObject(new ResourceLocation(Tags.MODID, "models/armor/AJR.obj")).asVBO();
+    public static final WaveFrontObjectVAO armor_ajr = new HFRWavefrontObject(new ResourceLocation(Tags.MODID, "models/armor/ajr.obj")).asVBO();
     public static final WaveFrontObjectVAO armor_steamsuit = new HFRWavefrontObject(new ResourceLocation(Tags.MODID, "models/armor/steamsuit.obj")).asVBO();
     public static final WaveFrontObjectVAO armor_dieselsuit = new HFRWavefrontObject(new ResourceLocation(Tags.MODID, "models/armor/bnuuy.obj")).asVBO();
     public static final WaveFrontObjectVAO armor_remnant = new HFRWavefrontObject(new ResourceLocation(Tags.MODID, "models/armor/remnant.obj")).asVBO();
@@ -707,6 +709,8 @@ public class ResourceManager {
     //Firebox and the lot
     public static final ResourceLocation sawmill_tex = new ResourceLocation(Tags.MODID, "textures/models/machines/sawmill.png");
     public static final ResourceLocation crucible_tex = new ResourceLocation(Tags.MODID, "textures/models/machines/crucible_heat.png");
+    public static final ResourceLocation hs_sword_tex = new ResourceLocation(Tags.MODID, "textures/models/weapons/hs_sword.png");
+    public static final ResourceLocation hf_sword_tex = new ResourceLocation(Tags.MODID, "textures/models/weapons/hf_sword.png");
     public static final ResourceLocation heater_firebox_tex = new ResourceLocation(Tags.MODID, "textures/models/machines/firebox.png");
     public static final ResourceLocation heater_oven_tex = new ResourceLocation(Tags.MODID, "textures/models/machines/heating_oven.png");
     public static final ResourceLocation ashpit_tex = new ResourceLocation(Tags.MODID, "textures/models/machines/ashpit.png");
@@ -978,6 +982,8 @@ public class ResourceManager {
     public static final ResourceLocation eott_tex = new ResourceLocation(Tags.MODID, "textures/models/weapons/eott.png");
     public static final ResourceLocation mas36_tex = new ResourceLocation(Tags.MODID, "textures/models/weapons/mas36.png");
     public static final ResourceLocation ks23_tex = new ResourceLocation(Tags.MODID, "textures/models/weapons/ks23.png");
+    public static final ResourceLocation grenade_mk2 = new ResourceLocation(Tags.MODID, "textures/models/weapons/grenade_mk2.png");
+    public static final ResourceLocation grenade_aschrab_tex = new ResourceLocation(Tags.MODID, "textures/models/weapons/grenade_aschrab.png");
     public static final ResourceLocation grenade_frag_tex = new ResourceLocation(Tags.MODID, "textures/models/grenades/frag.png");
     public static final ResourceLocation grenade_frag_body_tex = new ResourceLocation(Tags.MODID, "textures/models/grenades/frag_body.png");
     public static final ResourceLocation grenade_frag_label_tex = new ResourceLocation(Tags.MODID, "textures/models/grenades/frag_label.png");
@@ -1465,6 +1471,10 @@ public class ResourceManager {
     public static Animation jshotgun_anim1;
     public static AnimatedModel crucible_anim;
     public static Animation crucible_equip;
+    public static AnimatedModel hs_sword;
+    public static Animation hs_sword_equip;
+    public static AnimatedModel hf_sword;
+    public static Animation hf_sword_equip;
     //SHADERS
     public static Shader lit_particles = loadLitParticlesShader();
 
@@ -1646,6 +1656,11 @@ public class ResourceManager {
 
         crucible_anim = ColladaLoader.load(new ResourceLocation(Tags.MODID, "models/anim/crucible_equip.dae"), true);
         crucible_equip = ColladaLoader.loadAnim(1060, new ResourceLocation(Tags.MODID, "models/anim/crucible_equip.dae"));
+
+        hs_sword = ColladaLoader.load(new ResourceLocation(Tags.MODID, "models/anim/hs_sword_equip.dae"), true);
+        hs_sword_equip = ColladaLoader.loadAnim(800, new ResourceLocation(Tags.MODID, "models/anim/hs_sword_equip.dae"));
+        hf_sword = ColladaLoader.load(new ResourceLocation(Tags.MODID, "models/anim/hf_sword_equip.dae"), true);
+        hf_sword_equip = ColladaLoader.loadAnim(900, new ResourceLocation(Tags.MODID, "models/anim/hf_sword_equip.dae"));
 
         jshotgun = ColladaLoader.load(new ResourceLocation(Tags.MODID, "models/anim/jshotgun_anim1.dae"), true);
         jshotgun_anim0 = ColladaLoader.loadAnim(1500, new ResourceLocation(Tags.MODID, "models/anim/jshotgun_anim0.dae"));

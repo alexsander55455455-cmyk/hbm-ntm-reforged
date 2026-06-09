@@ -115,10 +115,10 @@ public class HbmWorldGen implements IWorldGenerator {
         int dimID = world.provider.getDimension();
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
 
-//        int dimOilcoalSpawn = parseInt(CompatibilityConfig.oilcoalSpawn.get(dimID));
-//        if (dimOilcoalSpawn > 0 && rand.nextInt(dimOilcoalSpawn) == 0) {
-//            DungeonToolbox.generateOre(world, rand, chunkMinX, chunkMinZ, 1, 64, 32, 32, ModBlocks.ore_coal_oil);
-//        }
+        int dimOilcoalSpawn = parseInt(CompatibilityConfig.oilcoalSpawn.get(dimID));
+        if (dimOilcoalSpawn > 0 && rand.nextInt(dimOilcoalSpawn) == 0) {
+            DungeonToolbox.generateOre(world, rand, chunkMinX, chunkMinZ, 1, 64, 32, 32, ModBlocks.ore_coal_oil);
+        }
 
         int dimGasbubbleSpawn = parseInt(CompatibilityConfig.gasbubbleSpawn.get(dimID));
         if (dimGasbubbleSpawn > 0 && rand.nextInt(dimGasbubbleSpawn) == 0 && GeneralConfig.enableFlammableGas) {

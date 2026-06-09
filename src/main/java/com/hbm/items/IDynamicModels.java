@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.texture.TextureMap;
+import com.hbm.render.item.TEISRBase;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ColorHandlerEvent;
@@ -35,7 +36,13 @@ public interface IDynamicModels {
 
     @SideOnly(Side.CLIENT)
     static void registerModels() {
-        INSTANCES.forEach(IDynamicModels::registerModel);
+        INSTANCES.forEach(model -> {
+            Object self = model.getSelf();
+            if (self instanceof Item item && item.getTileEntityItemStackRenderer() instanceof TEISRBase) {
+                return;
+            }
+            model.registerModel();
+        });
     }
 
     @SideOnly(Side.CLIENT)

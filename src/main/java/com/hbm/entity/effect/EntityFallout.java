@@ -243,16 +243,28 @@ public abstract class EntityFallout extends Entity implements IChunkLoader {
             case "minecraft:bedrock":
             case "hbm:ore_bedrock_oil":
             case "hbm:ore_bedrock_block":
-                world.setBlockState(pos, ModBlocks.sellafield_bedrock.getDefaultState());
+                if (world.isAirBlock(pos.up())) {
+                    world.setBlockState(pos.up(), ModBlocks.toxic_block.getDefaultState());
+                }
                 return false;
             case "minecraft:grass":
                 placeBlockFromDist(dist, ModBlocks.waste_earth, pos);
                 return false;
             case "minecraft:dirt":
                 BlockDirt.DirtType dirtVariant = blockState.getValue(BlockDirt.VARIANT);
-                switch (dirtVariant) {
-                    case PODZOL -> placeBlockFromDist(dist, ModBlocks.waste_mycelium, pos);
+                if (dirtVariant == BlockDirt.DirtType.DIRT) {
+                    placeBlockFromDist(dist, ModBlocks.waste_dirt, pos);
+                } else if (dirtVariant == BlockDirt.DirtType.COARSE_DIRT) {
+                    placeBlockFromDist(dist, ModBlocks.waste_gravel, pos);
+                } else if (dirtVariant == BlockDirt.DirtType.PODZOL) {
+                    placeBlockFromDist(dist, ModBlocks.waste_mycelium, pos);
                 }
+                return false;
+            case "minecraft:farmland":
+                placeBlockFromDist(dist, ModBlocks.waste_dirt, pos);
+                return false;
+            case "minecraft:gravel":
+                placeBlockFromDist(dist, ModBlocks.waste_gravel, pos);
                 return false;
 
             case "minecraft:mycelium":
@@ -260,9 +272,12 @@ public abstract class EntityFallout extends Entity implements IChunkLoader {
                 return false;
             case "minecraft:sand":
                 BlockSand.EnumType sandVariant = blockState.getValue(BlockSand.VARIANT);
+                Block wasteSand = sandVariant == BlockSand.EnumType.SAND ? ModBlocks.waste_sand : ModBlocks.waste_sand_red;
                 Block trinitite = sandVariant == BlockSand.EnumType.SAND ? ModBlocks.waste_trinitite : ModBlocks.waste_trinitite_red;
                 if (rand.nextInt(60) == 0) {
                     placeBlockFromDist(dist, trinitite, pos);
+                } else {
+                    placeBlockFromDist(dist, wasteSand, pos);
                 }
                 return false;
             case "minecraft:clay":

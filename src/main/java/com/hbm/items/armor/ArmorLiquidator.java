@@ -9,6 +9,7 @@ import com.hbm.items.ModItems;
 import com.hbm.items.gear.ArmorFSB;
 import com.hbm.render.model.ModelM65;
 import com.hbm.util.ArmorRegistry.HazardClass;
+import com.hbm.util.I18nUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.model.ModelBiped;
@@ -24,11 +25,16 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
@@ -39,12 +45,72 @@ import java.util.List;
 
 public class ArmorLiquidator extends ArmorFSB implements IGasMask {
 
+	private static final float DAMAGE_THRESHOLD = 1.0F;
+	private static final float BLAST_MOD = 0.25F;
+	private static final float PROTECTION_YIELD = 80F;
+
 	@SideOnly(Side.CLIENT)
 	private ModelM65 model;
 	private ResourceLocation hazmatBlur = new ResourceLocation(Tags.MODID + ":textures/misc/overlay_dark.png");
 	
 	public ArmorLiquidator(ArmorMaterial materialIn, int renderIndexIn, EntityEquipmentSlot equipmentSlotIn, String texture, String name) {
 		super(materialIn, renderIndexIn, equipmentSlotIn, texture, name);
+	}
+
+	public static boolean hasFullSet(EntityLivingBase entity) {
+		return isEquipped(entity, EntityEquipmentSlot.HEAD, ModItems.liquidator_helmet)
+				&& isEquipped(entity, EntityEquipmentSlot.CHEST, ModItems.liquidator_plate)
+				&& isEquipped(entity, EntityEquipmentSlot.LEGS, ModItems.liquidator_legs)
+				&& isEquipped(entity, EntityEquipmentSlot.FEET, ModItems.liquidator_boots);
+	}
+
+	private static boolean isEquipped(EntityLivingBase entity, EntityEquipmentSlot slot, Item item) {
+		ItemStack stack = entity.getItemStackFromSlot(slot);
+		return !stack.isEmpty() && stack.getItem() == item && stack.getItem() instanceof ArmorFSB armor && armor.isArmorEnabled(stack);
+	}
+
+	public static void handleLiquidatorAttack(LivingAttackEvent event) {
+		EntityLivingBase entity = event.getEntityLiving();
+		if (!hasFullSet(entity)) {
+			return;
+		}
+
+		if (DAMAGE_THRESHOLD >= event.getAmount() && !event.getSource().isUnblockable()) {
+			event.setCanceled(true);
+			return;
+		}
+
+		if (event.getSource().isFireDamage()) {
+			entity.extinguish();
+			event.setCanceled(true);
+		}
+	}
+
+	public static void handleLiquidatorHurt(LivingHurtEvent event) {
+		EntityLivingBase entity = event.getEntityLiving();
+		if (!hasFullSet(entity)) {
+			return;
+		}
+
+		DamageSource source = event.getSource();
+		if (source.isFireDamage()) {
+			entity.extinguish();
+			event.setAmount(0F);
+			return;
+		}
+
+		float overflow = Math.max(0F, event.getAmount() - PROTECTION_YIELD);
+		float amount = Math.min(event.getAmount(), PROTECTION_YIELD);
+
+		if (!source.isUnblockable()) {
+			amount -= DAMAGE_THRESHOLD;
+		}
+
+		if (source.isExplosion()) {
+			amount *= BLAST_MOD;
+		}
+
+		event.setAmount(Math.max(0F, amount + overflow));
 	}
 
 	@Override
@@ -99,6 +165,11 @@ public class ArmorLiquidator extends ArmorFSB implements IGasMask {
 		super.addInformation(stack, worldIn, list, flagIn);
 		if (this == ModItems.liquidator_helmet)
 			ArmorUtil.addGasMaskTooltip(stack, worldIn, list, flagIn);
+		list.add(TextFormatting.GOLD + I18nUtil.resolveKey("armor.fullSetBonus"));
+		list.add(TextFormatting.YELLOW + "  " + I18nUtil.resolveKey("armor.threshold", DAMAGE_THRESHOLD));
+		list.add(TextFormatting.YELLOW + "  " + I18nUtil.resolveKey("armor.blastProtection", BLAST_MOD));
+		list.add(TextFormatting.RED + "  " + I18nUtil.resolveKey("armor.fireproof"));
+		list.add(TextFormatting.GREEN + "  " + I18nUtil.resolveKey("armor.yield", PROTECTION_YIELD));
 	}
 
 	@Override

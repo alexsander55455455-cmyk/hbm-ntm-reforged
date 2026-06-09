@@ -1,0 +1,188 @@
+Item,EE_Rads,Port_Rads,Status
+END_ROD,0.6F,,SKIP_NOT_IN_PORT
+MAGMA,0,,SKIP_NOT_IN_PORT
+ancient_scrap,150F,150F,OK
+anvil_ferrouranium,ferro * 10,ferro * 10F,MISMATCH
+anvil_schrabidate,sb * 10,sb * 10F,MISMATCH
+apple_schrabidium,12F,12F,OK
+apple_schrabidium1,120F,,SKIP_NOT_IN_PORT
+apple_schrabidium2,1200F,,SKIP_NOT_IN_PORT
+arc_electrode_burnt,0,,MISSING
+assembly_lead,0.1F,0.1F,OK
+assembly_schrabidium,sa326 / 6F,sa326 / 6F,OK
+balefire_and_ham,2 * radspice * powder + bf,2F * radspice * powder + bf,MISMATCH
+balefire_and_steel,bf * nugget,bf * nugget,OK
+balefire_scrambled,radspice * powder + bf,radspice * powder + bf,OK
+baleonitite_0,50,50F,MISMATCH
+baleonitite_1,100,100F,MISMATCH
+baleonitite_2,200,200F,MISMATCH
+baleonitite_3,400,400F,MISMATCH
+baleonitite_4,800,800F,MISMATCH
+baleonitite_core,5000,5000F,MISMATCH
+baleonitite_slaked,25,25F,MISMATCH
+billet_balefire_gold,au198 * billet,au198 * billet,OK
+billet_flashlead,pb209 * 1.25F * billet,pb209 * 1.25F * billet,OK
+billet_nuclear_waste,wst * billet,wst * billet,OK
+billet_po210be,pobe * billet,pobe * billet,OK
+billet_pu238be,pube * billet,pube * billet,OK
+billet_ra226be,rabe * billet,rabe * billet,OK
+billet_unobtainium,unof * billet,unof * billet,OK
+billet_zfb_am_mix,zfb_am_mix * billet,zfb_am_mix * billet,OK
+billet_zfb_bismuth,zfb_bi * billet,zfb_bi * billet,OK
+billet_zfb_pu241,zfb_pu241 * billet,zfb_pu241 * billet,OK
+blades_schrabidium,sa326 * ingot * 5,sa326 * ingot * 5F,MISMATCH
+block_corium,10000F,10000F,OK
+block_corium_cobble,1000F,1000F,OK
+block_euphemium_cluster,50F,50F,OK
+block_fallout,fo * powder * block,fo * powder * block,OK
+block_meteor_molten,0,,MISSING
+block_schrabidium_cluster,70F,70F,OK
+block_solid_fuel_bf,10000,,SKIP_NOT_IN_PORT
+block_solid_fuel_presto_bf,20000,,SKIP_NOT_IN_PORT
+block_solid_fuel_presto_triplet_bf,60000,,SKIP_NOT_IN_PORT
+block_trinitite,trn * block,trn * block,OK
+block_tritium,4.5F,4.5F,OK
+block_waste,wst * block,wst * block,OK
+block_waste_painted,wst * block,wst * block,OK
+block_waste_vitrified,wstv * block,wstv * block,OK
+block_yellowcake,yc * block * powder_mult,yc * block * powder_mult,OK
+bomb_waffle,5F,5F,OK
+boy_bullet,u235 * ingot,u235 * ingot,OK
+boy_target,u235 * ingot * 2,u235 * ingot * 2,OK
+brick_jungle_ooze,10,10F,MISMATCH
+cotton_candy,0.25F,0.25F,OK
+crystal_trixite,trx * crystal,trx * crystal,OK
+debris_fuel,150000F,150000F,OK
+debris_graphite,700F,700F,OK
+debris_metal,50F,50F,OK
+demon_core_closed,10_000_000F,10_000_000F,OK
+demon_core_open,5F,5F,OK
+drillbit_ferro,24 * ferro,24F * ferro,MISMATCH
+drillbit_ferro_diamond,24 * ferro,24F * ferro,MISMATCH
+drillbit_tcalloy,20 * tcalloy,20F * tcalloy,MISMATCH
+drillbit_tcalloy_diamond,20 * tcalloy,20F * tcalloy,MISMATCH
+dualRod,base * rod_dual,,SKIP_NOT_IN_PORT
+egg_balefire,bf * ingot,bf * ingot,OK
+egg_balefire_shard,bf * nugget,bf * nugget,OK
+fallout,fo * powder * 2,fo * powder * 2F,MISMATCH
+fleija_core,10F,10F,OK
+fleija_propellant,15F,15F,OK
+gadget_core,pu239 * nugget * 10,pu239 * nugget * 10,OK
+glass_lead,0,,MISSING
+glass_polonium,po210 * nugget,po210 * nugget,OK
+glass_trinitite,trn * 10F,trn * 10F,OK
+glass_uranium,u * nugget,u * nugget,OK
+glow_spawner,bf * 0.1F,,SKIP_NOT_IN_PORT
+glowing_stew,2F,2F,OK
+gun_revolver_lead_ammo,0.1F,0.1F,OK
+gun_revolver_schrabidium,sa326 * block * 2 + sa326 * wire,sa326 * block * 2F + sa326 * wire,MISMATCH
+gun_revolver_schrabidium_ammo,sa326 / 6F,sa326 / 6F,OK
+hadron_coil_magtung,magt * 2,magt * 2F,MISMATCH
+hadron_coil_schrabidate,sa326 * 2 + sb * 2,sa326 * 2F + sb * 2F,MISMATCH
+hadron_coil_schrabidium,magt * 2 + sa326 * 2,magt * 2F + sa326 * 2F,MISMATCH
+insert_du,u238 * block,u238 * block,OK
+insert_ferrouranium,ferro * 4,ferro * 4F,MISMATCH
+insert_ghiorsium,gh336 * 4,gh336 * 4F,MISMATCH
+insert_polonium,100F,100F,OK
+lamp_demon,10_000_000F,10_000_000F,OK
+levitation_unit,sa326 * nugget * 2,sa326 * nugget * 2F,MISMATCH
+man_core,pu239 * nugget * 10,pu239 * nugget * 10,OK
+mike_core,u238 * nugget * 10,u238 * nugget * 10,OK
+mush,1,1F,MISMATCH
+mush_block,4,4F,MISMATCH
+mush_block_stem,4,4F,MISMATCH
+nuclear_waste,wst * powder,wst * powder,OK
+nuclear_waste_long,50,50F,MISMATCH
+nuclear_waste_long_depleted,5,5F,MISMATCH
+nuclear_waste_long_depleted_tiny,0.5F,0.5F,OK
+nuclear_waste_long_tiny,5,5F,MISMATCH
+nuclear_waste_short,300,300F,MISMATCH
+nuclear_waste_short_depleted,30,30F,MISMATCH
+nuclear_waste_short_depleted_tiny,3,3F,MISMATCH
+nuclear_waste_short_tiny,30,30F,MISMATCH
+nuclear_waste_tiny,wst * powder_tiny,wst * powder_tiny,OK
+nuclear_waste_vitrified,wstv * powder,wstv * powder,OK
+nuclear_waste_vitrified_tiny,wstv * powder_tiny,wstv * powder_tiny,OK
+nugget_unobtainium_greater,unof * nugget,unof * nugget,OK
+ore_tikite,trx * ore,trx * ore,OK
+part_plutonium,pu * powder * 0.25F,pu * powder * 0.25F,OK
+particle_digamma,100F,100F,OK
+pellet_charged,420,420F,MISMATCH
+pellet_rtg,rtg * pu238,rtg * pu238,OK
+pellet_rtg_actinium,rtg * ac227,rtg * ac227,OK
+pellet_rtg_americium,rtg * am241,rtg * am241,OK
+pellet_rtg_balefire,rtg * bf * 2,rtg * bf * 2F,MISMATCH
+pellet_rtg_cobalt,rtg * co60,rtg * co60,OK
+pellet_rtg_depleted_bismuth,1F,1F,OK
+pellet_rtg_depleted_lead,0.5F,0.5F,OK
+pellet_rtg_depleted_mercury,4.25F,4.25F,OK
+pellet_rtg_depleted_neptunium,3.75F,3.75F,OK
+pellet_rtg_depleted_zirconium,2,2F,MISMATCH
+pellet_rtg_gold,rtg * au198,rtg * au198,OK
+pellet_rtg_lead,rtg * pb209,rtg * pb209,OK
+pellet_rtg_polonium,rtg * po210,rtg * po210,OK
+pellet_rtg_radium,rtg * ra226,rtg * ra226,OK
+pellet_rtg_strontium,rtg * sr90,rtg * sr90,OK
+pellet_rtg_weak,rtg * u238,rtg * u238,OK
+pile_rod_plutonium,pu * billet * 3,pu * billet * 3F,MISMATCH
+pile_rod_source,rabe * billet * 3,rabe * billet * 3,OK
+pile_rod_uranium,u * billet * 3,u * billet * 3,OK
+powder_balefire,bf * powder,bf * powder,OK
+powder_yellowcake,yc * powder,yc * powder,OK
+quadRod,base * rod_quad,,SKIP_NOT_IN_PORT
+rodSingle,base * rod,,SKIP_NOT_IN_PORT
+sand_gold198,au198 * block * powder_mult,au198 * block * powder_mult,OK
+sand_lead,0,,MISSING
+sand_polonium,po210 * nugget,po210 * nugget,OK
+sand_uranium,u * nugget,u * nugget,OK
+schnitzel_vegan,600F,600F,OK
+schrabidium_boots,sa326 * ingot * 4,sa326 * ingot * 4F,MISMATCH
+schrabidium_hammer,sa326 * block * 35,sa326 * block * 35F,MISMATCH
+schrabidium_helmet,sa326 * ingot * 5,sa326 * ingot * 5F,MISMATCH
+schrabidium_legs,sa326 * ingot * 7,sa326 * ingot * 7F,MISMATCH
+schrabidium_plate,sa326 * ingot * 8,sa326 * ingot * 8F,MISMATCH
+schrabidium_sword,sa326 * block,sa326 * block,OK
+sellafield_0,5,5F,MISMATCH
+sellafield_1,10,10F,MISMATCH
+sellafield_2,20,20F,MISMATCH
+sellafield_3,40,40F,MISMATCH
+sellafield_4,80,80F,MISMATCH
+sellafield_core,500,500F,MISMATCH
+sellafield_slaked,2.5F,2.5F,OK
+solid_fuel_bf,1000,1000,OK
+solid_fuel_presto_bf,2000,2000,OK
+solid_fuel_presto_triplet_bf,6000,6000,OK
+solinium_core,ts * 5 + sa327 * 3,ts * 5F + sa327 * 3F,MISMATCH
+stamp_schrabidium_circuit,sa326 * ingot * 3,sa326 * ingot * 3F,MISMATCH
+stamp_schrabidium_flat,sa326 * ingot * 3,sa326 * ingot * 3F,MISMATCH
+stamp_schrabidium_plate,sa326 * ingot * 3,sa326 * ingot * 3F,MISMATCH
+stamp_schrabidium_wire,sa326 * ingot * 3,sa326 * ingot * 3F,MISMATCH
+trinitite,trn * ingot,trn * ingot,OK
+volcano_core,0,,MISSING
+waste_dirt,1,,MISSING
+waste_earth,1,,MISSING
+waste_grass_tall,1,,MISSING
+waste_gravel,1,,MISSING
+waste_ice,20,20F,MISMATCH
+waste_leaves,0.15F,0.15F,OK
+waste_mox,17.5F,17.5F,OK
+waste_mox_hot,17.5F,17.5F,OK
+waste_mycelium,1,,MISSING
+waste_plutonium,20,20F,MISMATCH
+waste_plutonium_hot,20,20F,MISMATCH
+waste_sand,1,,MISSING
+waste_sand_red,1,,MISSING
+waste_sandstone,1,,MISSING
+waste_sandstone_red,1,,MISSING
+waste_schrabidium,40,40F,MISMATCH
+waste_schrabidium_hot,40,40F,MISMATCH
+waste_snow,1,,MISSING
+waste_snow_block,1,,MISSING
+waste_terracotta,1,,MISSING
+waste_thorium,10,10F,MISMATCH
+waste_thorium_hot,10,10F,MISMATCH
+waste_trinitite,1,,MISSING
+waste_trinitite_red,1,,MISSING
+waste_uranium,15,15F,MISMATCH
+waste_uranium_hot,15,15F,MISMATCH
+yellow_barrel,wst * ingot * 10,wst * ingot * 10,OK

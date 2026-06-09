@@ -33,31 +33,31 @@ public final class ChunkRadiationManager {
 
         public void setRadiation(World world, BlockPos pos, double rad) {
             if (world.isRemote) return;
-            RadiationSystemNT.setRadForCoord((WorldServer) world, pos, rad);
+            RadiationSystemNT.setRadForCoord(world, pos, (float) rad);
         }
 
         @DoNotCall("no max rad limit")
         public void incrementRad(World world, BlockPos pos, double rad) {
             if (world.isRemote) return;
-            RadiationSystemNT.incrementRad((WorldServer) world, pos, rad, Double.MAX_VALUE);
+            RadiationSystemNT.incrementRad(world, pos, (float) rad, Float.MAX_VALUE);
         }
 
         public void incrementRad(WorldServer world, BlockPos pos, double rad) {
-            RadiationSystemNT.incrementRad(world, pos, rad, Double.MAX_VALUE);
+            RadiationSystemNT.incrementRad(world, pos, (float) rad, Float.MAX_VALUE);
         }
 
         public void incrementRad(World world, BlockPos pos, double rad, double max) {
             if (world.isRemote) return;
-            RadiationSystemNT.incrementRad((WorldServer) world, pos, rad, max);
+            RadiationSystemNT.incrementRad(world, pos, (float) rad, (float) max);
         }
 
         public void incrementRad(WorldServer world, BlockPos pos, double rad, double max) {
-            RadiationSystemNT.incrementRad(world, pos, rad, max);
+            RadiationSystemNT.incrementRad(world, pos, (float) rad, (float) max);
         }
 
         public void decrementRad(World world, BlockPos pos, double rad) {
             if (world.isRemote) return;
-            RadiationSystemNT.decrementRad((WorldServer) world, pos, rad);
+            RadiationSystemNT.decrementRad(world, pos, (float) rad);
         }
 
         public void clearSystem(World world) {

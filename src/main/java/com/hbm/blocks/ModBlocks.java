@@ -355,6 +355,8 @@ public class ModBlocks {
 
     public static final Block ore_tikite = new BlockNTMOre("ore_tikite", 4).setCreativeTab(MainRegistry.resourceTab).setHardness(5.0F).setResistance(10.0F);
 
+    public static final Block ore_coal_oil = new BlockCoalOil("ore_coal_oil").setCreativeTab(MainRegistry.resourceTab).setHardness(5.0F).setResistance(15.0F);
+    public static final Block ore_coal_oil_burning = new BlockCoalBurning("ore_coal_oil_burning").setCreativeTab(MainRegistry.resourceTab).setLightLevel(10F / 15F).setHardness(5.0F).setResistance(15.0F);
     public static final Block ore_nether_coal = new BlockNetherCoal(false, 5, true, "ore_nether_coal").setCreativeTab(MainRegistry.resourceTab).setLightLevel(10F / 15F).setHardness(0.4F).setResistance(10.0F);
     public static final Block ore_nether_smoldering = new BlockSmolder(Material.ROCK, "ore_nether_smoldering").setCreativeTab(MainRegistry.resourceTab).setLightLevel(1F).setHardness(0.4F).setResistance(10.0F);
     public static final Block ore_nether_cobalt = new BlockNTMOre("ore_nether_cobalt", 3).setCreativeTab(MainRegistry.resourceTab).setHardness(0.4F).setResistance(10.0F);
@@ -556,8 +558,18 @@ public class ModBlocks {
 
     public static final Block waste_mycelium = new WasteMycelium(Material.GRASS, SoundType.GROUND, true, "waste_mycelium").setLightLevel(0.25F).setHardness(0.5F).setResistance(1.0F).setCreativeTab(MainRegistry.resourceTab);
     public static final Block waste_earth = new WasteEarth(Material.GRASS, SoundType.GROUND, true, "waste_earth").setHardness(0.5F).setResistance(1.0F).setCreativeTab(MainRegistry.resourceTab);
+    public static final Block waste_dirt = new WasteEarth(Material.GROUND, SoundType.GROUND, true, "waste_dirt").setHardness(0.5F).setResistance(1.0F).setCreativeTab(MainRegistry.resourceTab);
+    public static final Block waste_gravel = new WasteSand(Material.GROUND, SoundType.GROUND, "waste_gravel").setHardness(0.5F).setResistance(1.0F).setCreativeTab(MainRegistry.resourceTab);
+    public static final Block waste_sandstone = new WasteHazardMeta(Material.ROCK, SoundType.STONE, "waste_sandstone").setCreativeTab(MainRegistry.resourceTab).setHardness(3.0F).setResistance(6.0F);
+    public static final Block waste_sand = new WasteSand(Material.SAND, SoundType.SAND, "waste_sand").setHardness(0.5F).setResistance(1.0F).setCreativeTab(MainRegistry.resourceTab);
     public static final Block waste_trinitite = new WasteSand(Material.SAND, SoundType.SAND, "waste_trinitite").setHardness(0.5F).setResistance(2.5F).setCreativeTab(MainRegistry.resourceTab);
+    public static final Block waste_sandstone_red = new WasteHazardMeta(Material.ROCK, SoundType.STONE, "waste_sandstone_red").setCreativeTab(MainRegistry.resourceTab).setHardness(3.0F).setResistance(6.0F);
+    public static final Block waste_sand_red = new WasteSand(Material.SAND, SoundType.SAND, "waste_sand_red").setHardness(0.5F).setResistance(1.0F).setCreativeTab(MainRegistry.resourceTab);
     public static final Block waste_trinitite_red = new WasteSand(Material.SAND, SoundType.SAND, "waste_trinitite_red").setHardness(0.5F).setResistance(2.5F).setCreativeTab(MainRegistry.resourceTab);
+    public static final Block waste_terracotta = new WasteHazardMeta(Material.ROCK, SoundType.STONE, "waste_terracotta").setCreativeTab(MainRegistry.resourceTab).setHardness(4.0F).setResistance(8.0F);
+    public static final Block waste_snow = new BlockPowder(Material.SNOW, SoundType.SNOW, "waste_snow").setCreativeTab(MainRegistry.resourceTab).setHardness(0.1F).setLightOpacity(0);
+    public static final Block waste_snow_block = new WasteHazardMeta(Material.SNOW, SoundType.SNOW, "waste_snow_block").setCreativeTab(MainRegistry.resourceTab).setHardness(0.2F);
+    public static final Block waste_ice = new WasteIce("waste_ice").setCreativeTab(MainRegistry.resourceTab).setHardness(0.2F);
 
 
     public static final Block waste_log = new WasteLog(Material.WOOD, SoundType.WOOD, "waste_log").setHardness(5.0F).setResistance(2.5F).setCreativeTab(MainRegistry.resourceTab);
@@ -603,13 +615,27 @@ public class ModBlocks {
     public static final Block block_c4 = new BlockPlasticExplosive(Material.TNT, SoundType.METAL, "block_c4", BlockBakeFrame.southFacingCube("block_c4", "block_c4_front")).setCreativeTab(MainRegistry.blockTab).setHardness(2.0F).setResistance(2.0F);
     public static final Block block_smore = new BlockBase(Material.ROCK, "block_smore").setCreativeTab(MainRegistry.blockTab).setHardness(15.0F).setResistance(450.0F);
     public static final Block block_slag = new BlockMeta(Material.ROCK, SoundType.STONE, "block_slag", "block_slag", "block_slag_broken").setCreativeTab(MainRegistry.blockTab).setHardness(5.0F).setResistance(10.0F);
+    public static final Block block_coal_infernal = new BlockFuel(Material.ROCK, "block_coal_infernal", 1, 1, 84000).setCreativeTab(MainRegistry.blockTab).setHardness(5.0F).setResistance(10.0F);
 
 
     //TODO: We need some kind of crafting recepie for purifying the higher meta blocks if we want them for building
     public static final Block sellafield_slaked = new BlockSellafieldSlaked(Material.ROCK, SoundType.STONE, "sellafield_slaked").setHardness(5.0F).setResistance(6F).setCreativeTab(MainRegistry.resourceTab);
     public static final Block sellafield_bedrock = new BlockSellafieldSlaked(Material.ROCK, SoundType.STONE, "sellafield_bedrock").setBlockUnbreakable().setResistance(6000000.0F).setCreativeTab(MainRegistry.resourceTab);
     public static final Block sellafield = new BlockSellafield(Material.ROCK, SoundType.STONE, "sellafield").setHardness(5.0F).setResistance(6F).setCreativeTab(MainRegistry.resourceTab);
+    public static final Block sellafield_0 = new BlockHazardSellafieldTier(Material.ROCK, SoundType.STONE, "sellafield_0").setHardness(5.0F).setResistance(6F).setCreativeTab(MainRegistry.resourceTab);
+    public static final Block sellafield_1 = new BlockHazardSellafieldTier(Material.ROCK, SoundType.STONE, "sellafield_1").setHardness(5.0F).setResistance(6F).setCreativeTab(MainRegistry.resourceTab);
+    public static final Block sellafield_2 = new BlockHazardSellafieldTier(Material.ROCK, SoundType.STONE, "sellafield_2").setHardness(5.0F).setResistance(6F).setCreativeTab(MainRegistry.resourceTab);
+    public static final Block sellafield_3 = new BlockHazardSellafieldTier(Material.ROCK, SoundType.STONE, "sellafield_3").setHardness(5.0F).setResistance(7F).setCreativeTab(MainRegistry.resourceTab);
+    public static final Block sellafield_4 = new BlockHazardSellafieldTier(Material.ROCK, SoundType.STONE, "sellafield_4").setHardness(5.0F).setResistance(8F).setCreativeTab(MainRegistry.resourceTab);
+    public static final Block sellafield_core = new BlockHazardSellafieldTier(Material.ROCK, SoundType.STONE, "sellafield_core").setHardness(10.0F).setResistance(9F).setCreativeTab(MainRegistry.resourceTab);
 
+    public static final Block baleonitite_slaked = new BlockHazard(Material.ROCK, SoundType.STONE, "baleonitite_slaked").setHardness(5.0F).setResistance(6F).setCreativeTab(MainRegistry.resourceTab);
+    public static final Block baleonitite_0 = new BlockHazard(Material.ROCK, SoundType.STONE, "baleonitite_0").setHardness(5.0F).setResistance(6F).setCreativeTab(MainRegistry.resourceTab);
+    public static final Block baleonitite_1 = new BlockHazard(Material.ROCK, SoundType.STONE, "baleonitite_1").setHardness(5.0F).setResistance(6F).setCreativeTab(MainRegistry.resourceTab);
+    public static final Block baleonitite_2 = new BlockHazard(Material.ROCK, SoundType.STONE, "baleonitite_2").setHardness(5.0F).setResistance(6F).setCreativeTab(MainRegistry.resourceTab);
+    public static final Block baleonitite_3 = new BlockHazard(Material.ROCK, SoundType.STONE, "baleonitite_3").setHardness(5.0F).setResistance(7F).setCreativeTab(MainRegistry.resourceTab);
+    public static final Block baleonitite_4 = new BlockHazard(Material.ROCK, SoundType.STONE, "baleonitite_4").setHardness(5.0F).setResistance(8F).setCreativeTab(MainRegistry.resourceTab);
+    public static final Block baleonitite_core = new BlockHazard(Material.ROCK, SoundType.STONE, "baleonitite_core").setHardness(10.0F).setResistance(9F).setCreativeTab(MainRegistry.resourceTab);
 
     public static final Block geysir_water = new BlockGeysir(Material.ROCK, "geysir_water").setSoundType(SoundType.STONE).setHardness(5.0F).setCreativeTab(MainRegistry.resourceTab);
     public static final Block geysir_chlorine = new BlockGeysir(Material.ROCK, "geysir_chlorine").setSoundType(SoundType.STONE).setHardness(5.0F).setCreativeTab(MainRegistry.resourceTab);
@@ -925,6 +951,7 @@ public class ModBlocks {
     public static final Block machine_battery = new MachineBattery(Material.IRON, 1_000_000, "machine_battery").setHardness(5.0F).setResistance(10.0F).setCreativeTab(null);
     public static final Block machine_lithium_battery = new MachineBattery(Material.IRON, 50_000_000, "machine_lithium_battery").setHardness(5.0F).setResistance(10.0F).setCreativeTab(null);
     public static final Block machine_schrabidium_battery = new MachineBattery(Material.IRON, 25_000_000_000L, "machine_schrabidium_battery").setHardness(5.0F).setResistance(10.0F).setCreativeTab(null);
+    public static final Block machine_schrabidium_transmutator = new MachineSchrabidiumTransmutator(Material.IRON, "machine_schrabidium_transmutator").setHardness(5.0F).setResistance(100.0F).setCreativeTab(MainRegistry.machineTab);
     public static final Block machine_dineutronium_battery = new MachineBattery(Material.IRON, 1_000_000_000_000L, "machine_dineutronium_battery").setHardness(5.0F).setResistance(10.0F).setCreativeTab(null);
     public static final Block machine_fensu = new MachineFENSU(Material.IRON, "machine_fensu").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
 
@@ -1282,6 +1309,16 @@ public class ModBlocks {
     public static final Block watz = new Watz("watz").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
     public static final Block watz_pump = new WatzPump("watz_pump").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
 
+    //Fwatz stuff
+    public static final Block fwatz_conductor = new BlockReactor(Material.IRON, "fwatz_conductor").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
+    public static final Block fwatz_cooler = new BlockReactor(Material.IRON, "fwatz_cooler").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
+    public static final Block fwatz_tank = new BlockNTMGlass(Material.IRON, BlockRenderLayer.CUTOUT, true, "fwatz_tank").setLightOpacity(1).setHardness(5.0F).setResistance(2000.0F).setCreativeTab(MainRegistry.machineTab);
+    public static final Block fwatz_scaffold = new BlockBase(Material.IRON, "fwatz_scaffold").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
+    public static final Block fwatz_hatch = new FWatzHatch(Material.IRON, "fwatz_hatch").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
+    public static final Block fwatz_computer = new BlockBase(Material.IRON, "fwatz_computer").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
+    public static final Block fwatz_core = new FWatzCore(Material.IRON, "fwatz_core").setHardness(5.0F).setResistance(10.0F).setLightLevel(15F).setCreativeTab(MainRegistry.machineTab);
+    public static final Block fwatz_plasma = new BlockPlasma(Material.IRON, "fwatz_plasma").setHardness(5.0F).setResistance(6000.0F).setLightLevel(1.0F).setCreativeTab(MainRegistry.machineTab);
+
     //DFC
     public static final Block dfc_emitter = new CoreComponent(Material.IRON, "dfc_emitter").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
     public static final Block dfc_injector = new CoreComponent(Material.IRON, "dfc_injector").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
@@ -1460,6 +1497,7 @@ public class ModBlocks {
     }.setImmovableMobility());
     public static final Material fluidvolcanic = (new MaterialLiquid(MapColor.RED));
     public static final Material fluidrad = (new MaterialLiquid(MapColor.LIME));
+    public static final Material fluidradwater = (new MaterialLiquid(MapColor.BLUE));
 
     public static Block mercury_block;
 
@@ -1509,12 +1547,13 @@ public class ModBlocks {
 
     public static final Block logic_block = new LogicBlock("logic_block");
 
-    public static final Block toxic_block = new ToxicBlock(ModFluids.toxic_fluid, fluidtoxic, "toxic_block").setResistance(500F);
-    public static final Block mud_block = new MudBlock(ModFluids.mud_fluid, fluidmud, ModDamageSource.mudPoisoning, "mud_block").setResistance(500F);
+    public static final Block toxic_block = new ToxicBlock(ModFluids.toxic_fluid, Material.WATER, "toxic_block", 0x232323).setResistance(500F);
+    public static final Block mud_block = new MudBlock(ModFluids.mud_fluid, Material.LAVA, ModDamageSource.mudPoisoning, "mud_block", 0x98F500).setResistance(500F);
     public static final Block acid_block = new AcidBlock(ModFluids.acid_fluid, fluidacid.setReplaceable(), ModDamageSource.acid, "acid_block").setResistance(500F);
-    public static final Block schrabidic_block = new SchrabidicBlock(ModFluids.schrabidic_fluid, fluidschrabidic.setReplaceable(), ModDamageSource.radiation, "schrabidic_block").setResistance(500F);
+    public static final Block schrabidic_block = new SchrabidicBlock(ModFluids.schrabidic, fluidschrabidic.setReplaceable(), ModDamageSource.radiation, "schrabidic_block").setResistance(500F);
     public static final Block corium_block = new CoriumFinite(ModFluids.corium_fluid, fluidcorium, "corium_block").setResistance(500F);
     public static final Block volcanic_lava_block = new VolcanicBlock(ModFluids.volcanic_lava_fluid, fluidvolcanic, "volcanic_lava_block").setResistance(500F);
+    public static final Block radwater_block = new RadWaterBlock(ModFluids.radwater_fluid, ModDamageSource.radiation, "radwater_block", 0x3F7A97).setResistance(500F);
     public static final Block rad_lava_block = new RadBlock(ModFluids.rad_lava_fluid, fluidrad, "rad_lava_block").setResistance(500F);
     public static final Block sulfuric_acid_block = new GenericFluidBlock(ModFluids.sulfuric_acid_fluid, Material.WATER, "sulfuric_acid_block").setDamage(ModDamageSource.acid, 5F).setResistance(500F);
 
@@ -1534,6 +1573,8 @@ public class ModBlocks {
         for (Block block : ALL_BLOCKS) {
             if (block instanceof BlockHazard) {
                 ((BlockHazard) block).addRadiation((float) HazardSystem.getRawRadsFromBlock(block));
+            } else if (block instanceof BlockSellafieldSlaked) {
+                ((BlockSellafieldSlaked) block).addChunkRadiation((float) HazardSystem.getRawRadsFromBlock(block));
             }
         }
         BlockTallPlant.initPlacables();
@@ -1545,9 +1586,10 @@ public class ModBlocks {
         ModFluids.toxic_fluid.setBlock(toxic_block);
         ModFluids.mud_fluid.setBlock(mud_block);
         ModFluids.acid_fluid.setBlock(acid_block);
-        ModFluids.schrabidic_fluid.setBlock(schrabidic_block);
+        ModFluids.schrabidic.setBlock(schrabidic_block);
         ModFluids.corium_fluid.setBlock(corium_block);
         ModFluids.volcanic_lava_fluid.setBlock(volcanic_lava_block);
+        ModFluids.radwater_fluid.setBlock(radwater_block);
         ModFluids.rad_lava_fluid.setBlock(rad_lava_block);
         ModFluids.sulfuric_acid_fluid.setBlock(sulfuric_acid_block);
     }

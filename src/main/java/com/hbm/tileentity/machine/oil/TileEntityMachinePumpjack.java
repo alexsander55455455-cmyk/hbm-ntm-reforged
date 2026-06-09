@@ -6,8 +6,8 @@ import com.hbm.blocks.BlockDummyable;
 import com.hbm.blocks.ModBlocks;
 import com.hbm.interfaces.AutoRegister;
 import com.hbm.inventory.container.ContainerMachineOilWell;
-import com.hbm.inventory.fluid.Fluids;
 import com.hbm.inventory.gui.GUIMachineOilWell;
+import com.hbmspace.blocks.generic.BlockOreFluid;
 import com.hbm.items.machine.ItemMachineUpgrade;
 import com.hbm.lib.DirPos;
 import com.hbm.lib.ForgeDirection;
@@ -17,7 +17,6 @@ import com.hbm.util.BobMathUtil;
 import com.hbm.util.I18nUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -45,6 +44,9 @@ public class TileEntityMachinePumpjack extends TileEntityOilDrillBase {
     protected static int gasPerDepositMin = 50;
     protected static int gasPerDepositMax = 250;
     protected static double drainChance = 0.025D;
+    protected static double oilMultiplier = 1.5D;
+    protected static double gasMultiplier = 0.5D;
+    protected static double drainChanceMultiplier = 0.5D;
 
     public float rot = 0;
     public float prevRot = 0;
@@ -132,22 +134,33 @@ public class TileEntityMachinePumpjack extends TileEntityOilDrillBase {
     }
 
     @Override
-    public void onSuck(BlockPos pos) {
-        IBlockState state = world.getBlockState(pos);
-        Block block = state.getBlock();
+    protected int getPrimaryFluidAmount(BlockOreFluid block, int meta) {
+        return (int) (super.getPrimaryFluidAmount(block, meta) * oilMultiplier);
+    }
 
-        if (block == ModBlocks.ore_oil) {
-            tanks[0].setTankType(Fluids.OIL);
-            tanks[1].setTankType(Fluids.GAS);
-            this.tanks[0].setFill(this.tanks[0].getFill() + oilPerDeposit);
-            if (this.tanks[0].getFill() > this.tanks[0].getMaxFill()) this.tanks[0].setFill(tanks[0].getMaxFill());
-            this.tanks[1].setFill(this.tanks[1].getFill() + (gasPerDepositMin + world.rand.nextInt((gasPerDepositMax - gasPerDepositMin + 1))));
-            if (this.tanks[1].getFill() > this.tanks[1].getMaxFill()) this.tanks[1].setFill(tanks[1].getMaxFill());
+    @Override
+    protected int getSecondaryFluidAmount(BlockOreFluid block, int meta) {
+        return (int) (super.getSecondaryFluidAmount(block, meta) * gasMultiplier);
+    }
 
-            if (world.rand.nextDouble() < drainChance) {
-                world.setBlockState(pos, ModBlocks.ore_oil_empty.getDefaultState(), 3);
-            }
-        }
+    @Override
+    protected void attemptDrain(BlockOreFluid block, BlockPos targetPos, int meta) {
+        block.drain(world, targetPos, meta, drainChanceMultiplier);
+    }
+
+    @Override
+    protected int getLegacyOilPerDeposit() {
+        return oilPerDeposit;
+    }
+
+    @Override
+    protected int getLegacyGasPerDeposit() {
+        return gasPerDepositMin + world.rand.nextInt(gasPerDepositMax - gasPerDepositMin + 1);
+    }
+
+    @Override
+    protected double getLegacyDrainChance() {
+        return drainChance;
     }
 
     @Override

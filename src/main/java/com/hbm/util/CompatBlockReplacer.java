@@ -29,16 +29,7 @@ public class CompatBlockReplacer {
     public static final Map<String, BiFunction<String, IBlockState, IBlockState>> specialReplacer = new HashMap<>();
 
     static {
-        replacementMap.put("hbm:waste_ice", Blocks.ICE);
-        replacementMap.put("hbm:waste_snow", Blocks.SNOW_LAYER);
-        replacementMap.put("hbm:waste_snow_block", Blocks.SNOW);
-        replacementMap.put("hbm:waste_dirt", Blocks.DIRT);
-        replacementMap.put("hbm:waste_gravel", Blocks.GRAVEL);
-        replacementMap.put("hbm:waste_sand", Blocks.SAND);
-        replacementMap.put("hbm:waste_sandstone", Blocks.SANDSTONE);
-        replacementMap.put("hbm:waste_sand_red", Blocks.SAND);
         replacementMap.put("hbm:waste_red_sandstone", Blocks.RED_SANDSTONE);
-        replacementMap.put("hbm:waste_terracotta", Blocks.HARDENED_CLAY);
     }
 
     public static @NotNull IBlockState replaceBlock(IBlockState missingBlock) {

@@ -1,6 +1,5 @@
 package com.hbm.inventory.container;
 
-import com.hbm.inventory.slot.SlotNonRetarded;
 import com.hbm.tileentity.machine.TileEntityCrucible;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -9,6 +8,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.SlotItemHandler;
 
 public class ContainerCrucible extends Container {
 
@@ -16,6 +16,8 @@ public class ContainerCrucible extends Container {
 
     public ContainerCrucible(InventoryPlayer invPlayer, TileEntityCrucible crucible) {
         this.crucible = crucible;
+
+        this.addSlotToContainer(new SlotItemHandler(crucible.inventory, 0, 107, 81));
 
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -49,15 +51,16 @@ public class ContainerCrucible extends Container {
             ItemStack stackInSlot = slot.getStack();
             ret = stackInSlot.copy();
 
-            if (index < 9) {
-                if (!this.mergeItemStack(stackInSlot, 9, this.inventorySlots.size(), true)) {
+            if (index > 10) {
+                if (crucible.isItemValidForSlot(0, stackInSlot)) {
+                    if (!this.mergeItemStack(stackInSlot, 0, 1, false)) {
+                        return ItemStack.EMPTY;
+                    }
+                } else if (!this.mergeItemStack(stackInSlot, 1, 11, false)) {
                     return ItemStack.EMPTY;
                 }
-                slot.onSlotChange(stackInSlot, ret);
-            } else {
-                if (!this.mergeItemStack(stackInSlot, 0, 9, false)) {
-                    return ItemStack.EMPTY;
-                }
+            } else if (!this.mergeItemStack(stackInSlot, 11, this.inventorySlots.size(), false)) {
+                return ItemStack.EMPTY;
             }
 
             if (stackInSlot.isEmpty()) {
@@ -75,7 +78,7 @@ public class ContainerCrucible extends Container {
         return crucible.isUseableByPlayer(player);
     }
 
-    public static class SlotOneItem extends SlotNonRetarded {
+    public static class SlotOneItem extends SlotItemHandler {
         public SlotOneItem(IItemHandler inv, int index, int x, int y) {
             super(inv, index, x, y);
         }

@@ -94,5 +94,22 @@ public class ModItemsReplaceHandler {
 
         ore_oil_item.setRegistryName("hbm", "ore_oil");
         event.getRegistry().register(ore_oil_item);
+
+        ItemBlock ore_oil_empty_item = new ItemBlock(ModBlocks.ore_oil_empty);
+        EnumAddonTypes.setInstanceField(net.minecraftforge.registries.IForgeRegistryEntry.Impl.class, "registryName", ore_oil_empty_item, null);
+        ore_oil_empty_item.setRegistryName("hbm", "ore_oil_empty");
+        event.getRegistry().register(ore_oil_empty_item);
+
+        ItemBlock ore_bedrock_oil_item = new ItemBlock(ModBlocks.ore_bedrock_oil) {
+            @Override
+            public int getMetadata(int damage) {
+                return damage;
+            }
+        };
+        ore_bedrock_oil_item.setHasSubtypes(true);
+        ore_bedrock_oil_item.setMaxDamage(0);
+        EnumAddonTypes.setInstanceField(net.minecraftforge.registries.IForgeRegistryEntry.Impl.class, "registryName", ore_bedrock_oil_item, null);
+        ore_bedrock_oil_item.setRegistryName("hbm", "ore_bedrock_oil");
+        event.getRegistry().register(ore_bedrock_oil_item);
     }
 }

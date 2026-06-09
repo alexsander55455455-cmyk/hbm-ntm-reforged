@@ -2,6 +2,7 @@ package com.hbm.blocks.generic;
 
 import com.hbm.blocks.ModBlocks;
 import com.hbm.config.GeneralConfig;
+import com.hbm.handler.radiation.ChunkRadiationManager;
 import com.hbm.util.DelayedTick;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -47,22 +48,20 @@ public class BlockOutgas extends BlockNTMOre {
 
     public Block getGas() {
 
-        if (GeneralConfig.enableRadon) {
-            if (this == ModBlocks.ore_uranium || this == ModBlocks.ore_uranium_scorched ||
-                    this == ModBlocks.ore_gneiss_uranium || this == ModBlocks.ore_gneiss_uranium_scorched ||
-                    this == ModBlocks.ore_nether_uranium || this == ModBlocks.ore_nether_uranium_scorched) {
-                return ModBlocks.gas_radon;
-            }
-
-            if (this == ModBlocks.block_corium_cobble)
-                return ModBlocks.gas_radon_dense;
-
-            if (this == ModBlocks.ancient_scrap)
-                return ModBlocks.gas_radon_tomb;
+        if (this == ModBlocks.ore_uranium || this == ModBlocks.ore_uranium_scorched ||
+                this == ModBlocks.ore_gneiss_uranium || this == ModBlocks.ore_gneiss_uranium_scorched ||
+                this == ModBlocks.ore_nether_uranium || this == ModBlocks.ore_nether_uranium_scorched) {
+            return ModBlocks.gas_radon;
         }
 
+        if (this == ModBlocks.block_corium_cobble)
+            return ModBlocks.gas_radon_dense;
+
+        if (this == ModBlocks.ancient_scrap)
+            return ModBlocks.gas_radon_tomb;
+
         if (GeneralConfig.enableCarbonMonoxide) {
-            if (this == ModBlocks.ore_nether_coal) {
+            if (this == ModBlocks.ore_nether_coal || this == ModBlocks.ore_coal_oil_burning) {
                 return ModBlocks.gas_monoxide;
             }
         }
@@ -103,15 +102,15 @@ public class BlockOutgas extends BlockNTMOre {
 
     @Override
     public void neighborChanged(@NotNull IBlockState state, @NotNull World world, @NotNull BlockPos pos, @NotNull Block blockIn, @NotNull BlockPos fromPos) {
-        if(onNeighbour && !world.isRemote &&world.rand.nextInt(3) == 0) {
-            for(EnumFacing dir : EnumFacing.VALUES) {
+        if (onNeighbour && !world.isRemote) {
+            Block gas = getGas();
+            if (gas == Blocks.AIR) return;
+            for (EnumFacing dir : EnumFacing.VALUES) {
                 BlockPos targetPos = pos.offset(dir);
-                DelayedTick.nextWorldTickEnd(world, w -> {
-                    IBlockState targetState = w.getBlockState(targetPos);
-                    if (targetState.getBlock().isAir(targetState, w, targetPos)) {
-                        w.setBlockState(targetPos, getGas().getDefaultState(), 3);
-                    }
-                });
+                IBlockState targetState = world.getBlockState(targetPos);
+                if (targetState.getBlock().isAir(targetState, world, targetPos)) {
+                    world.setBlockState(targetPos, gas.getDefaultState(), 3);
+                }
             }
         }
     }
@@ -140,6 +139,14 @@ public class BlockOutgas extends BlockNTMOre {
     @Override
     public void updateTick(World world, BlockPos pos, IBlockState state, Random rand) {
         if (world.isRemote) return;
+
+        if (this == ModBlocks.block_corium_cobble) {
+            ChunkRadiationManager.proxy.incrementRad(world, pos, 1000F, 10000F);
+        }
+        if (this == ModBlocks.ancient_scrap) {
+            ChunkRadiationManager.proxy.incrementRad(world, pos, 150F, 1500F);
+        }
+
         EnumFacing dir = EnumFacing.VALUES[rand.nextInt(6)];
         BlockPos randomPos = pos.offset(dir);
         IBlockState neighbourPos = world.getBlockState(randomPos);

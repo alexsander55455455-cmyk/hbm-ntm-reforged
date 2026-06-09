@@ -4,9 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonWriter;
-import com.hbm.blocks.BlockEnums.EnumStoneType;
 import com.hbm.blocks.ModBlocks;
-import com.hbm.inventory.OreDictManager.DictFrame;
 import com.hbm.inventory.RecipesCommon;
 import com.hbm.inventory.material.MaterialShapes;
 import com.hbm.inventory.material.Mats;
@@ -17,6 +15,7 @@ import com.hbm.items.ModItems;
 import com.hbm.items.machine.ItemMold;
 import com.hbm.items.machine.ItemScraps;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -57,7 +56,7 @@ public class CrucibleRecipes extends GenericRecipes<CrucibleRecipe> {
     int i = MaterialShapes.INGOT.q(1);
 
     this.register(new CrucibleRecipe("crucible.steel").setup(2, new ItemStack(ModItems.ingot_steel))
-        .inputs(new MaterialStack(Mats.MAT_IRON, n * 2), new MaterialStack(Mats.MAT_CARBON, n))
+        .inputs(new MaterialStack(Mats.MAT_IRON, n), new MaterialStack(Mats.MAT_CARBON, n))
         .outputs(new MaterialStack(Mats.MAT_STEEL, n * 2)));
 
     //        if(Compat.isModLoaded(Compat.MOD_GT6)) {
@@ -72,11 +71,11 @@ public class CrucibleRecipes extends GenericRecipes<CrucibleRecipe> {
     //                    .outputs(new MaterialStack(Mats.MAT_STEEL, n * 2)));
     //        }
 
-    this.register(new CrucibleRecipe("crucible.hematite").setup(6, DictFrame.fromOne(ModBlocks.stone_resource, EnumStoneType.HEMATITE))
+    this.register(new CrucibleRecipe("crucible.hematite").setup(6, new ItemStack(Items.IRON_INGOT))
         .inputs(new MaterialStack(Mats.MAT_HEMATITE, i * 2), new MaterialStack(Mats.MAT_FLUX, n * 2))
         .outputs(new MaterialStack(Mats.MAT_IRON, i), new MaterialStack(Mats.MAT_SLAG, n * 3)));
 
-    this.register(new CrucibleRecipe("crucible.malachite").setup(6, DictFrame.fromOne(ModBlocks.stone_resource, EnumStoneType.MALACHITE))
+    this.register(new CrucibleRecipe("crucible.malachite").setup(6, new ItemStack(ModItems.ingot_copper))
         .inputs(new MaterialStack(Mats.MAT_MALACHITE, i * 2), new MaterialStack(Mats.MAT_FLUX, n * 2))
         .outputs(new MaterialStack(Mats.MAT_COPPER, i), new MaterialStack(Mats.MAT_SLAG, n * 3)));
 
@@ -112,13 +111,21 @@ public class CrucibleRecipes extends GenericRecipes<CrucibleRecipe> {
         .inputs(new MaterialStack(Mats.MAT_COPPER, n * 8), new MaterialStack(Mats.MAT_ARSENIC, n), new MaterialStack(Mats.MAT_FLUX, n * 3))
         .outputs(new MaterialStack(Mats.MAT_ABRONZE, i), new MaterialStack(Mats.MAT_SLAG, n * 3)));
 
-    this.register(new CrucibleRecipe("crucible.cmb").setup(3, new ItemStack(ModItems.ingot_combine_steel))
-        .inputs(new MaterialStack(Mats.MAT_MAGTUNG, n * 6), new MaterialStack(Mats.MAT_MUD, n * 3))
-        .outputs(new MaterialStack(Mats.MAT_CMB, i)));
+    this.register(new CrucibleRecipe("crucible.star").setup(3, new ItemStack(ModItems.ingot_starmetal))
+        .inputs(new MaterialStack(Mats.MAT_SATURN, n), new MaterialStack(Mats.MAT_METEOR, n))
+        .outputs(new MaterialStack(Mats.MAT_STAR, n * 2)));
+
+    this.register(new CrucibleRecipe("crucible.tungcar").setup(2, new ItemStack(ModItems.neutron_reflector))
+        .inputs(new MaterialStack(Mats.MAT_TUNGSTEN, i), new MaterialStack(Mats.MAT_CARBON, i))
+        .outputs(new MaterialStack(Mats.MAT_TUNGCAR, i * 2)));
 
     this.register(new CrucibleRecipe("crucible.magtung").setup(3, new ItemStack(ModItems.ingot_magnetized_tungsten))
         .inputs(new MaterialStack(Mats.MAT_TUNGSTEN, i), new MaterialStack(Mats.MAT_SCHRABIDIUM, n * 1))
         .outputs(new MaterialStack(Mats.MAT_MAGTUNG, i)));
+
+    this.register(new CrucibleRecipe("crucible.cmb").setup(3, new ItemStack(ModItems.ingot_combine_steel))
+        .inputs(new MaterialStack(Mats.MAT_MUD, i), new MaterialStack(Mats.MAT_MAGTUNG, n * 6), new MaterialStack(Mats.MAT_ALLOY, n * 3))
+        .outputs(new MaterialStack(Mats.MAT_CMB, i)));
 
     this.register(new CrucibleRecipe("crucible.bscco").setup(3, new ItemStack(ModItems.ingot_bscco))
         .inputs(new MaterialStack(Mats.MAT_BISMUTH, n * 2), new MaterialStack(Mats.MAT_STRONTIUM, n * 2), new MaterialStack(Mats.MAT_CALCIUM, n * 2), new MaterialStack(Mats.MAT_COPPER, n * 3))
@@ -216,7 +223,7 @@ public class CrucibleRecipes extends GenericRecipes<CrucibleRecipe> {
               List<ItemStack> stacks = new ArrayList<>();
               stacks.add(
                   ItemScraps.create(
-                      new Mats.MaterialStack(convert, shape.q(1) * out / in), true));
+                      new Mats.MaterialStack(convert, shape.q(1) * out / in), false));
               map.put(new RecipesCommon.OreDictStack(name), stacks);
             }
           }
@@ -226,7 +233,7 @@ public class CrucibleRecipes extends GenericRecipes<CrucibleRecipe> {
     for (Map.Entry<String, List<Mats.MaterialStack>> entry : Mats.materialOreEntries.entrySet()) {
       List<ItemStack> stacks = new ArrayList<>();
       for (Mats.MaterialStack mat : entry.getValue()) {
-        stacks.add(ItemScraps.create(mat, true));
+        stacks.add(ItemScraps.create(mat, false));
       }
       map.put(new RecipesCommon.OreDictStack(entry.getKey()), stacks);
     }
@@ -235,7 +242,7 @@ public class CrucibleRecipes extends GenericRecipes<CrucibleRecipe> {
         Mats.materialEntries.entrySet()) {
       List<ItemStack> stacks = new ArrayList<>();
       for (Mats.MaterialStack mat : entry.getValue()) {
-        stacks.add(ItemScraps.create(mat, true));
+        stacks.add(ItemScraps.create(mat, false));
       }
       map.put(entry.getKey().copy(), stacks);
     }
@@ -263,7 +270,7 @@ public class CrucibleRecipes extends GenericRecipes<CrucibleRecipe> {
         ItemStack out = mold.getOutput(material);
         if (!out.isEmpty()) {
           ItemStack scrap =
-              ItemScraps.create(new Mats.MaterialStack(material, mold.getCost()), true);
+              ItemScraps.create(new Mats.MaterialStack(material, mold.getCost()), false);
           ItemStack shape = new ItemStack(ModItems.mold, 1, mold.id);
           ItemStack basin =
               new ItemStack(

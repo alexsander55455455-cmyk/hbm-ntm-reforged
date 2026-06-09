@@ -4,6 +4,8 @@ import com.hbm.capability.HbmLivingCapability.EntityHbmProps;
 import com.hbm.capability.HbmLivingProps;
 import com.hbm.config.CompatibilityConfig;
 import com.hbm.config.GeneralConfig;
+import com.hbm.config.RadiationConfig;
+import com.hbm.main.MainRegistry;
 import com.hbm.entity.effect.EntityNukeTorex;
 import com.hbm.entity.grenade.EntityGrenadeUniversal;
 import com.hbm.items.weapon.grenade.ItemGrenadeFilling.EnumGrenadeFilling;
@@ -40,6 +42,7 @@ import net.minecraft.entity.passive.EntitySkeletonHorse;
 import net.minecraft.entity.passive.EntityZombieHorse;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
@@ -58,6 +61,7 @@ import java.util.List;
 public class ContaminationUtil {
 
 	public static final String NTM_NEUTRON_NBT_KEY = "ntmNeutron";
+	public static final float MIN_RAD_ACTIVATION_RATE = 0.000005F;
     public static final String RAD_MULT_KEY = "hbmradmultiplier";
     public static Class<?>[] immuneEntities  = new Class<?>[]{
             EntityCreeperNuclear.class,
@@ -236,9 +240,23 @@ public class ContaminationUtil {
 		return rads;
 	}
 
-    public static double getNoNeutronPlayerRads(EntityLivingBase entity) {
+	public static double getNoNeutronPlayerRads(EntityLivingBase entity) {
         return HbmLivingProps.getRadBuf(entity) * ContaminationUtil.calculateRadiationMod(entity);
     }
+
+	public static float getPlayerNeutronRads(EntityPlayer player) {
+		float radBuffer = 0F;
+		for (ItemStack slotI : player.inventory.mainInventory) {
+			radBuffer += getNeutronRads(slotI);
+		}
+		for (ItemStack slotA : player.inventory.armorInventory) {
+			radBuffer += getNeutronRads(slotA);
+		}
+		for (ItemStack offhand : player.inventory.offHandInventory) {
+			radBuffer += getNeutronRads(offhand);
+		}
+		return radBuffer;
+	}
 
 	public static boolean isRadItem(ItemStack stack){
 		if(stack == null)
@@ -283,12 +301,63 @@ public class ContaminationUtil {
 				}
 			}
 		}
-		for(ItemStack slotA : player.inventory.armorInventory){
+		for (ItemStack slotA : player.inventory.armorInventory) {
 			if (neutronActivateItem(slotA, rad, decay)) {
 				changed = true;
 			}
 		}
+		for (ItemStack offhand : player.inventory.offHandInventory) {
+			if (neutronActivateItem(offhand, rad, decay)) {
+				changed = true;
+			}
+		}
 		return changed;
+	}
+
+	public static void syncNeutronInventoryToClient(EntityPlayer player) {
+		player.inventory.markDirty();
+		if (player.inventoryContainer == null) {
+			return;
+		}
+		for (Slot slot : player.inventoryContainer.inventorySlots) {
+			if (slot.inventory == player.inventory) {
+				slot.onSlotChanged();
+			}
+		}
+		player.inventoryContainer.detectAndSendChanges();
+	}
+
+	/**
+	 * EE parity: apply neutron item dose and activate clean inventory slots from ambient received RAD/s.
+	 */
+	public static void updatePlayerItemContamination(EntityPlayer player) {
+		if (player.world.isRemote || !GeneralConfig.enableRads || !RadiationConfig.neutronActivation) {
+			return;
+		}
+
+		float neutronRads = getPlayerNeutronRads(player);
+		if (neutronRads > 0) {
+			contaminate(player, HazardType.NEUTRON, ContaminationType.CREATIVE, neutronRads * 0.05F);
+		} else {
+			HbmLivingProps.setNeutron(player, 0);
+		}
+
+		double receivedRadiation = getNoNeutronPlayerRads(player) * 0.00004D
+				- (0.00004D * RadiationConfig.neutronActivationThreshold);
+
+		if (GeneralConfig.enableDebugMode && player.ticksExisted % 100 == 0) {
+			MainRegistry.logger.info("[ItemContam] {} radBuf={} radEnv={} received={} threshold={}",
+					player.getName(),
+					HbmLivingProps.getRadBuf(player),
+					HbmLivingProps.getRadEnv(player),
+					receivedRadiation,
+					RadiationConfig.neutronActivationThreshold);
+		}
+
+		if (receivedRadiation > MIN_RAD_ACTIVATION_RATE) {
+			neutronActivateInventory(player, (float) receivedRadiation, 1.0F);
+			syncNeutronInventoryToClient(player);
+		}
 	}
 
 	public static boolean neutronActivateItem(ItemStack stack, float rad, float decay) {

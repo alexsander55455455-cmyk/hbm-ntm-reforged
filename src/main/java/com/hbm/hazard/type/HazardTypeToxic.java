@@ -5,6 +5,7 @@ import com.hbm.config.RadiationConfig;
 import com.hbm.handler.ArmorUtil;
 import com.hbm.hazard.helper.HazardHelper;
 import com.hbm.hazard.modifier.IHazardModifier;
+import com.hbm.lib.Library;
 import com.hbm.util.ArmorRegistry;
 import com.hbm.util.I18nUtil;
 import net.minecraft.entity.EntityLivingBase;
@@ -23,16 +24,19 @@ import static com.hbm.hazard.helper.HazardHelper.applyPotionEffect;
 
 public class HazardTypeToxic implements IHazardType {
 	@Override
-    public void onUpdate(final EntityLivingBase target, final double level, final ItemStack stack) {
+    public void onUpdate(final EntityLivingBase target, double level, final ItemStack stack) {
 
 		if (RadiationConfig.disableToxic) return;
 
-		final boolean reacher = HazardHelper.isHoldingReacher(target);
+		level *= stack.getCount();
 		boolean hasToxFilter = false;
 		boolean hasHazmat = false;
+		final boolean reacher = HazardHelper.isHoldingReacher(target);
 
 		if (target instanceof EntityPlayer player) {
-            hasToxFilter = ArmorRegistry.hasProtection(player, EntityEquipmentSlot.HEAD, ArmorRegistry.HazardClass.NERVE_AGENT);
+			if (player.capabilities.isCreativeMode) return;
+
+			hasToxFilter = ArmorRegistry.hasProtection(player, EntityEquipmentSlot.HEAD, ArmorRegistry.HazardClass.NERVE_AGENT);
 
 			if (hasToxFilter) {
 				ArmorUtil.damageGasMaskFilter(player, hazardRate);
@@ -41,38 +45,32 @@ public class HazardTypeToxic implements IHazardType {
 			hasHazmat = ArmorUtil.checkForHazmat(player);
 		}
 
-		final boolean isUnprotected = !(hasToxFilter || hasHazmat || reacher);
+		if (!hasToxFilter && !hasHazmat && !reacher) {
+			if (level > 0) {
+				applyPotionEffect(target, MobEffects.HUNGER, 110, Math.min(255, (int) level));
+			}
+			if (level > 10) {
+				applyPotionEffect(target, MobEffects.WEAKNESS, 110, Math.min(255, (int) level / 10));
+			}
+			if (level > 100) {
+				applyPotionEffect(target, MobEffects.SLOWNESS, 110, Math.min(4, (int) level / 100));
+			}
+			if (level > 1000) {
+				if (level > 2000 || target.world.rand.nextInt((int) (2000 / level)) == 0) {
+					applyPotionEffect(target, MobEffects.POISON, 110, Math.min(255, (int) level / 1000));
+				}
+			}
+		}
 
-        if (isUnprotected) {
-            applyPotionEffect(target, MobEffects.WEAKNESS, 110, (int) (level - 1));
-
-            if (level > 2) {
-                applyPotionEffect(target, MobEffects.SLOWNESS, 110, (int) Math.min(4, level - 4));
-            }
-
-            if (level > 4) {
-                applyPotionEffect(target, MobEffects.HUNGER, 110, (int) level);
-            }
-
-            if (level > 6 && target.world.rand.nextInt((int) (2000 / level)) == 0) {
-                applyPotionEffect(target, MobEffects.POISON, 110, (int) (level - 4));
-            }
-        }
-
-		if (!hasHazmat || !hasToxFilter || !reacher) {
-            if (level > 8) {
-                applyPotionEffect(target, MobEffects.MINING_FATIGUE, 110, (int) (level - 8));
-            }
-
-            if (level > 16) {
-                applyPotionEffect(target, MobEffects.INSTANT_DAMAGE, 110, (int) (level - 16));
-            }
-        }
-    }
-
-
-
-
+		if (!(hasHazmat && hasToxFilter) && !reacher) {
+			if (level > 2000) {
+				applyPotionEffect(target, MobEffects.MINING_FATIGUE, 110, Math.min(255, (int) level / 2000));
+			}
+			if (level > 10000) {
+				applyPotionEffect(target, MobEffects.INSTANT_DAMAGE, 110, Math.min(255, (int) level / 5000));
+			}
+		}
+	}
 
     @Override
     public void updateEntity(final EntityItem item, final double level) {
@@ -80,21 +78,25 @@ public class HazardTypeToxic implements IHazardType {
 
     @Override
 	@SideOnly(Side.CLIENT)
-    public void addHazardInformation(final EntityPlayer player, final List<String> list, final double level, final ItemStack stack, final List<IHazardModifier> modifiers) {
-        final String adjectiveKey;
+    public void addHazardInformation(final EntityPlayer player, final List<String> list, double level, final ItemStack stack, final List<IHazardModifier> modifiers) {
+		level *= stack.getCount();
+		final float rl = Library.roundFloat(level, 3);
+		final String adjectiveKey;
 
-        if (level > 16) {
-            adjectiveKey = "adjective.extreme";
-        } else if (level > 8) {
-            adjectiveKey = "adjective.veryhigh";
-        } else if (level > 4) {
-            adjectiveKey = "adjective.high";
-        } else if (level > 2) {
-            adjectiveKey = "adjective.medium";
-        } else {
-            adjectiveKey = "adjective.little";
-        }
+		if (level > 10000) {
+			adjectiveKey = "adjective.extreme";
+		} else if (level > 1000) {
+			adjectiveKey = "adjective.veryhigh";
+		} else if (level > 100) {
+			adjectiveKey = "adjective.high";
+		} else if (level > 10) {
+			adjectiveKey = "adjective.medium";
+		} else if (level > 0) {
+			adjectiveKey = "adjective.little";
+		} else {
+			return;
+		}
 
-		list.add(TextFormatting.GREEN + "[" + I18nUtil.resolveKey(adjectiveKey) + " " + I18nUtil.resolveKey("trait.toxic") + "]");
+		list.add(TextFormatting.GREEN + "[" + I18nUtil.resolveKey(adjectiveKey) + " " + I18nUtil.resolveKey("trait.toxic") + "] " + rl);
     }
 }

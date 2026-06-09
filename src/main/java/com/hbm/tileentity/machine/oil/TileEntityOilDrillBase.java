@@ -13,21 +13,25 @@ import com.hbm.lib.Library;
 import com.hbm.tileentity.*;
 import com.hbm.util.BobMathUtil;
 import com.hbm.util.SoundUtil;
+import com.hbmspace.blocks.generic.BlockOreFluid;
+import com.hbmspace.dim.CelestialBody;
+import com.hbmspace.dim.SolarSystem;
+import com.hbmspace.dim.WorldProviderCelestial;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Queue;
 
 public abstract class TileEntityOilDrillBase extends TileEntityMachineBase implements ITickable, IEnergyReceiverMK2, IFluidStandardTransceiver, IConfigurableMachine, IPersistentNBT, IGUIProvider, IFluidCopiable, IUpgradeInfoProvider, IConnectionAnchors {
     private final UpgradeManagerNT upgradeManager = new UpgradeManagerNT(this);
@@ -37,7 +41,7 @@ public abstract class TileEntityOilDrillBase extends TileEntityMachineBase imple
     public int speedLevel;
     public int energyLevel;
     public int overLevel;
-    HashSet<BlockPos> processed = new HashSet<>();
+    protected HashSet<BlockPos> trace = new HashSet<>();
 
     public TileEntityOilDrillBase() {
         super(0, true, true);
@@ -141,17 +145,23 @@ public abstract class TileEntityOilDrillBase extends TileEntityMachineBase imple
                     this.indicator = 0;
 
                     for (int y = pos.getY() - 1; y >= getDrillDepth(); y--) {
+                        BlockPos columnPos = new BlockPos(pos.getX(), y, pos.getZ());
+                        Block columnBlock = world.getBlockState(columnPos).getBlock();
 
-                        if (world.getBlockState(new BlockPos(pos.getX(), y, pos.getZ())).getBlock() != ModBlocks.oil_pipe) {
+                        if (columnBlock == ModBlocks.oil_pipe) {
+                            if (y == getDrillDepth())
+                                this.indicator = 1;
+                            continue;
+                        }
 
-                            if (!trySuck(y)) {
-                                tryDrill(y);
-                            }
+                        if (isOilDepositBlock(columnBlock)) {
+                            if (!trySuck(y))
+                                this.indicator = 2;
                             break;
                         }
 
-                        if (y == getDrillDepth())
-                            this.indicator = 1;
+                        tryDrill(y);
+                        break;
                     }
                 }
 
@@ -205,9 +215,40 @@ public abstract class TileEntityOilDrillBase extends TileEntityMachineBase imple
 
     public abstract int getDelay();
 
+    public static boolean matchesHbmOreRegistry(Block b, String... paths) {
+        if (b == null)
+            return false;
+
+        ResourceLocation id = b.getRegistryName();
+        if (id == null || !"hbm".equals(id.getNamespace()))
+            return false;
+
+        for (String path : paths) {
+            if (path.equals(id.getPath()))
+                return true;
+        }
+
+        return false;
+    }
+
+    public boolean isOilDepositBlock(Block b) {
+        if (b == ModBlocks.ore_oil || b == ModBlocks.ore_oil_empty || b == ModBlocks.ore_bedrock_oil)
+            return true;
+        if (b instanceof BlockOreFluid)
+            return true;
+        if (BlockOreFluid.getFullBlock(b) != null)
+            return true;
+        return matchesHbmOreRegistry(b, "ore_oil", "ore_oil_empty", "ore_bedrock_oil");
+    }
+
     public void tryDrill(int y) {
         BlockPos posD = new BlockPos(pos.getX(), y, pos.getZ());
         Block b = world.getBlockState(posD).getBlock();
+
+        if (isOilDepositBlock(b)) {
+            this.indicator = 2;
+            return;
+        }
 
         if (b.getExplosionResistance(null) < 1000) {
             onDrill(y);
@@ -227,47 +268,129 @@ public abstract class TileEntityOilDrillBase extends TileEntityMachineBase imple
     public boolean trySuck(int y) {
         BlockPos startPos = new BlockPos(pos.getX(), y, pos.getZ());
         Block startBlock = world.getBlockState(startPos).getBlock();
-        if (!canSuckBlock(startBlock)) return false;
-        if (!this.canPump()) return true;
-        Queue<BlockPos> queue = new ArrayDeque<>();
-        processed.clear();
-        queue.offer(startPos);
-        processed.add(startPos);
 
-        int nodesVisited = 0;
-        while (!queue.isEmpty() && nodesVisited < 256) {
-            BlockPos currentPos = queue.poll();
-            nodesVisited++;
-            Block currentBlock = world.getBlockState(currentPos).getBlock();
-            if (currentBlock == ModBlocks.ore_oil || currentBlock == ModBlocks.ore_bedrock_oil) {
-                doSuck(currentPos);
-                return true;
-            }
-            if (currentBlock != ModBlocks.ore_oil_empty) continue;
-            for (ForgeDirection dir : BobMathUtil.getShuffledDirs()) {
-                BlockPos neighborPos = currentPos.add(dir.offsetX, dir.offsetY, dir.offsetZ);
-                if (!processed.contains(neighborPos) && canSuckBlock(world.getBlockState(neighborPos).getBlock())) {
-                    processed.add(neighborPos);
-                    queue.offer(neighborPos);
-                }
-            }
-        }
-        return false;
+        if (!canSuckBlock(startBlock))
+            return false;
+
+        if (!this.canPump())
+            return true;
+
+        trace.clear();
+        return suckRec(startPos, 0);
     }
 
     public boolean canSuckBlock(Block b) {
-        return b == ModBlocks.ore_oil || b == ModBlocks.ore_oil_empty;
+        if (b == ModBlocks.ore_bedrock_oil || matchesHbmOreRegistry(b, "ore_bedrock_oil"))
+            return false;
+        if (b instanceof BlockOreFluid)
+            return true;
+        if (BlockOreFluid.getFullBlock(b) != null)
+            return true;
+        return matchesHbmOreRegistry(b, "ore_oil", "ore_oil_empty");
     }
 
-    public void doSuck(BlockPos pos) {
-        Block b = world.getBlockState(pos).getBlock();
+    public boolean suckRec(BlockPos currentPos, int layer) {
+        if (trace.contains(currentPos))
+            return false;
 
-        if (b == ModBlocks.ore_oil) {
-            onSuck(pos);
+        trace.add(currentPos);
+
+        if (layer > 64)
+            return false;
+
+        Block b = world.getBlockState(currentPos).getBlock();
+
+        if (b instanceof BlockOreFluid) {
+            onSuck((BlockOreFluid) b, currentPos);
+            return true;
+        }
+
+        if (matchesHbmOreRegistry(b, "ore_oil") || b == ModBlocks.ore_oil) {
+            onSuckDeposit(currentPos);
+            return true;
+        }
+
+        if (BlockOreFluid.getFullBlock(b) != null) {
+            for (ForgeDirection dir : BobMathUtil.getShuffledDirs()) {
+                BlockPos neighborPos = currentPos.add(dir.offsetX, dir.offsetY, dir.offsetZ);
+                if (suckRec(neighborPos, layer + 1))
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected int resolveDepositMeta(BlockOreFluid block, IBlockState state) {
+        int blockMeta = block.getMetaFromState(state);
+
+        if (world.provider.getDimension() == 0) {
+            return SolarSystem.Body.KERBIN.ordinal();
+        }
+
+        if (world.provider instanceof WorldProviderCelestial) {
+            return CelestialBody.getMeta(world);
+        }
+
+        return blockMeta;
+    }
+
+    public void onSuck(BlockOreFluid block, BlockPos targetPos) {
+        IBlockState state = world.getBlockState(targetPos);
+        int meta = resolveDepositMeta(block, state);
+
+        tanks[0].setTankType(block.getPrimaryFluid(meta));
+        tanks[1].setTankType(block.getSecondaryFluid(meta));
+
+        tanks[0].setFill(Math.min(tanks[0].getFill() + getPrimaryFluidAmount(block, meta), tanks[0].getMaxFill()));
+        if (tanks[1].getTankType() != Fluids.NONE) {
+            tanks[1].setFill(Math.min(tanks[1].getFill() + getSecondaryFluidAmount(block, meta), tanks[1].getMaxFill()));
+        }
+
+        attemptDrain(block, targetPos, meta);
+    }
+
+    protected void onSuckDeposit(BlockPos targetPos) {
+        Block block = world.getBlockState(targetPos).getBlock();
+
+        if (block instanceof BlockOreFluid) {
+            onSuck((BlockOreFluid) block, targetPos);
+            return;
+        }
+
+        tanks[0].setTankType(Fluids.OIL);
+        tanks[1].setTankType(Fluids.GAS);
+        tanks[0].setFill(Math.min(tanks[0].getFill() + getLegacyOilPerDeposit(), tanks[0].getMaxFill()));
+        tanks[1].setFill(Math.min(tanks[1].getFill() + getLegacyGasPerDeposit(), tanks[1].getMaxFill()));
+
+        if (world.rand.nextDouble() < getLegacyDrainChance()) {
+            world.setBlockState(targetPos, ModBlocks.ore_oil_empty.getDefaultState(), 3);
         }
     }
 
-    public abstract void onSuck(BlockPos pos);
+    protected int getLegacyOilPerDeposit() {
+        return 500;
+    }
+
+    protected int getLegacyGasPerDeposit() {
+        return 100 + world.rand.nextInt(401);
+    }
+
+    protected double getLegacyDrainChance() {
+        return 0.05D;
+    }
+
+    protected int getPrimaryFluidAmount(BlockOreFluid block, int meta) {
+        return block.getPrimaryFluidAmount(meta);
+    }
+
+    protected int getSecondaryFluidAmount(BlockOreFluid block, int meta) {
+        return block.getSecondaryFluidAmount(meta);
+    }
+
+    protected void attemptDrain(BlockOreFluid block, BlockPos targetPos, int meta) {
+        block.drain(world, targetPos, meta, 1);
+    }
 
     @Override
     public long getPower() {

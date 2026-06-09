@@ -1,6 +1,7 @@
 package com.hbm.handler.ability;
 
 import com.hbm.util.ChatBuilder;
+import com.hbm.util.I18nUtil;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -26,15 +27,39 @@ public class ToolPreset {
         this.harvestAbilityLevel = harvestAbilityLevel;
     }
 
+    public String getTooltipLabel() {
+        if (isNone()) {
+            return I18nUtil.resolveKey("chat.abildisabled");
+        }
+
+        boolean hasArea = areaAbility != IToolAreaAbility.NONE;
+        boolean hasHarvest = harvestAbility != IToolHarvestAbility.NONE;
+        StringBuilder label = new StringBuilder();
+
+        if (hasArea) {
+            label.append(areaAbility.getFullName(areaAbilityLevel));
+        }
+
+        if (hasArea && hasHarvest) {
+            label.append(" + ");
+        }
+
+        if (hasHarvest) {
+            label.append(harvestAbility.getFullName(harvestAbilityLevel));
+        }
+
+        return label.toString();
+    }
+
     public ITextComponent getMessage() {
         if (isNone()) {
-            return ChatBuilder.start("[Tool ability deactivated]").color(TextFormatting.GOLD).flush();
+            return ChatBuilder.start("[").nextTranslation("chat.abildisabled").next("]").color(TextFormatting.GOLD).flush();
         }
 
         boolean hasArea = areaAbility != IToolAreaAbility.NONE;
         boolean hasHarvest = harvestAbility != IToolHarvestAbility.NONE;
 
-        ChatBuilder builder = ChatBuilder.start("[Enabled ");
+        ChatBuilder builder = ChatBuilder.start("[").nextTranslation("chat.abilenabled").next(" ");
 
         if (hasArea) {
             builder.nextTranslation(areaAbility.getName());
@@ -50,7 +75,7 @@ public class ToolPreset {
             builder.next(harvestAbility.getExtension(harvestAbilityLevel));
         }
 
-        return builder.colorAll(TextFormatting.YELLOW).flush();
+        return builder.next("]").colorAll(TextFormatting.YELLOW).flush();
     }
 
     public boolean isNone() {

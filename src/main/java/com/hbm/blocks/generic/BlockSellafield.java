@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableMap;
 import com.hbm.Tags;
 import com.hbm.blocks.ModBlocks;
 import com.hbm.handler.radiation.ChunkRadiationManager;
+import com.hbm.hazard.HazardRegistry;
+import com.hbm.hazard.HazardSystem;
 import com.hbm.items.IDynamicModels;
 import com.hbm.potion.HbmPotion;
 import com.hbm.render.block.BlockBakeFrame;
@@ -23,6 +25,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -55,7 +58,6 @@ public class BlockSellafield extends BlockMeta implements IDynamicModels {
 
     public static final IUnlistedProperty<Integer> VARIANT = new PropertyRandomVariant(sellafieldTextures.length);
     private static final short LEVELS = 6;
-    private static final float rad = 0.5f;
     private static final int[][] colors = new int[][]{
             {0x4C7939, 0x41463F},
             {0x418223, 0x3E443B},
@@ -81,6 +83,13 @@ public class BlockSellafield extends BlockMeta implements IDynamicModels {
     @Override
     public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
         super.onBlockAdded(worldIn, pos, state);
+        this.setTickRandomly(true);
+        worldIn.scheduleUpdate(pos, this, this.tickRate(worldIn));
+    }
+
+    @Override
+    public int tickRate(World world) {
+        return 60 + world.rand.nextInt(500);
     }
 
     @Override
@@ -92,8 +101,9 @@ public class BlockSellafield extends BlockMeta implements IDynamicModels {
 
     @Override
     public void onEntityWalk(World worldIn, BlockPos pos, Entity entityIn) {
-        int level = worldIn.getBlockState(pos).getValue(META);
         if (entityIn instanceof EntityLivingBase livingBase) {
+            HazardSystem.applyHazards(new ItemStack(this, 1, worldIn.getBlockState(pos).getValue(META)), livingBase);
+            int level = worldIn.getBlockState(pos).getValue(META);
             livingBase.addPotionEffect(new PotionEffect(HbmPotion.radiation, 30 * 20, level < 5 ? level : level * 2));
             if (level >= 3)
                 entityIn.setFire(level);
@@ -105,8 +115,11 @@ public class BlockSellafield extends BlockMeta implements IDynamicModels {
         if (world.isRemote) return;
         IBlockState currentState = world.getBlockState(pos);
         int level = currentState.getValue(META);
-        float netRad = rad * (level + 1);
-        ChunkRadiationManager.proxy.incrementRad(world, pos, netRad);
+        float rads = (float) HazardSystem.getHazardLevelFromStack(new ItemStack(this, 1, level), HazardRegistry.RADIATION);
+        if (rads > 0) {
+            ChunkRadiationManager.proxy.incrementRad(world, pos, rads * 0.1F, rads);
+            world.scheduleUpdate(pos, this, this.tickRate(world));
+        }
 
         if (rand.nextInt(level == 0 ? 25 : 15) == 0) {
             if (level > 0)

@@ -7,6 +7,7 @@ import com.hbm.inventory.fluid.Fluids;
 import com.hbm.items.ItemEnums;
 import com.hbm.items.ItemEnums.EnumCircuitType;
 import com.hbm.items.ModItems;
+import com.hbm.items.tool.ItemBombCaller;
 import com.hbm.items.food.ItemConserve.EnumFoodType;
 import com.hbm.items.weapon.grenade.ItemGrenadeFilling.EnumGrenadeFilling;
 import com.hbm.items.weapon.sedna.factory.GunFactory;
@@ -31,6 +32,8 @@ public class ConsumableRecipes {
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.bomb_caller, 1, 1),"TTT", "TRT", "TTT", 'T', new ItemStack(ModItems.grenade_filling, 1, EnumGrenadeFilling.INC.ordinal()), 'R', ModItems.rangefinder );
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.bomb_caller, 1, 2),"TTT", "TRT", "TTT", 'T', ModItems.pellet_gas, 'R', ModItems.rangefinder );
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.bomb_caller, 1, 4),"TRC", 'T', OreDictManager.DictFrame.fromOne(ModItems.ammo_standard, GunFactory.EnumAmmo.NUKE_HIGH), 'R', ModItems.rangefinder, 'C', OreDictManager.DictFrame.fromOne(ModItems.circuit, EnumCircuitType.CONTROLLER) );
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.bomb_caller, 1, ItemBombCaller.EnumCallerType.NAPALM.ordinal()), "TTT", "TRT", "TTT", 'T', ModItems.grenade_gascan, 'R', ModItems.detonator_laser);
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.bomb_caller, 1, ItemBombCaller.EnumCallerType.ORANGE.ordinal()), "TRT", 'T', ModItems.grenade_cloud, 'R', ModItems.detonator_laser);
 
         //Food
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.bomb_waffle, 1),"WEW", "MPM", "WEW", 'W', Items.WHEAT, 'E', Items.EGG, 'M', Items.MILK_BUCKET, 'P', ModItems.man_core );
@@ -216,6 +219,7 @@ public class ConsumableRecipes {
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.gas_mask_filter, 1),"I", "F", 'F', ModItems.filter_coal, 'I', IRON.plate() );
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.gas_mask_filter_mono, 1),"ZZZ", "ZCZ", "ZZZ", 'Z', ZR.nugget(), 'C', ModItems.catalyst_clay );
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.gas_mask_filter_combo, 1),"ZCZ", "CFC", "ZCZ", 'Z', ZR.ingot(), 'C', ModItems.catalyst_clay, 'F', ModItems.gas_mask_filter );
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.gas_mask_filter_radon, 1),"ZCZ", "NFN", "ZCZ", 'Z', ModItems.nugget_verticium, 'N', ModItems.powder_radspice, 'C', ModItems.insert_xsapi, 'F', ModItems.gas_mask_filter_combo );
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.gas_mask_filter_rag, 1),"I", "F", 'F', ModItems.rag_damp, 'I', IRON.ingot() );
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.gas_mask_filter_piss, 1),"I", "F", 'F', ModItems.rag_piss, 'I', IRON.ingot() );
     }

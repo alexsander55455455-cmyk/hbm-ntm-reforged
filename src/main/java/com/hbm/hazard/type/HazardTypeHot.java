@@ -3,6 +3,7 @@ package com.hbm.hazard.type;
 import com.hbm.config.RadiationConfig;
 import com.hbm.hazard.helper.HazardHelper;
 import com.hbm.hazard.modifier.IHazardModifier;
+import com.hbm.lib.Library;
 import com.hbm.util.I18nUtil;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -35,8 +36,10 @@ public class HazardTypeHot implements IHazardType {
 
         level = IHazardModifier.evalAllModifiers(stack, player, level, modifiers);
 
-        if (level > 0)
-            list.add(TextFormatting.GOLD + "[" + I18nUtil.resolveKey("trait.hot") + "]");
+        if (level > 0) {
+            double displayLevel = level * stack.getCount();
+            list.add(TextFormatting.GOLD + "[" + I18nUtil.resolveKey("trait.hot") + "] " + Library.roundFloat(displayLevel, 3));
+        }
     }
 
 }

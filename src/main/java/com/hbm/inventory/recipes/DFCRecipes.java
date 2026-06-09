@@ -26,6 +26,7 @@ public class DFCRecipes {
 
     public static void register() {
         DFCRecipes.setRecipe(10000000L, ModItems.billet_polonium, new ItemStack(ModItems.billet_yharonite));
+        DFCRecipes.setRecipe(100000000000L, ModItems.meteorite_sword_warped, new ItemStack(ModItems.meteorite_sword_demonic));
     }
 
     public static void setRecipe(long requiredFlux, ItemStack in, ItemStack out) {

@@ -107,7 +107,7 @@ public abstract class MixinFluids {
         GASEOUS_SCHRABIDIUM_BROMIDE = space$createFixed("GASEOUS_SCHRABIDIUM_BROMIDE",   0x006B6B, 0, 0, 0, EnumSymbol.NONE, idCounter++).setTemp(3000).addTraits(GASEOUS, NOCON, NOID, new FT_Rocket(3000, 700_000));
         GASEOUS_THORIUM_BROMIDE = space$createFixed("GASEOUS_THORIUM_BROMIDE",           0x7A5542, 0, 0, 0, EnumSymbol.NONE, idCounter++).setTemp(2300).addTraits(GASEOUS, NOCON, NOID, new FT_Rocket(1300, 700_000));
         GASEOUS_HYDROGEN = space$createFixed("GASEOUS_HYDROGEN",     0x4286f4, 3, 4, 0, EnumSymbol.NONE, idCounter++).addTraits(new FT_Flammable(5_000), new FT_Combustible(FT_Combustible.FuelGrade.HIGH, 10_000), GASEOUS, new FT_Rocket(380, 700_000));
-        GAS_WATZ = space$createFixed("GAS_WATZ",     0x86653E, 4, 0, 3, EnumSymbol.ACID, idCounter++).setTemp(2500).addTraits(GASEOUS, NOCON, NOID, new FT_Polluting().release(PollutionHandler.PollutionType.POISON, POISON_EXTREME), new FT_Rocket(1200, 700_000));
+        GAS_WATZ = space$createFixed("GAS_WATZ",     0x98F500, 4, 0, 3, EnumSymbol.ACID, idCounter++).setTemp(2500).addTraits(GASEOUS, NOCON, NOID, new FT_Polluting().release(PollutionHandler.PollutionType.POISON, POISON_EXTREME), new FT_Rocket(1200, 700_000));
         LITHYDRO =				space$createFixed("LITHYDRO",			0xD1CEBE, 0, 0, 0, EnumSymbol.NONE, idCounter++).addTraits(GASEOUS);
         
         metaOrder.add(EARTHAIR);

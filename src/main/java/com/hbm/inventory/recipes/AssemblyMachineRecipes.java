@@ -10,6 +10,7 @@ import com.hbm.inventory.RecipesCommon.OreDictStack;
 import com.hbm.inventory.fluid.FluidStack;
 import com.hbm.inventory.fluid.FluidType;
 import com.hbm.inventory.fluid.Fluids;
+import com.hbm.inventory.material.Mats;
 import com.hbm.inventory.recipes.loader.GenericRecipe;
 import com.hbm.inventory.recipes.loader.GenericRecipes;
 import com.hbm.items.ItemEnums.*;
@@ -115,6 +116,8 @@ public class AssemblyMachineRecipes extends GenericRecipes<GenericRecipe> {
                 .inputItems(new RecipesCommon.OreDictStack(PB.plateCast(), 2), new RecipesCommon.OreDictStack(CU.plate(), 4), new RecipesCommon.ComparableStack(ModItems.thermo_element, 2)));
         this.register(new GenericRecipe("ass.magnetron").setup(40, 100).outputItems(new ItemStack(ModItems.magnetron, 1))
                 .inputItems(new RecipesCommon.OreDictStack(CU.plate(), 3), new RecipesCommon.OreDictStack(W.wireFine(), 4)));
+        this.register(new GenericRecipe("ass.australium_iii").setup(150, 100).outputItems(new ItemStack(ModItems.australium_iii, 1))
+                .inputItems(new RecipesCommon.ComparableStack(ModItems.rod_australium, 1), new RecipesCommon.OreDictStack(STEEL.ingot(), 1), new RecipesCommon.OreDictStack(STEEL.plate(), 6), new RecipesCommon.OreDictStack(CU.plate(), 2), new RecipesCommon.ComparableStack(ModItems.wire, 6, Mats.MAT_COPPER.id)));
         this.register(new GenericRecipe("ass.titaniumdrill").setup(100, 100).outputItems(new ItemStack(ModItems.drill_titanium, 1))
                 .inputItems(new RecipesCommon.OreDictStack(DURA.plateCast(), 1), new RecipesCommon.OreDictStack(TI.plate(), 8)));
         this.register(new GenericRecipe("ass.entanglementkit").setup(200, 100).outputItems(new ItemStack(ModItems.entanglement_kit, 1))
@@ -424,6 +427,8 @@ public class AssemblyMachineRecipes extends GenericRecipes<GenericRecipe> {
         this.register(new GenericRecipe("ass.cyclotron").setup(600, 100).outputItems(new ItemStack(ModBlocks.machine_cyclotron, 1))
                 .inputItems(new ComparableStack(ModItems.battery_pack, 1, ItemBatteryPack.EnumBatteryPack.BATTERY_LITHIUM), new OreDictStack(ND.wireDense(), 32), new OreDictStack(STEEL.plateCast(), 16), new OreDictStack(STEEL.plate(), 32), new OreDictStack(AL.plate(), 32), new OreDictStack(ANY_PLASTIC.ingot(), 24), new OreDictStack(RUBBER.ingot(), 24), new OreDictStack(CU.plateCast(), 8), new ComparableStack(ModItems.circuit, 16, EnumCircuitType.BASIC))
                 .inputItemsEx(new ComparableStack(ModItems.item_expensive, 8, EnumExpensiveType.FERRO_PLATING), new OreDictStack(ND.wireDense(), 32), new OreDictStack(AL.plateWelded(), 16), new OreDictStack(RUBBER.ingot(), 32), new ComparableStack(ModItems.item_expensive, 8, EnumExpensiveType.CIRCUIT)));
+        this.register(new GenericRecipe("ass.schrabidium_transmutator").setup(500, 100).outputItems(new ItemStack(ModBlocks.machine_schrabidium_transmutator, 1))
+                .inputItems(new OreDictStack(MAGTUNG.ingot(), 1), new OreDictStack(TI.ingot(), 24), new OreDictStack(ALLOY.plate(), 18), new OreDictStack(STEEL.plateWelded(), 12), new ComparableStack(ModItems.plate_desh, 6), new OreDictStack(RUBBER.ingot(), 8), new ComparableStack(ModBlocks.machine_battery, 5), new ComparableStack(ModItems.circuit, 2, EnumCircuitType.ADVANCED)));
         this.register(new GenericRecipe("ass.beamline").setup(200, 100).outputItems(new ItemStack(ModBlocks.pa_beamline, 1))
                 .inputItems(new OreDictStack(STEEL.plateCast(), 8), new OreDictStack(CU.plate(), 16), new OreDictStack(GOLD.wireDense(), 4))
                 .inputItemsEx(new ComparableStack(ModItems.item_expensive, 4, EnumExpensiveType.STEEL_PLATING), new OreDictStack(CU.plate(), 16), new OreDictStack(GOLD.wireDense(), 4))
@@ -569,6 +574,14 @@ public class AssemblyMachineRecipes extends GenericRecipes<GenericRecipe> {
                 .inputItemsEx(new ComparableStack(ModItems.item_expensive, 6, EnumExpensiveType.LEAD_PLATING), new OreDictStack(ANY_RESISTANTALLOY.plateWelded()))
                 .setPools528(GenericRecipes.POOL_PREFIX_528 + "tcalloy"));
 
+        // fwatz
+        this.register(new GenericRecipe("ass.fwatz_hatch").setup(250, 100).outputItems(new ItemStack(ModBlocks.fwatz_hatch, 1))
+                .inputItems(new ComparableStack(ModBlocks.fwatz_scaffold, 4), new ComparableStack(ModItems.circuit, 1, EnumCircuitType.CHIP_BISMOID), new ComparableStack(ModItems.circuit, 2, EnumCircuitType.CHIP), new ComparableStack(ModItems.wire, 16, Mats.MAT_MINGRADE.id), new OreDictStack(CMB.plate(), 16)));
+        this.register(new GenericRecipe("ass.fwatz_computer").setup(300, 100).outputItems(new ItemStack(ModBlocks.fwatz_computer, 1))
+                .inputItems(new ComparableStack(ModBlocks.block_meteor, 1), new ComparableStack(ModItems.wire, 16, Mats.MAT_MAGTUNG.id), new OreDictStack(SBD.dust(), 4), new ComparableStack(ModItems.circuit, 2, EnumCircuitType.BISMOID)));
+        this.register(new GenericRecipe("ass.fwatz_core").setup(450, 100).outputItems(new ItemStack(ModBlocks.fwatz_core, 1))
+                .inputItems(new ComparableStack(ModBlocks.block_meteor, 1), new ComparableStack(ModItems.wire, 24, Mats.MAT_MAGTUNG.id), new OreDictStack(DIAMOND.dust(), 8), new OreDictStack(MAGTUNG.dust(), 12), new OreDictStack(DESH.heavyComp()), new ComparableStack(ModItems.upgrade_screm, 1), new ComparableStack(ModItems.upgrade_overdrive_3, 1), new ComparableStack(ModItems.circuit, 8, EnumCircuitType.QUANTUM)));
+
         // upgrades
         if(no528) {
             this.register(new GenericRecipe("ass.overdrive1").setup(200, 100).outputItems(new ItemStack(ModItems.upgrade_overdrive_1, 1))
@@ -682,7 +695,31 @@ public class AssemblyMachineRecipes extends GenericRecipes<GenericRecipe> {
         this.register(new GenericRecipe("ass.soliniumcharge").setup(300, 100).outputItems(new ItemStack(ModItems.solinium_propellant, 1))
                 .inputItems(new OreDictStack(ANY_HIGHEXPLOSIVE.ingot(), 3), new OreDictStack(OreDictManager.getReflector(), 2), new ComparableStack(ModItems.plate_polymer, 6), new OreDictStack(W.wireFine(), 6), new ComparableStack(ModItems.biomass_compressed, 4)));
 
-
+        // grenades (EE assembler parity)
+        this.register(new GenericRecipe("ass.grenadefire").setup(150, 100).outputItems(new ItemStack(ModItems.grenade_fire, 1))
+                .inputItems(new ComparableStack(ModItems.grenade_frag, 1), new OreDictStack(P_RED.dust(), 1), new OreDictStack(CU.plate(), 2)));
+        this.register(new GenericRecipe("ass.grenadeshrapnel").setup(150, 100).outputItems(new ItemStack(ModItems.grenade_shrapnel, 1))
+                .inputItems(new ComparableStack(ModItems.grenade_frag, 1), new ComparableStack(ModItems.pellet_buckshot, 1), new OreDictStack(STEEL.plate(), 2)));
+        this.register(new GenericRecipe("ass.grenadecluster").setup(200, 100).outputItems(new ItemStack(ModItems.grenade_cluster, 1))
+                .inputItems(new ComparableStack(ModItems.grenade_frag, 1), new ComparableStack(ModItems.pellet_cluster, 1), new OreDictStack(STEEL.plate(), 2)));
+        this.register(new GenericRecipe("ass.grenadeflare").setup(100, 100).outputItems(new ItemStack(ModItems.grenade_flare, 1))
+                .inputItems(new ComparableStack(ModItems.grenade_generic, 1), new ComparableStack(Items.GLOWSTONE_DUST, 1), new OreDictStack(AL.plate(), 2), new OreDictStack(CS.plate(), 1)));
+        this.register(new GenericRecipe("ass.grenadeelectric").setup(200, 100).outputItems(new ItemStack(ModItems.grenade_electric, 1))
+                .inputItems(new ComparableStack(ModItems.grenade_generic, 1), new ComparableStack(ModItems.circuit, 3, EnumCircuitType.CAPACITOR.ordinal()), new OreDictStack(GOLD.plate(), 2)));
+        this.register(new GenericRecipe("ass.grenadepulse").setup(300, 100).outputItems(new ItemStack(ModItems.grenade_pulse, 4))
+                .inputItems(new OreDictStack(STEEL.plate(), 1), new OreDictStack(IRON.plate(), 3), new OreDictStack(MINGRADE.wireFine(), 6), new ComparableStack(Items.DIAMOND, 1)));
+        this.register(new GenericRecipe("ass.grenadeplasma").setup(300, 100).outputItems(new ItemStack(ModItems.grenade_plasma, 2))
+                .inputItems(new OreDictStack(STEEL.plate(), 3), new OreDictStack(ALLOY.plate(), 1), new ComparableStack(ModItems.coil_advanced_torus, 1), new ComparableStack(ModItems.cell, 1, Fluids.DEUTERIUM.getID()), new ComparableStack(ModItems.cell, 1, Fluids.TRITIUM.getID())));
+        this.register(new GenericRecipe("ass.grenadetau").setup(300, 100).outputItems(new ItemStack(ModItems.grenade_tau, 2))
+                .inputItems(new OreDictStack(PB.plate(), 3), new OreDictStack(ALLOY.plate(), 1), new ComparableStack(ModItems.coil_advanced_torus, 1), new ComparableStack(ModItems.gun_xvl1456_ammo, 1)));
+        this.register(new GenericRecipe("ass.grenadeschrabidium").setup(300, 100).outputItems(new ItemStack(ModItems.grenade_schrabidium, 1))
+                .inputItems(new ComparableStack(ModItems.grenade_flare, 1), new OreDictStack(SA326.dust(), 1), new OreDictStack(OreDictManager.getReflector(), 2)));
+        this.register(new GenericRecipe("ass.grenadenuclear").setup(200, 100).outputItems(new ItemStack(ModItems.grenade_nuclear, 1))
+                .inputItems(new OreDictStack(IRON.plate(), 1), new OreDictStack(STEEL.plate(), 1), new OreDictStack(PU239.nugget(), 2), new OreDictStack(MINGRADE.wireFine(), 2)));
+        this.register(new GenericRecipe("ass.grenadezomg").setup(300, 100).outputItems(new ItemStack(ModItems.grenade_zomg, 1))
+                .inputItems(new ComparableStack(ModItems.plate_paa, 3), new OreDictStack(OreDictManager.getReflector(), 1), new ComparableStack(ModItems.coil_magnetized_tungsten, 3), new ComparableStack(ModItems.powder_power, 3), new ComparableStack(ModItems.nugget_radspice, 1)));
+        this.register(new GenericRecipe("ass.grenadeblackhole").setup(500, 100).outputItems(new ItemStack(ModItems.grenade_black_hole, 1))
+                .inputItems(new OreDictStack(ANY_PLASTIC.ingot(), 6), new OreDictStack(OreDictManager.getReflector(), 3), new ComparableStack(ModItems.coil_magnetized_tungsten, 2), new ComparableStack(ModItems.black_hole, 1)));
 
         // turrets
         this.register(new GenericRecipe("ass.turretchekhov").setup(200, 100).outputItems(new ItemStack(ModBlocks.turret_chekhov, 1))
@@ -988,6 +1025,18 @@ public class AssemblyMachineRecipes extends GenericRecipes<GenericRecipe> {
                         new ComparableStack(ModItems.thruster_small, 1),
                         new ComparableStack(ModItems.photo_panel, 12),
                         new ComparableStack(ModItems.battery_pack, 1, ItemBatteryPack.EnumBatteryPack.BATTERY_LITHIUM)));
+        this.register(new GenericRecipe("ass.gunegon").setup(256, 100).outputItems(new ItemStack(ModItems.gun_egon, 1))
+                .inputItems(
+                        new ComparableStack(ModItems.mechanism_special, 4),
+                        new OreDictStack(STEEL.plate(), 16),
+                        new OreDictStack(PB.plate(), 24),
+                        new ComparableStack(ModItems.coil_advanced_torus, 32),
+                        new ComparableStack(ModItems.circuit, 4, EnumCircuitType.CHIP_QUANTUM),
+                        new ComparableStack(ModItems.plate_polymer, 8),
+                        new ComparableStack(ModBlocks.machine_schrabidium_battery, 2),
+                        new ComparableStack(ModBlocks.machine_waste_drum, 1),
+                        new ComparableStack(ModItems.wire, 8, Mats.MAT_COPPER.id)
+                ));
         this.register(new GenericRecipe("ass.emptypackage").setup(40, 100).outputItems(new ItemStack(ModItems.fluid_pack_empty, 1))
                 .inputItems(new OreDictStack(TI.plate(), 4), new OreDictStack(ANY_PLASTIC.ingot(), 2)));
         FluidType[] order = Fluids.getInNiceOrder();

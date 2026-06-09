@@ -112,6 +112,13 @@ public class RefineryRecipes {
 				new FluidStack(Fluids.UNSATURATEDS,		crackds_frac_unsat),
 				OreDictManager.DictFrame.fromOne(ModItems.oil_tar, ItemEnums.EnumTarType.PARAFFIN)
 		));
+		refinery.put(Fluids.TOXIC, new Tuple.Quintet<>(
+				new FluidStack(Fluids.COLLOID,		40),
+				new FluidStack(Fluids.WASTEFLUID,	25),
+				new FluidStack(Fluids.WASTEGAS,		20),
+				new FluidStack(Fluids.CORIUM,		1),
+				new ItemStack(ModItems.nuclear_waste_tiny, 1)
+		));
 
 		vacuum.put(Fluids.OIL, new Tuple.Quartet<>(
 				new FluidStack(Fluids.HEAVYOIL_VACUUM,	vac_frac_heavy),

@@ -15,6 +15,7 @@ import com.hbm.inventory.fluid.FluidType;
 import com.hbm.inventory.fluid.Fluids;
 import com.hbm.inventory.material.Mats;
 import com.hbm.inventory.material.NTMMaterial;
+import com.hbm.inventory.recipes.CrucibleRecipes;
 import com.hbm.items.ClaimedModelLocationRegistry;
 import com.hbm.items.IDynamicModels;
 import com.hbm.items.IModelRegister;
@@ -33,6 +34,7 @@ import com.hbm.main.ResourceManager;
 import com.hbm.render.GuiCTMWarning;
 import com.hbm.render.entity.RenderBoat;
 import com.hbm.render.icon.RegistrationUtils;
+import com.hbm.render.item.BakedModelCustom;
 import com.hbm.render.item.BakedModelNoFPV;
 import com.hbm.render.item.FancyMissingModelPerspective;
 import com.hbm.render.item.TEISRBase;
@@ -149,6 +151,7 @@ public class NTMClientRegistry {
         registerIgnoringStateMapper(ModBlocks.toxic_block, BlockFluidBase.LEVEL);
         registerIgnoringStateMapper(ModBlocks.volcanic_lava_block, BlockFluidBase.LEVEL);
         registerIgnoringStateMapper(ModBlocks.rad_lava_block, BlockFluidBase.LEVEL);
+        registerIgnoringStateMapper(ModBlocks.radwater_block, BlockFluidBase.LEVEL);
         registerIgnoringStateMapper(ModBlocks.ore_volcano, BlockFissure.CRATER);
         registerIgnoringStateMapper(ModBlocks.seal_controller, BlockSeal.ACTIVATED);
 
@@ -402,7 +405,12 @@ public class NTMClientRegistry {
             }
         }
 
-        teisr.itemModel = model;
+        ModelResourceLocation inventoryLocation = new ModelResourceLocation(owned.item.getRegistryName(), "inventory");
+        IBakedModel inventoryModel = unwrapWrappedModel(reg.getObject(inventoryLocation));
+        if (inventoryModel == null) {
+            MainRegistry.logger.warn("TEISR {} has no baked inventory model at {}; using synthetic fallback", owned.item.getRegistryName(), inventoryLocation);
+        }
+        teisr.itemModel = inventoryModel != null ? inventoryModel : model;
         if (teisr.useFMMPerspective(owned.item)) {
             reg.putObject(targetLocation, new FancyMissingModelPerspective(teisr, model));
             return;
@@ -411,13 +419,18 @@ public class NTMClientRegistry {
             reg.putObject(targetLocation, new BakedModelNoFPV(teisr, model));
             return;
         }
+        if (inventoryModel != null && teisr.useRegistryPerspective(owned.item)) {
+            reg.putObject(targetLocation, new BakedModelCustom(teisr));
+            return;
+        }
         reg.putObject(targetLocation, new WrappedTEISRModel(teisr, model, null, binding, false));
     }
 
     private static void registerOwnedTeisrModelLocations() {
         for (ClaimedModelLocationRegistry.ITeisrBinding owned : ClaimedModelLocationRegistry.getTeisrBindings()) {
             ModelResourceLocation location = owned.getModelLocation();
-            ModelBakery.registerItemVariants(owned.getItem(), location);
+            ModelResourceLocation inventoryLocation = new ModelResourceLocation(owned.getItem().getRegistryName(), "inventory");
+            ModelBakery.registerItemVariants(owned.getItem(), location, inventoryLocation);
             ModelLoader.setCustomMeshDefinition(owned.getItem(), _ -> location);
         }
     }
@@ -574,6 +587,17 @@ public class NTMClientRegistry {
                 ModelLoader.setCustomModelResourceLocation(item, i, new ModelResourceLocation(item.getRegistryName(), "inventory"));
             }
         } else if (item == ModItems.conveyor_wand) {
+        } else if (item == ModItems.crucible_template) {
+            if (CrucibleRecipes.INSTANCE.recipeOrderedList.isEmpty()) {
+                CrucibleRecipes.INSTANCE.registerDefaults();
+                try {
+                    com.hbmspace.inventory.recipes.tweakers.CrucibleRecipesTweaker.init();
+                } catch (Throwable ignored) {
+                }
+            }
+            for (int i = 0; i < CrucibleRecipes.INSTANCE.recipeOrderedList.size(); i++) {
+                ModelLoader.setCustomModelResourceLocation(item, i, ItemCrucibleTemplate.cruciModel);
+            }
         } else if (item == ModItems.fluid_identifier_multi) {
             ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
         } else if (item instanceof IHasCustomModel) {
@@ -613,6 +637,9 @@ public class NTMClientRegistry {
         }
 
         ResourceManager.init();
+        com.hbm.render.item.CrucibleTemplateRender.INSTANCE.itemModel = registry.getObject(com.hbm.items.machine.ItemCrucibleTemplate.cruciModel);
+        registry.putObject(com.hbm.items.machine.ItemCrucibleTemplate.cruciModel, new com.hbm.render.item.CrucibleTemplateBakedModel());
+
         ItemRedstoneSwordRender.INSTANCE.itemModel = registry.getObject(RedstoneSword.rsModel);
         registry.putObject(RedstoneSword.rsModel, new ItemRenderRedstoneSword());
         ItemRenderGunAnim.INSTANCE.b92ItemModel = registry.getObject(GunB92.b92Model);

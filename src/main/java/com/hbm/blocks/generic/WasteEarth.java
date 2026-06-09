@@ -6,6 +6,8 @@ import com.hbm.main.MainRegistry;
 import com.hbm.potion.HbmPotion;
 import com.hbm.util.ContaminationUtil;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockHugeMushroom;
+import net.minecraft.block.BlockMushroom;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyInteger;
@@ -67,7 +69,7 @@ public class WasteEarth extends Block {
         if (this == ModBlocks.frozen_grass) {
             return Items.SNOWBALL;
         }
-        return super.getItemDropped(state, rand, fortune);
+        return Item.getItemFromBlock(this);
     }
 
     @Override
@@ -77,13 +79,17 @@ public class WasteEarth extends Block {
 
     @Override
     public void onEntityWalk(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull Entity entity) {
-        if (entity instanceof EntityLivingBase castedEntity) {
-            if (this == ModBlocks.waste_mycelium) {
-                castedEntity.addPotionEffect(new PotionEffect(HbmPotion.radiation, 30 * 20, 29));
-            } else if (this == ModBlocks.frozen_grass) {
-                castedEntity.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 2 * 60 * 20, 2));
-            } else if (this == ModBlocks.burning_earth) {
-                entity.setFire(3);
+        if (!(entity instanceof EntityLivingBase base)) return;
+        if (this == ModBlocks.frozen_grass) {
+            base.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 2 * 60 * 20, 2));
+        } else if (this == ModBlocks.waste_mycelium) {
+            base.addPotionEffect(new PotionEffect(HbmPotion.radiation, 30 * 20, 29));
+            base.addPotionEffect(new PotionEffect(MobEffects.NAUSEA, 5 * 20, 0));
+        } else if (!ContaminationUtil.isRadImmune(base)) {
+            if (this == ModBlocks.waste_earth) {
+                base.addPotionEffect(new PotionEffect(HbmPotion.radiation, 15 * 20, 4));
+            } else if (this == ModBlocks.waste_dirt) {
+                base.addPotionEffect(new PotionEffect(HbmPotion.radiation, 15 * 20, 3));
             }
         }
     }
@@ -93,10 +99,10 @@ public class WasteEarth extends Block {
     public void randomDisplayTick(@NotNull IBlockState stateIn, @NotNull World world, @NotNull BlockPos pos, @NotNull Random rand) {
         super.randomDisplayTick(stateIn, world, pos, rand);
 
-        if (this == ModBlocks.waste_mycelium) {
+        if (this == ModBlocks.waste_earth || this == ModBlocks.waste_mycelium) {
             world.spawnParticle(EnumParticleTypes.TOWN_AURA, pos.getX() + rand.nextFloat(), pos.getY() + 1.1F, pos.getZ() + rand.nextFloat(), 0.0D, 0.0D, 0.0D);
         }
-        if(this == ModBlocks.burning_earth) {
+        if (this == ModBlocks.burning_earth) {
             world.spawnParticle(EnumParticleTypes.FLAME, pos.getX() + rand.nextFloat(), pos.getY() + 1.1F, pos.getZ() + rand.nextFloat(), 0.0D, 0.0D, 0.0D);
             world.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, pos.getX() + rand.nextFloat(), pos.getY() + 1.1F, pos.getZ() + rand.nextFloat(), 0.0D, 0.0D, 0.0D);
         }
@@ -109,9 +115,32 @@ public class WasteEarth extends Block {
 
     @Override
     public void updateTick(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState state, @NotNull Random rand) {
-        if (this == ModBlocks.waste_earth || this == ModBlocks.waste_mycelium) {
+        int x = pos.getX();
+        int y = pos.getY();
+        int z = pos.getZ();
+
+        if (this == ModBlocks.waste_mycelium && GeneralConfig.enableMycelium) {
+            for (int i = -1; i < 2; i++) {
+                for (int j = -1; j < 2; j++) {
+                    for (int k = -1; k < 2; k++) {
+                        Block b0 = world.getBlockState(new BlockPos(x + i, y + j, z + k)).getBlock();
+                        IBlockState b1 = world.getBlockState(new BlockPos(x + i, y + j + 1, z + k));
+                        if (!b1.isOpaqueCube() && (b0 == Blocks.DIRT || b0 == Blocks.GRASS || b0 == Blocks.MYCELIUM || b0 == ModBlocks.waste_earth)) {
+                            world.setBlockState(new BlockPos(x + i, y + j, z + k), ModBlocks.waste_mycelium.getDefaultState());
+                        }
+                    }
+                }
+            }
+        }
+
+        if (this == ModBlocks.waste_earth || this == ModBlocks.waste_dirt || this == ModBlocks.waste_mycelium) {
             if (GeneralConfig.enableAutoCleanup) {
                 world.setBlockState(pos, Blocks.DIRT.getDefaultState());
+            }
+
+            Block above = world.getBlockState(new BlockPos(x, y + 1, z)).getBlock();
+            if (above instanceof BlockMushroom || above instanceof BlockHugeMushroom) {
+                world.setBlockState(new BlockPos(x, y + 1, z), ModBlocks.mush.getDefaultState());
             }
         }
     }

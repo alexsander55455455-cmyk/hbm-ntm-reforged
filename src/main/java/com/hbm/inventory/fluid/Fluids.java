@@ -100,6 +100,10 @@ public class Fluids {
     public static FluidType PUF6;
     public static FluidType SAS3;
     public static FluidType SCHRABIDIC;
+    public static FluidType TOXIC;
+    public static FluidType CORIUM;
+    public static FluidType VOLCANIC_LAVA;
+    public static FluidType RADWATER;
     public static FluidType AMAT;
     public static FluidType ASCHRAB;
     public static FluidType PEROXIDE;
@@ -299,11 +303,11 @@ public class Fluids {
         UF6 =					new FluidType("UF6",				0xD1CEBE, 4, 0, 2, EnumSymbol.RADIATION).addTraits(new FT_VentRadiation(0.2F), new FT_Corrosive(15), GASEOUS);
         PUF6 =					new FluidType("PUF6",				0x4C4C4C, 4, 0, 4, EnumSymbol.RADIATION).addTraits(new FT_VentRadiation(0.1F), new FT_Corrosive(15), GASEOUS);
         SAS3 =					new FluidType("SAS3",				0x4ffffc, 5, 0, 4, EnumSymbol.RADIATION).addTraits(new FT_VentRadiation(1F), new FT_Corrosive(30), LIQUID);
-        SCHRABIDIC =			new FluidType("SCHRABIDIC",			0x006B6B, 5, 0, 5, EnumSymbol.ACID).addTraits(new FT_VentRadiation(1F), new FT_Corrosive(75), new FT_Poison(true, 2), LIQUID);
+        SCHRABIDIC =			new FluidType("SCHRABIDIC",			0x006B6B, 5, 0, 5, EnumSymbol.ACID).setFFNameOverride("schrabidic").addTraits(new FT_VentRadiation(1F), new FT_Corrosive(75), new FT_Poison(true, 2), LIQUID);
         AMAT =					new FluidType("AMAT",				0x010101, 5, 0, 5, EnumSymbol.ANTIMATTER).addTraits(ANTI, GASEOUS);
         ASCHRAB =				new FluidType("ASCHRAB",			0xb50000, 5, 0, 5, EnumSymbol.ANTIMATTER).addTraits(ANTI, GASEOUS);
         PEROXIDE =				new FluidType("PEROXIDE",			0xfff7aa, 3, 0, 3, EnumSymbol.OXIDIZER).addTraits(new FT_Corrosive(40), LIQUID);
-        WATZ =					new FluidType("WATZ",				0x86653E, 4, 0, 3, EnumSymbol.ACID).addTraits(new FT_Corrosive(60), new FT_VentRadiation(0.1F), LIQUID, VISCOUS, new FT_Polluting().release(PollutionType.POISON, POISON_EXTREME));
+        WATZ =					new FluidType("WATZ",				0x98F500, 4, 0, 3, EnumSymbol.ACID).setFFNameOverride("mud_fluid").setGuiTint(0x98F500).addContainers(new CD_Canister(0x98F500)).addTraits(new FT_Corrosive(60), new FT_VentRadiation(0.1F), LIQUID, VISCOUS, new FT_Polluting().release(PollutionType.POISON, POISON_EXTREME));
         CRYOGEL =				new FluidType("CRYOGEL",			0x32ffff, 2, 0, 0, EnumSymbol.CROYGENIC).setTemp(-170).addTraits(LIQUID, VISCOUS);
         HYDROGEN =				new FluidType("HYDROGEN",			0x4286f4, 3, 4, 0, EnumSymbol.CROYGENIC).setTemp(-260).addContainers(new CD_Gastank(0x4286f4, 0xffffff)).addTraits(new FT_Flammable(5_000), new FT_Combustible(FuelGrade.HIGH, 10_000), LIQUID, EVAP);
         OXYGEN =				new FluidType("OXYGEN",				0x98bdf9, 3, 0, 0, EnumSymbol.CROYGENIC).setTemp(-100).addContainers(new CD_Gastank(0x98bdf9, 0xffffff)).addTraits(LIQUID, EVAP);
@@ -423,6 +427,10 @@ public class Fluids {
         CONCRETE =				new FluidType("CONCRETE",			0xA2A2A2, 0, 0, 0, EnumSymbol.NONE).addTraits(LIQUID);
         // 1.7 has 153, +1 due to HYDRAZINE
         DHC =					new FluidType(154, "DHC",			0xD2AFFF, 0, 0, 0, EnumSymbol.NONE).addTraits(GASEOUS);
+        TOXIC =					new FluidType(155, "TOXIC",				0x232323, 3, 0, 4, EnumSymbol.RADIATION).setFFNameOverride("toxic_fluid").setGuiTint(0x232323).addContainers(new CD_Canister(0x232323)).addTraits(new FT_Corrosive(60), new FT_VentRadiation(1F), LIQUID);
+        CORIUM =				new FluidType(156, "CORIUM",				0x383838, 4, 0, 2, EnumSymbol.RADIATION).setFFNameOverride("corium_fluid").setGuiTint(0x383838).addContainers(new CD_Canister(0x383838)).addTraits(new FT_Corrosive(60), new FT_VentRadiation(10F), LIQUID, VISCOUS);
+        VOLCANIC_LAVA =			new FluidType(157, "VOLCANIC_LAVA",		0xC42509, 4, 1, 1, EnumSymbol.NOWATER).setFFNameOverride("volcanic_lava_fluid").setGuiTint(0xC42509).addContainers(new CD_Canister(0xC42509)).setTemp(1300).addTraits(LIQUID, VISCOUS);
+        RADWATER =				new FluidType(158, "RADWATER",			0x3F7A97, 2, 0, 0, EnumSymbol.RADIATION).setFFNameOverride("radwater_fluid").setGuiTint(0x3F7A97).addContainers(new CD_Canister(0x3F7A97)).addTraits(new FT_VentRadiation(0.04F), LIQUID);
 
         // ^ ^ ^ ^ ^ ^ ^ ^
         //ADD NEW FLUIDS HERE
@@ -554,6 +562,10 @@ public class Fluids {
         metaOrder.add(SOLVENT);
         metaOrder.add(RADIOSOLVENT);
         metaOrder.add(SCHRABIDIC);
+        metaOrder.add(TOXIC);
+        metaOrder.add(CORIUM);
+        metaOrder.add(VOLCANIC_LAVA);
+        metaOrder.add(RADWATER);
         metaOrder.add(UF6);
         metaOrder.add(PUF6);
         metaOrder.add(SAS3);

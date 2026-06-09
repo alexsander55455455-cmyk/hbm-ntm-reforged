@@ -28,6 +28,7 @@ import com.hbm.hazard.HazardData;
 import com.hbm.hazard.HazardRegistry;
 import com.hbm.hazard.HazardSystem;
 import com.hbm.inventory.BedrockOreRegistry;
+import com.hbm.inventory.SAFERecipes;
 import com.hbm.inventory.FluidContainerRegistry;
 import com.hbm.inventory.OreDictManager;
 import com.hbm.inventory.RecipesCommon;
@@ -287,6 +288,7 @@ public class MainRegistry {
         if (RadiationConfig.enableContaminationOnGround)
             HazardRegistry.registerContaminatingDrops();
         Fluids.initForgeFluidCompat();
+        HazardRegistry.registerFluids();
         PacketDispatcher.registerPackets();
         PacketThreading.init();
         IMCHandler.init();
@@ -319,10 +321,12 @@ public class MainRegistry {
         ArmorUtil.register();
         RBMKFuelRecipes.registerRecipes();
         DFCRecipes.register();
+        SAFERecipes.registerRecipes();
         StorageDrumRecipes.registerRecipes();
         NuclearTransmutationRecipes.registerRecipes();
         EngineRecipes.registerEngineRecipes();
         FluidCombustionRecipes.registerFluidCombustionRecipes();
+        com.hbm.forgefluid.FluidTypeHandler.registerFluidProperties();
         HbmDetox.init();
         NTMBatteryCapabilityHandler.initialize();
 

@@ -22,7 +22,7 @@ public class GunGaussFactory {
 		config.rateOfFire = 6;
 		config.roundsPerCycle = 1;
 		config.gunMode = GunConfiguration.MODE_NORMAL;
-		config.firingMode = GunConfiguration.FIRE_MANUAL;
+		config.firingMode = GunConfiguration.FIRE_AUTO;
 		config.reloadDuration = 20;
 		config.firingDuration = 0;
 		config.ammoCap = 0;

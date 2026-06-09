@@ -12,6 +12,7 @@ import com.hbm.lib.HBMSoundHandler;
 import com.hbm.main.AdvancementManager;
 import com.hbm.main.MainRegistry;
 import com.hbm.packet.toclient.AuxParticlePacketNT;
+import com.hbm.util.ContaminationUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -194,9 +195,6 @@ public class EntityNukeExplosionMK3 extends EntityExplosionChunkloading {
         {
         	if(waste) {
         		flag = exp.update();
-        		if (wst != null) {
-        			wst.update();
-        		}
         		flag3 = vap.update();
         		
         		if(flag3) {
@@ -219,9 +217,9 @@ public class EntityNukeExplosionMK3 extends EntityExplosionChunkloading {
         {
         	this.world.playSound(this.posX, this.posY, this.posZ, SoundEvents.ENTITY_LIGHTNING_THUNDER, SoundCategory.AMBIENT, 10000.0F, 0.8F + this.rand.nextFloat() * 0.2F, true);
 			if(waste || extType != 1) {
-				ExplosionNukeGeneric.dealDamage(this.world, this.posX, this.posY, this.posZ, this.destructionRange * 2);
+				ContaminationUtil.radiate(this.world, this.posX, this.posY, this.posZ, this.destructionRange, 25000F, 0F, 0F, this.destructionRange * 20000F, age);
 			} else {
-				ExplosionHurtUtil.doRadiation(world, posX, posY, posZ, 15000, 250000, this.destructionRange);
+				ContaminationUtil.radiate(world, posX, posY, posZ, this.destructionRange, 2500000F);
 			}
         } else {
 			if (!did2 && waste) {
@@ -230,7 +228,7 @@ public class EntityNukeExplosionMK3 extends EntityExplosionChunkloading {
 				fallout.posY = this.posY;
 				fallout.posZ = this.posZ;
 				fallout.detonator = detonator;
-				fallout.setScale((int)(this.destructionRange * 1.8));
+				fallout.setScale((int)(this.destructionRange * 1.8), this.destructionRange + 16);
 
 				this.world.spawnEntity(fallout);
 				//this.world.getWorldInfo().setRaining(true);

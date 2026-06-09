@@ -1,16 +1,16 @@
 package com.hbm.handler.radiation;
 
-import com.hbm.handler.radiation.RadiationSystemNT.WorldRadiationData.MultiSectionRef;
-import com.hbm.handler.radiation.RadiationSystemNT.WorldRadiationData.SectionRef;
-import com.hbm.handler.radiation.RadiationSystemNT.WorldRadiationData.SingleMaskedSectionRef;
+import com.hbm.handler.radiation.RadiationSystemNT.ChunkRadiationStorage;
+import com.hbm.handler.radiation.RadiationSystemNT.RadPocket;
+import com.hbm.handler.radiation.RadiationSystemNT.SubChunkRadiationStorage;
+import com.hbm.handler.radiation.RadiationSystemNT.WorldRadiationData;
 import com.hbm.lib.Library;
 import com.hbm.render.util.NTMImmediate;
 import com.hbm.render.util.NTMBufferBuilder;
 import com.hbm.util.RenderUtil;
-import com.hbm.util.SectionKeyHash;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
-import it.unimi.dsi.fastutil.longs.Long2ReferenceOpenCustomHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -21,6 +21,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.WorldServer;
@@ -33,15 +34,24 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.*;
 
-import static com.hbm.handler.radiation.RadiationSystemNT.*;
-
 @SideOnly(Side.CLIENT)
 public final class RadVisOverlay {
     public static final Config CONFIG = new Config();
 
     private static final int MAX_RADIUS = 8;
+    private static final int MAX_POCKETS = 2048;
+    private static final short NO_POCKET = -1;
+    private static final int KIND_NONE = 0;
+    private static final int KIND_UNI = 1;
+    private static final int KIND_SINGLE = 2;
+    private static final int KIND_MULTI = 3;
     private static final double RAD_REF = 1000.0d;
     private static final int[] VERIFY_FACES = {5, 3, 1};
+    private static final int[] FACE_DX = {0, 0, 0, 0, -1, 1};
+    private static final int[] FACE_DY = {-1, 1, 0, 0, 0, 0};
+    private static final int[] FACE_DZ = {0, 0, -1, 1, 0, 0};
+    private static final int[] LINEAR_OFFSETS = {-256, 256, -16, 16, -1, 1};
+    private static final int[] FACE_PLANE = new int[6 * 256];
 
     private static final float[] COLOR_UNI = {0.0f, 0.9f, 1.0f};      // Neon Cyan
     private static final float[] COLOR_SINGLE = {0.1f, 1.0f, 0.1f};   // Bright Lime Green
@@ -68,17 +78,31 @@ public final class RadVisOverlay {
     private static final int[] PLANE16_TEMP = new int[16];
     private static final int[] PLANE16_COPY_TEMP = new int[16];
     private static final LongArrayList QUADS_TEMP2 = new LongArrayList(256);
-    private static final WeakHashMap<MultiSectionRef, PocketMesh> POCKET_MESH_CACHE = new WeakHashMap<>(32);
-    private static final WeakHashMap<MultiSectionRef, MultiOuterMeshes> MULTI_OUTER_CACHE = new WeakHashMap<>(32);
-    private static final WeakHashMap<SingleMaskedSectionRef, SingleOuterMeshes> SINGLE_OUTER_CACHE = new WeakHashMap<>(
-            32);
-    private static final Long2ReferenceOpenCustomHashMap<int[]> ERROR_MASK = new Long2ReferenceOpenCustomHashMap<>(32,
-            SectionKeyHash.STRATEGY);
+    private static final Long2ObjectOpenHashMap<PocketMesh> POCKET_MESH_CACHE = new Long2ObjectOpenHashMap<>(32);
+    private static final Long2ObjectOpenHashMap<MultiOuterMeshes> MULTI_OUTER_CACHE = new Long2ObjectOpenHashMap<>(32);
+    private static final Long2ObjectOpenHashMap<SingleOuterMeshes> SINGLE_OUTER_CACHE = new Long2ObjectOpenHashMap<>(32);
+    private static final Long2ObjectOpenHashMap<int[]> ERROR_MASK = new Long2ObjectOpenHashMap<>(32);
     private static final ThreadLocal<RenderScratch> TL_RENDER_SCRATCH = ThreadLocal.withInitial(RenderScratch::new);
     private static int[] OUTER_ROWS_TEMP = new int[6 * 16 * 16];
     private static long lastVerifyTick = Long.MIN_VALUE;
 
     static {
+        int[] rowShifts = {4, 4, 8, 8, 8, 8};
+        int[] colShifts = {0, 0, 0, 0, 4, 4};
+        int[] bases = {0, 15 << 8, 0, 15 << 4, 0, 15};
+        for (int face = 0; face < 6; face++) {
+            int base = face << 8;
+            int rowShift = rowShifts[face];
+            int colShift = colShifts[face];
+            int fixedBits = bases[face];
+            int t = 0;
+            for (int r = 0; r < 16; r++) {
+                int rBase = r << rowShift;
+                for (int c = 0; c < 16; c++) {
+                    FACE_PLANE[base + (t++)] = rBase | (c << colShift) | fixedBits;
+                }
+            }
+        }
         for (int i = 0; i < POCKET_COLORS.length; i++) {
             float h = (i * 0.618034f + 0.1f) % 1.0f;
             float[] rgb = hsvToRgb(h, 1.0f, 1.0f);
@@ -267,17 +291,16 @@ public final class RadVisOverlay {
         return q;
     }
 
-    private static PocketMesh getOrBuildPocketMesh(MultiSectionRef ms, int pocketCount) {
-        short[] pd = ms.pocketData;
+    private static PocketMesh getOrBuildPocketMesh(long sectionKey, short[] pd, int pocketCount) {
         if (pd == null || pocketCount <= 0) return null;
 
-        PocketMesh cached = POCKET_MESH_CACHE.get(ms);
+        PocketMesh cached = POCKET_MESH_CACHE.get(sectionKey);
         if (cached != null && cached.pocketDataRef == pd && cached.pocketCount == pocketCount) {
             return cached;
         }
 
         PocketMesh built = buildPocketMesh(pd, pocketCount);
-        POCKET_MESH_CACHE.put(ms, built);
+        POCKET_MESH_CACHE.put(sectionKey, built);
         return built;
     }
 
@@ -376,27 +399,25 @@ public final class RadVisOverlay {
         return new PocketMesh(pocketData, pc, q);
     }
 
-    private static MultiOuterMeshes getOrBuildOuterMeshes(MultiSectionRef ms, int pocketCount) {
-        short[] pd = ms.pocketData;
+    private static MultiOuterMeshes getOrBuildOuterMeshes(long sectionKey, short[] pd, int pocketCount) {
         if (pd == null || pocketCount <= 0) return null;
 
-        MultiOuterMeshes cached = MULTI_OUTER_CACHE.get(ms);
+        MultiOuterMeshes cached = MULTI_OUTER_CACHE.get(sectionKey);
         if (cached != null && cached.pocketDataRef == pd && cached.pocketCount == pocketCount) return cached;
 
         MultiOuterMeshes built = buildMultiOuterMeshes(pd, pocketCount);
-        MULTI_OUTER_CACHE.put(ms, built);
+        MULTI_OUTER_CACHE.put(sectionKey, built);
         return built;
     }
 
-    private static SingleOuterMeshes getOrBuildOuterMeshes(SingleMaskedSectionRef s) {
-        short[] pd = s.pocketData;
+    private static SingleOuterMeshes getOrBuildOuterMeshes(long sectionKey, short[] pd) {
         if (pd == null) return null;
 
-        SingleOuterMeshes cached = SINGLE_OUTER_CACHE.get(s);
+        SingleOuterMeshes cached = SINGLE_OUTER_CACHE.get(sectionKey);
         if (cached != null && cached.pocketDataRef == pd) return cached;
 
         SingleOuterMeshes built = buildSingleOuterMeshes(pd);
-        SINGLE_OUTER_CACHE.put(s, built);
+        SINGLE_OUTER_CACHE.put(sectionKey, built);
         return built;
     }
 
@@ -589,7 +610,7 @@ public final class RadVisOverlay {
         if (server == null) return null;
         WorldServer ws = DimensionManager.getWorld(mc.world.provider.getDimension());
         if (ws == null) return null;
-        return worldMap.get(ws);
+        return RadiationSystemNT.getWorldRadiationData(ws);
     }
 
     private static void renderWire(WorldRadiationData data, int pcx, int pcz, int radius, FocusFilter filter) {
@@ -610,7 +631,7 @@ public final class RadVisOverlay {
                     if (filter != null && filter.isSectionOutsideFilter(baseX, baseY, baseZ)) continue;
 
                     long sck = Library.sectionToLong(cx, sy, cz);
-                    if (!resolveSection(data, sck, sec)) continue;
+                    if (!resolveSubChunk(data, sck, sec)) continue;
 
                     float[] color = kindColor(sec.kind);
                     float tint = (sec.kind == KIND_MULTI) ? (0.5f + 0.5f * (sec.pocketCount / 15.0f)) : 1.0f;
@@ -657,7 +678,7 @@ public final class RadVisOverlay {
                 if (filter != null && filter.isSectionOutsideFilter(baseX, sy << 4, baseZ)) continue;
 
                 long sck = Library.sectionToLong(cx, sy, cz);
-                if (!resolveSection(data, sck, sec)) continue;
+                if (!resolveSubChunk(data, sck, sec)) continue;
 
                 int kind = sec.kind;
                 int pocketCount = sec.pocketCount;
@@ -752,32 +773,14 @@ public final class RadVisOverlay {
                     if (filter != null && filter.isSectionOutsideFilter(baseX, baseY, baseZ)) continue;
 
                     long sck = Library.sectionToLong(cx, sy, cz);
-                    if (!resolveSection(data, sck, sec)) continue;
+                    if (!resolveSubChunk(data, sck, sec)) continue;
 
                     int kind = sec.kind;
                     if (kind == KIND_UNI) continue;
 
-                    if (kind == KIND_SINGLE) {
-                        SingleMaskedSectionRef s = sec.single;
-                        if (s == null) continue;
+                    if (sec.pocketData == null) continue;
 
-                        SingleOuterMeshes mesh = getOrBuildOuterMeshes(s);
-                        if (mesh == null) continue;
-
-                        float[] col = kindColor(kind);
-                        for (int face = 0; face < 6; face++) {
-                            long[] quads = mesh.sectionFaceQuads[face];
-                            if (quads.length == 0) continue;
-                            drawPackedQuads(buf, baseX, baseY, baseZ, quads, col[0], col[1], col[2], a, inset);
-                        }
-                        continue;
-                    }
-
-                    // MULTI
-                    MultiSectionRef m = sec.multi;
-                    if (m == null) continue;
-
-                    MultiOuterMeshes mesh = getOrBuildOuterMeshes(m, sec.pocketCount);
+                    MultiOuterMeshes mesh = getOrBuildOuterMeshes(sck, sec.pocketData, sec.pocketCount);
                     if (mesh == null) continue;
 
                     for (int face = 0; face < 6; face++) {
@@ -788,7 +791,7 @@ public final class RadVisOverlay {
                         if (mesh.facePockets[face] != null && mesh.facePockets[face].length > 1) {
                             long neighborKey = Library.sectionToLong(cx + FACE_DX[face], sy + FACE_DY[face],
                                     cz + FACE_DZ[face]);
-                            if (resolveSection(data, neighborKey, nei) && nei.kind == KIND_UNI) leakRisk = true;
+                            if (resolveSubChunk(data, neighborKey, nei) && nei.kind == KIND_UNI) leakRisk = true;
                         }
 
                         float[] col = leakRisk ? COLOR_WARN : kindColor(kind);
@@ -829,12 +832,14 @@ public final class RadVisOverlay {
                     if (filter != null && filter.isSectionOutsideFilter(baseX, baseY, baseZ)) continue;
 
                     long sck = Library.sectionToLong(cx, sy, cz);
-                    if (!resolveSection(data, sck, sec)) continue;
+                    if (!resolveSubChunk(data, sck, sec)) continue;
 
-                    if (sec.kind != KIND_MULTI) continue;
-
-                    MultiSectionRef ms = sec.multi;
-                    if (ms == null || sec.pocketData == null || sec.pocketCount <= 0) continue;
+                    short[] pocketData = sec.pocketData;
+                    if (pocketData == null) {
+                        pocketData = new short[4096];
+                        Arrays.fill(pocketData, (short) 0);
+                    }
+                    if (sec.pocketCount <= 0) continue;
 
                     int pocketCount = sec.pocketCount;
                     for (int pi = 0; pi < pocketCount; pi++) {
@@ -850,7 +855,7 @@ public final class RadVisOverlay {
                         }
                     }
 
-                    PocketMesh mesh = getOrBuildPocketMesh(ms, pocketCount);
+                    PocketMesh mesh = getOrBuildPocketMesh(sck, pocketData, pocketCount);
                     if (mesh == null) continue;
 
                     long[] quads = mesh.quads;
@@ -894,15 +899,14 @@ public final class RadVisOverlay {
                     if (filter != null && filter.isSectionOutsideFilter(baseX, baseY, baseZ)) continue;
 
                     long sck = Library.sectionToLong(cx, sy, cz);
-                    if (!resolveSection(data, sck, sec)) continue;
+                    if (!resolveSubChunk(data, sck, sec)) continue;
 
                     if (sec.kind != KIND_MULTI) continue;
                     if (sec.pocketCount <= 1) continue;
 
-                    MultiSectionRef m = sec.multi;
-                    if (m == null || sec.pocketData == null) continue;
+                    if (sec.pocketData == null) continue;
 
-                    MultiOuterMeshes mesh = getOrBuildOuterMeshes(m, sec.pocketCount);
+                    MultiOuterMeshes mesh = getOrBuildOuterMeshes(sck, sec.pocketData, sec.pocketCount);
                     if (mesh == null) continue;
 
                     for (int face = 0; face < 6; face++) {
@@ -911,7 +915,7 @@ public final class RadVisOverlay {
 
                         long neighborKey = Library.sectionToLong(cx + FACE_DX[face], sy + FACE_DY[face],
                                 cz + FACE_DZ[face]);
-                        if (!resolveSection(data, neighborKey, nei) || nei.kind != KIND_UNI) continue;
+                        if (!resolveSubChunk(data, neighborKey, nei) || nei.kind != KIND_UNI) continue;
 
                         drawPackedQuads(buf, baseX, baseY, baseZ, warnQuads, COLOR_WARN[0], COLOR_WARN[1],
                                 COLOR_WARN[2], a, inset);
@@ -961,7 +965,7 @@ public final class RadVisOverlay {
                 int col = coordAxis(FACE_U_AXIS[face], lx, ly, lz);
                 fr[face * 16 + row] |= (1 << col);
             }
-            var iterator = ERROR_MASK.long2ReferenceEntrySet().fastIterator();
+            var iterator = ERROR_MASK.long2ObjectEntrySet().fastIterator();
             while (iterator.hasNext()) {
                 var e = iterator.next();
                 long sectionA = e.getLongKey();
@@ -1038,7 +1042,7 @@ public final class RadVisOverlay {
                     if (filter != null && filter.isSectionOutsideFilter(baseX, baseY, baseZ)) continue;
 
                     long aKey = Library.sectionToLong(cx, sy, cz);
-                    if (!resolveSection(data, aKey, a)) continue;
+                    if (!resolveSubChunk(data, aKey, a)) continue;
 
                     for (int faceA : VERIFY_FACES) {
                         int nx = cx + FACE_DX[faceA];
@@ -1048,7 +1052,7 @@ public final class RadVisOverlay {
                         if (nx < pcx - radius || nx > pcx + radius || nz < pcz - radius || nz > pcz + radius) continue;
 
                         long bKey = Library.sectionToLong(nx, ny, nz);
-                        if (!resolveSection(data, bKey, b)) continue;
+                        if (!resolveSubChunk(data, bKey, b)) continue;
 
                         try {
                             verifyPair(aKey, bKey, faceA, a, b, counts, samplesA, samplesB, out);
@@ -1082,32 +1086,14 @@ public final class RadVisOverlay {
         }
     }
 
-    private static void reportStaleEdges(List<? super ErrorRecord> out, Long2IntOpenHashMap counts, long multiKey,
-                                         long otherKey, int faceOnMulti, boolean multiIsAInCounts, boolean otherIsMulti,
-                                         MultiSectionRef ms) {
-        int[] edges = ms.edgesByFace[faceOnMulti];
-        int edgeCount = ms.edgeCounts[faceOnMulti] & 0xFFFF;
-        if (edges == null || edgeCount == 0) return;
-
-        for (int i = 0; i < edgeCount; i++) {
-            int edge = edges[i];
-            int myPi = (edge >>> 20) & 0x7FF;
-            int otherPi = (edge >>> 9) & 0x7FF;
-            int otherPocket = otherIsMulti ? otherPi : 0;
-
-            long key = multiIsAInCounts ? (((long) myPi) << 16) | (otherPocket & 0xFFFFL) : (((long) otherPocket) << 16) | (myPi & 0xFFFFL);
-
-            if (!counts.containsKey(key)) {
-                addMismatch(out, multiKey, otherKey, faceOnMulti, myPi, otherPocket, edge & 0x1FF, 0, -1);
-            }
-        }
-    }
-
-    private static void verifyMultiMulti(long aKey, long bKey, int faceA, int faceB, Sec a, Sec b,
-                                         Long2IntOpenHashMap counts, Long2IntOpenHashMap samplesA,
-                                         Long2IntOpenHashMap samplesB, List<? super ErrorRecord> out) {
-        MultiSectionRef am = a.multi;
-        MultiSectionRef bm = b.multi;
+    private static void verifyPair(long aKey, long bKey, int faceA, Sec a, Sec b, Long2IntOpenHashMap counts,
+                                   Long2IntOpenHashMap samplesA, Long2IntOpenHashMap samplesB,
+                                   List<? super ErrorRecord> out) {
+        int faceB = faceA ^ 1;
+        counts.clear();
+        samplesA.clear();
+        samplesB.clear();
+        buildFaceOverlapCounts(faceA, a, faceB, b, counts, samplesA, samplesB);
 
         var iterator = counts.long2IntEntrySet().fastIterator();
         while (iterator.hasNext()) {
@@ -1116,103 +1102,25 @@ public final class RadVisOverlay {
             int pa = (int) (key >>> 16);
             int pb = (int) (key & 0xFFFF);
             int actual = entry.getIntValue();
+            if (actual <= 0) continue;
 
-            int storedA = readConnMulti(am, pa, faceA, pb);
-            int storedB = readConnMulti(bm, pb, faceB, pa);
+            RadPocket pocketA = pocketAt(a, pa);
+            if (pocketA == null) continue;
 
-            if (storedA != actual) addMismatch(out, aKey, bKey, faceA, pa, pb, storedA, actual, samplesA.get(key));
-            if (storedB != actual) addMismatch(out, bKey, aKey, faceB, pb, pa, storedB, actual, samplesB.get(key));
-        }
-
-        // edges present but no actual overlap
-        reportStaleEdges(out, counts, aKey, bKey, faceA, true, true, am);
-        reportStaleEdges(out, counts, bKey, aKey, faceB, false, true, bm);
-    }
-
-    private static void verifyMultiToNonMulti(long multiKey, long otherKey, int faceOnMulti, boolean multiIsAInCounts,
-                                              MultiSectionRef ms, Long2IntOpenHashMap counts,
-                                              Long2IntOpenHashMap sampleMapForMismatch, List<? super ErrorRecord> out) {
-        var iterator = counts.long2IntEntrySet().fastIterator();
-        while (iterator.hasNext()) {
-            var entry = iterator.next();
-            long key = entry.getLongKey();
-            int myPi = multiIsAInCounts ? (int) (key >>> 16) : (int) (key & 0xFFFF);
-            int actual = entry.getIntValue();
-            int stored = readConnUniSingle(ms, myPi, faceOnMulti);
-            if (stored != actual) addMismatch(out, multiKey, otherKey, faceOnMulti, myPi, 0, stored, actual,
-                    sampleMapForMismatch.get(key));
-        }
-
-        reportStaleEdges(out, counts, multiKey, otherKey, faceOnMulti, multiIsAInCounts, false, ms);
-    }
-
-    private static void verifySingleSingle(long aKey, long bKey, int faceA, int faceB, Long2IntOpenHashMap counts,
-                                           Long2IntOpenHashMap samplesA, Long2IntOpenHashMap samplesB,
-                                           SingleMaskedSectionRef sa, SingleMaskedSectionRef sb,
-                                           List<? super ErrorRecord> out) {
-        int actual = counts.get(0L);
-
-        int storedA = readSingleConn(sa, faceA);
-        int storedB = readSingleConn(sb, faceB);
-
-        if (storedA != actual) addMismatch(out, aKey, bKey, faceA, 0, 0, storedA, actual, samplesA.get(0L));
-        if (storedB != actual) addMismatch(out, bKey, aKey, faceB, 0, 0, storedB, actual, samplesB.get(0L));
-    }
-
-    private static void verifySingleToUni(long singleKey, long uniKey, int faceOnSingle, Long2IntOpenHashMap counts,
-                                          Long2IntOpenHashMap sampleMap, SingleMaskedSectionRef s,
-                                          List<? super ErrorRecord> out) {
-        int actual = counts.get(0L);
-        int exposed = s.getFaceCount(faceOnSingle);
-        if (exposed != actual)
-            addMismatch(out, singleKey, uniKey, faceOnSingle, 0, 0, exposed, actual, sampleMap.get(0L));
-    }
-
-    private static void verifyPair(long aKey, long bKey, int faceA, Sec a, Sec b, Long2IntOpenHashMap counts,
-                                   Long2IntOpenHashMap samplesA, Long2IntOpenHashMap samplesB,
-                                   List<? super ErrorRecord> out) {
-        int faceB = faceA ^ 1;
-
-        int aCount = (a.kind == KIND_MULTI) ? a.pocketCount : 1;
-        int bCount = (b.kind == KIND_MULTI) ? b.pocketCount : 1;
-        if (aCount <= 0 || bCount <= 0) return;
-
-        if (a.kind >= KIND_SINGLE && a.pocketData == null) return;
-        if (b.kind >= KIND_SINGLE && b.pocketData == null) return;
-
-        counts.clear();
-        samplesA.clear();
-        samplesB.clear();
-
-        buildFaceOverlapCounts(faceA, a, faceB, b, counts, samplesA, samplesB);
-
-        if (a.kind == KIND_MULTI && b.kind == KIND_MULTI) {
-            verifyMultiMulti(aKey, bKey, faceA, faceB, a, b, counts, samplesA, samplesB, out);
-            return;
-        }
-
-        if (a.kind == KIND_MULTI && (b.kind == KIND_SINGLE || b.kind == KIND_UNI)) {
-            verifyMultiToNonMulti(aKey, bKey, faceA, true, a.multi, counts, samplesA, out);
-            return;
-        }
-
-        if ((a.kind == KIND_SINGLE || a.kind == KIND_UNI) && b.kind == KIND_MULTI) {
-            verifyMultiToNonMulti(bKey, aKey, faceB, false, b.multi, counts, samplesB, out);
-            return;
-        }
-
-        if (a.kind == KIND_SINGLE && b.kind == KIND_SINGLE) {
-            verifySingleSingle(aKey, bKey, faceA, faceB, counts, samplesA, samplesB, a.single, b.single, out);
-            return;
-        }
-
-        if (a.kind == KIND_SINGLE && b.kind == KIND_UNI) {
-            verifySingleToUni(aKey, bKey, faceA, counts, samplesA, a.single, out);
-            return;
-        }
-
-        if (a.kind == KIND_UNI && b.kind == KIND_SINGLE) {
-            verifySingleToUni(bKey, aKey, faceB, counts, samplesB, b.single, out);
+            List<Integer> links = pocketA.connectionIndices[faceA];
+            boolean linked = false;
+            if (links != null) {
+                for (Integer link : links) {
+                    if (link == null) continue;
+                    if (link == pb || (link == -1 && b.kind == KIND_UNI)) {
+                        linked = true;
+                        break;
+                    }
+                }
+            }
+            if (!linked) {
+                addMismatch(out, aKey, bKey, faceA, pa, pb, 1, actual, samplesA.get(key));
+            }
         }
     }
 
@@ -1261,7 +1169,7 @@ public final class RadVisOverlay {
                     if (filter != null && filter.isSectionOutsideFilter(baseX, baseY, baseZ)) continue;
 
                     long sck = Library.sectionToLong(cx, sy, cz);
-                    if (!resolveSection(data, sck, sec)) continue;
+                    if (!resolveSubChunk(data, sck, sec)) continue;
 
                     double cxp = baseX + 8.0;
                     double cyp = baseY + 8.0;
@@ -1370,91 +1278,36 @@ public final class RadVisOverlay {
 
     private static void appendLinks(List<? super String> lines, WorldRadiationData data, int cx, int sy, int cz,
                                     Sec cur, int myPi, Sec nei) {
+        RadPocket pocket = pocketAt(cur, myPi);
+        if (pocket == null) return;
+
         int linkId = 1;
         boolean active = readActive(cur, myPi);
+        int area = countFaceBlocks(cur, 0, myPi);
 
         for (int face = 0; face < 6; face++) {
+            List<Integer> links = pocket.connectionIndices[face];
+            if (links == null || links.isEmpty()) continue;
+
             int nsy = sy + FACE_DY[face];
             if (nsy < 0 || nsy > 15) continue;
 
             int ncx = cx + FACE_DX[face];
             int ncz = cz + FACE_DZ[face];
-
             long nKey = Library.sectionToLong(ncx, nsy, ncz);
-            if (!resolveSection(data, nKey, nei)) continue;
+            if (!resolveSubChunk(data, nKey, nei)) continue;
 
-            int nKind = nei.kind;
-            int faceB = face ^ 1;
             String faceName = FACE_NAMES[face];
+            String type = nei.kind == KIND_UNI ? "UNI" : "M";
+            int faceArea = countFaceBlocks(cur, face, myPi);
 
-            if (cur.kind == KIND_MULTI) {
-                MultiSectionRef m = cur.multi;
-
-                if (nKind == KIND_UNI || nKind == KIND_SINGLE) {
-                    int area = readConnUniSingle(m, myPi, face);
-                    if (area > 0) lines.add(
-                            formatLink(linkId++, nKind == KIND_UNI ? "UNI" : "S", ncx, nsy, ncz, 0, faceName, area,
-                                    active));
-                } else if (nKind == KIND_MULTI) {
-                    int[] edges = m.edgesByFace[face];
-                    int edgeCount = m.edgeCounts[face] & 0xFFFF;
-                    if (edges != null && edgeCount > 0) {
-                        for (int i = 0; i < edgeCount; i++) {
-                            int edge = edges[i];
-                            int pa = (edge >>> 20) & 0x7FF;
-                            if (pa == myPi) {
-                                int pb = (edge >>> 9) & 0x7FF;
-                                int area = edge & 0x1FF;
-                                lines.add(formatLink(linkId++, "M", ncx, nsy, ncz, pb, faceName, area, active));
-                            }
-                        }
-                    }
-                }
-                continue;
-            }
-
-            if (cur.kind == KIND_SINGLE) {
-                if (nKind == KIND_UNI || nKind == KIND_SINGLE) {
-                    int area = readSingleConn(cur.single, face);
-                    if (area > 0) lines.add(
-                            formatLink(linkId++, nKind == KIND_UNI ? "UNI" : "S", ncx, nsy, ncz, 0, faceName, area,
-                                    active));
-                    continue;
-                }
-
-                if (nKind == KIND_MULTI) {
-                    MultiSectionRef nm = nei.multi;
-                    int[] edges = nm.edgesByFace[faceB];
-                    int edgeCount = nm.edgeCounts[faceB] & 0xFFFF;
-                    if (edges != null && edgeCount > 0) {
-                        for (int i = 0; i < edgeCount; i++) {
-                            int edge = edges[i];
-                            int pb = (edge >>> 20) & 0x7FF; // neighbor's local pocket
-                            int area = edge & 0x1FF;
-                            lines.add(formatLink(linkId++, "M", ncx, nsy, ncz, pb, faceName, area, active));
-                        }
-                    }
-                }
-                continue;
-            }
-
-            if (nKind == KIND_SINGLE) {
-                int area = readSingleConn(nei.single, faceB);
-                if (area > 0) lines.add(formatLink(linkId++, "S", ncx, nsy, ncz, 0, faceName, area, active));
-                continue;
-            }
-
-            if (nKind == KIND_MULTI) {
-                MultiSectionRef nm = nei.multi;
-                int[] edges = nm.edgesByFace[faceB];
-                int edgeCount = nm.edgeCounts[faceB] & 0xFFFF;
-                if (edges != null && edgeCount > 0) {
-                    for (int i = 0; i < edgeCount; i++) {
-                        int edge = edges[i];
-                        int pb = (edge >>> 20) & 0x7FF;
-                        int area = edge & 0x1FF;
-                        lines.add(formatLink(linkId++, "M", ncx, nsy, ncz, pb, faceName, area, active));
-                    }
+            for (Integer link : links) {
+                if (link == null) continue;
+                int neighborPi = link;
+                if (neighborPi < 0) {
+                    lines.add(formatLink(linkId++, "?", ncx, nsy, ncz, -1, faceName, faceArea, active));
+                } else {
+                    lines.add(formatLink(linkId++, type, ncx, nsy, ncz, neighborPi, faceName, faceArea, active));
                 }
             }
         }
@@ -1465,149 +1318,110 @@ public final class RadVisOverlay {
         return "Link" + idx + ": " + type + " (" + cx + ',' + sy + ',' + cz + ')' + " id=" + id + ' ' + face + " area=" + area + " active=" + (active ? "Y" : "N");
     }
 
-    private static boolean resolveSection(WorldRadiationData data, long sectionKey, Sec out) {
+    private static short[] buildPocketIndexData(SubChunkRadiationStorage sc) {
+        short[] data = new short[4096];
+        if (sc.pocketsByBlock == null) {
+            Arrays.fill(data, (short) 0);
+            return data;
+        }
+        for (int i = 0; i < 4096; i++) {
+            RadPocket pocket = sc.pocketsByBlock[i];
+            data[i] = pocket == null ? NO_POCKET : (short) Math.min(pocket.index, MAX_POCKETS - 1);
+        }
+        return data;
+    }
+
+    private static boolean resolveSubChunk(WorldRadiationData data, long sectionKey, Sec out) {
         try {
+            int cx = Library.getSectionX(sectionKey);
             int sy = Library.getSectionY(sectionKey);
+            int cz = Library.getSectionZ(sectionKey);
             if ((sy & ~15) != 0) {
                 out.clear();
                 return false;
             }
 
-            long ck = Library.sectionToChunkLong(sectionKey);
-            int ownerId = data.getId(ck);
-            if (ownerId < 0 || ownerId >= data.mcChunks.length) {
+            ChunkRadiationStorage chunkSt = data.data.get(new ChunkPos(cx, cz));
+            if (chunkSt == null) {
                 out.clear();
                 return false;
             }
-            if (data.cks[ownerId] != ck || data.mcChunks[ownerId] == null) {
-                out.clear();
-                return false;
-            }
-            int secIdx = (ownerId << 4) | sy;
 
-            int kind = data.getKind(ownerId, sy);
-            if (kind == KIND_NONE) {
+            SubChunkRadiationStorage sc = chunkSt.getForYLevel(sy << 4);
+            if (sc == null || sc.pockets == null || sc.pockets.length == 0) {
                 out.clear();
                 return false;
             }
 
             out.data = data;
-            out.idx = secIdx;
-            out.kind = kind;
+            out.sectionKey = sectionKey;
+            out.subChunk = sc;
+            out.pocketCount = Math.min(sc.pockets.length, MAX_POCKETS);
 
-            if (kind == KIND_UNI) {
-                out.sc = null;
-                out.multi = null;
-                out.single = null;
+            if (sc.pocketsByBlock == null && sc.pockets.length == 1) {
+                out.kind = KIND_UNI;
                 out.pocketData = null;
-                out.pocketCount = 1;
-                return true;
+            } else {
+                out.kind = KIND_MULTI;
+                out.pocketData = buildPocketIndexData(sc);
             }
-
-            SectionRef sc = data.complexSecs[secIdx];
-            if (sc == null || sc.pocketCount <= 0) {
-                out.clear();
-                return false;
-            }
-            out.sc = sc;
-
-            if (kind == KIND_SINGLE) {
-                if (!(sc instanceof SingleMaskedSectionRef s)) {
-                    out.clear();
-                    return false;
-                }
-                out.single = s;
-                out.multi = null;
-                out.pocketData = s.pocketData;
-                out.pocketCount = 1;
-                return true;
-            }
-
-            if (kind == KIND_MULTI) {
-                if (!(sc instanceof MultiSectionRef m)) {
-                    out.clear();
-                    return false;
-                }
-                out.multi = m;
-                out.single = null;
-                out.pocketData = m.pocketData;
-                int pc = m.pocketCount & 0xFFFF;
-                out.pocketCount = Math.min(pc, MAX_POCKETS);
-                return out.pocketCount > 0;
-            }
-
-            out.clear();
-            return false;
+            return true;
         } catch (Throwable _) {
             out.clear();
             return false;
         }
     }
 
+    private static RadPocket pocketAt(Sec sec, int pocketIndex) {
+        if (sec.subChunk == null || pocketIndex < 0 || pocketIndex >= sec.pocketCount) return null;
+        return sec.subChunk.pockets[pocketIndex];
+    }
+
     private static double readRad(Sec sec, int pocketIndex) {
-        if (sec.kind == KIND_UNI || sec.kind == KIND_SINGLE) return sec.data.uniformRads[sec.idx];
-        if (sec.kind == KIND_MULTI) {
-            if (pocketIndex < 0 || pocketIndex >= sec.pocketCount) return 0.0d;
-            return sec.multi.data[pocketIndex << 1];
-        }
-        return 0.0d;
+        RadPocket pocket = pocketAt(sec, pocketIndex);
+        return pocket == null ? 0.0d : pocket.radiation;
     }
 
     private static boolean readActive(Sec sec, int pocketIndex) {
-        if (sec.data == null || sec.idx < 0) return false;
-        int ownerId = sec.idx >>> 4;
-        int sy = sec.idx & 15;
-        if (!sec.data.isSectionActive(ownerId, sy)) return false;
-        return readRad(sec, pocketIndex) > 0.0D;
+        RadPocket pocket = pocketAt(sec, pocketIndex);
+        if (pocket == null || sec.data == null) return false;
+        return sec.data.getActivePockets().contains(pocket);
     }
 
     private static int pocketIndexAt(Sec sec, int blockIndex) {
-        int kind = sec.kind;
-        if (kind == KIND_UNI) return 0;
+        if (sec.kind == KIND_UNI) return 0;
 
         short[] data = sec.pocketData;
         if (data == null) return -1;
 
         int pi = data[blockIndex];
         if (pi == NO_POCKET) return -1;
-
-        if (kind == KIND_SINGLE) return (pi == 0) ? 0 : -1;
-
         return (pi >= 0 && pi < sec.pocketCount) ? pi : -1;
     }
 
-    private static int readConnMulti(MultiSectionRef ms, int myPi, int face, int neighborPocket) {
-        if (ms == null) return 0;
-        int[] edges = ms.edgesByFace[face];
-        int edgeCount = ms.edgeCounts[face] & 0xFFFF;
-        if (edges == null || edgeCount == 0) return 0;
-        for (int i = 0; i < edgeCount; i++) {
-            int edge = edges[i];
-            int pa = (edge >>> 20) & 0x7FF;
-            if (pa != myPi) continue;
-            int pb = (edge >>> 9) & 0x7FF;
-            if (pb == neighborPocket) return edge & 0x1FF;
+    private static int countFaceBlocks(Sec sec, int face, int pocketIndex) {
+        if (sec.kind == KIND_UNI) {
+            return pocketIndex == 0 ? 256 : 0;
         }
-        return 0;
+        short[] data = sec.pocketData;
+        if (data == null) return 0;
+        int count = 0;
+        int planeBase = face << 8;
+        for (int t = 0; t < 256; t++) {
+            int idx = FACE_PLANE[planeBase + t];
+            if (pocketIndexAt(sec, idx) == pocketIndex) count++;
+        }
+        return count;
     }
 
-    private static int readConnUniSingle(MultiSectionRef ms, int myPi, int face) {
-        if (ms == null) return 0;
-        int[] edges = ms.edgesByFace[face];
-        int edgeCount = ms.edgeCounts[face] & 0xFFFF;
-        if (edges == null || edgeCount == 0) return 0;
-        for (int i = 0; i < edgeCount; i++) {
-            int edge = edges[i];
-            int pa = (edge >>> 20) & 0x7FF;
-            if (pa == myPi) return edge & 0x1FF;
+    private static boolean hasPocketConnection(RadPocket pocket, int face, int neighborIndex) {
+        if (pocket == null || face < 0 || face > 5) return false;
+        List<Integer> links = pocket.connectionIndices[face];
+        if (links == null || links.isEmpty()) return false;
+        for (Integer link : links) {
+            if (link != null && link == neighborIndex) return true;
         }
-        return 0;
-    }
-
-    private static int readSingleConn(SingleMaskedSectionRef s, int face) {
-        if (s == null) return 0;
-        if (face < 0 || face > 5) return 0;
-        return (int) ((s.connections >>> (face * 9)) & 0x1FFL);
+        return false;
     }
 
     private static float computeRadAlpha(double rad, float baseAlpha, boolean active) {
@@ -1843,22 +1657,16 @@ public final class RadVisOverlay {
 
     private static final class Sec {
         WorldRadiationData data;
-        int idx = -1;
+        long sectionKey;
         int kind;
-
-        SectionRef sc;
-        MultiSectionRef multi;
-        SingleMaskedSectionRef single;
-
+        SubChunkRadiationStorage subChunk;
         short[] pocketData;
         int pocketCount;
 
         void clear() {
             data = null;
-            idx = -1;
-            sc = null;
-            multi = null;
-            single = null;
+            sectionKey = 0L;
+            subChunk = null;
             pocketData = null;
             pocketCount = 0;
             kind = KIND_NONE;

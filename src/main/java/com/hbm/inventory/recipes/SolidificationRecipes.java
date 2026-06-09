@@ -66,7 +66,8 @@ public class SolidificationRecipes extends SerializableRecipe {
         registerRecipe(BIOGAS,		250,			ModItems.biomass_compressed);
         registerRecipe(SALIENT,		1280,			new ItemStack(ModItems.bio_wafer, 8)); //4 (food val) * 2 (sat mod) * 2 (constant) * 10 (quanta) * 8 (batch size)
         registerRecipe(ENDERJUICE,	100,			Items.ENDER_PEARL);
-        registerRecipe(WATZ,		1000,			ModItems.ingot_mud);
+        registerRecipe(WATZ,		16000,			ModItems.ingot_mud);
+        registerRecipe(TOXIC,		500,			ModBlocks.sellafield_core);
         registerRecipe(REDMUD,		450,			Items.IRON_INGOT);
         registerRecipe(SODIUM,		100,			ModItems.powder_sodium);
         registerRecipe(LEAD,		100,			ModItems.ingot_lead);

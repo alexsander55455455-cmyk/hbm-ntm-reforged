@@ -6,6 +6,7 @@ import com.hbm.handler.ArmorUtil;
 import com.hbm.hazard.modifier.IHazardModifier;
 import com.hbm.util.ArmorRegistry;
 import com.hbm.util.ArmorRegistry.HazardClass;
+import com.hbm.lib.Library;
 import com.hbm.util.I18nUtil;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -42,7 +43,9 @@ public class HazardTypeCoal implements IHazardType {
 	@Override
 	@SideOnly(Side.CLIENT)
     public void addHazardInformation(final EntityPlayer player, final List<String> list, final double level, final ItemStack stack, final List<IHazardModifier> modifiers) {
-        list.add(TextFormatting.DARK_GRAY + "[" + I18nUtil.resolveKey("trait.coal") + "]");
+        if (RadiationConfig.disableCoal) return;
+        double displayLevel = level * stack.getCount();
+        list.add(TextFormatting.DARK_GRAY + "[" + I18nUtil.resolveKey("trait.coal") + "] " + Library.roundFloat(displayLevel, 3));
     }
 
 }

@@ -1,5 +1,6 @@
 package com.hbm.config;
 
+import com.hbm.main.MainRegistry;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 
@@ -21,7 +22,7 @@ public class RadiationConfig {
 	public static int railgunBuffer = 500000000;
 	public static int railgunUse = 250000000;
 	public static int fireDuration = 4 * 20;
-	public static boolean neutronActivation = false;
+	public static boolean neutronActivation = true;
 	public static int neutronActivationThreshold = 15;
 
 	public static int digammaX = 16;
@@ -46,7 +47,7 @@ public class RadiationConfig {
 	public static double sootFogThreshold = 35D;
 	public static double sootFogDivisor = 120D;
 	public static double smokeStackSootMult = 0.8;
-    public static int radTickRate = 1;
+    public static int radTickRate = 20;
     public static double radHalfLifeSeconds = 120D;
     public static double radDiffusivity = 10.0;
 
@@ -89,12 +90,22 @@ public class RadiationConfig {
 		
 		fogCh = CommonConfig.setDef(RadiationConfig.fogCh, 20);
 
-		neutronActivation = CommonConfig.createConfigBool(config, CommonConfig.CATEGORY_RADIATION, "7.01_itemContamination", "Whether high radiation levels should radiate items in inventory. WARNING: extremely laggy and and buggy. Keep it off unless you know what you are doing", false);
+		int itemContaminationConfigRev = CommonConfig.createConfigInt(config, CommonConfig.CATEGORY_RADIATION, "7.00_itemContaminationConfigRev", "Internal revision for item contamination default migration", 0);
+		Property itemContaminationProp = config.get(CommonConfig.CATEGORY_RADIATION, "7.01_itemContamination", true);
+		itemContaminationProp.setComment("Whether high radiation levels should radiate clean items and armor in inventory from ambient radiation");
+		if (itemContaminationConfigRev < 1) {
+			if (!itemContaminationProp.getBoolean()) {
+				itemContaminationProp.set(true);
+				MainRegistry.logger.info("[HBM] Enabled 7.01_itemContamination by default (EE parity)");
+			}
+			config.get(CommonConfig.CATEGORY_RADIATION, "7.00_itemContaminationConfigRev", 0).set(1);
+		}
+		neutronActivation = itemContaminationProp.getBoolean();
 		neutronActivationThreshold = CommonConfig.createConfigInt(config, CommonConfig.CATEGORY_RADIATION, "7.01_itemContaminationThreshold", "Minimum recieved Rads/s threshold at which items get irradiated", 15);
 		
 		digammaX = CommonConfig.createConfigInt(config, CommonConfig.CATEGORY_RADIATION, "7.02_digammaX", "X Coordinate of the digamma diagnostic gui (x=0 is on the right)", 16);
 		digammaY = CommonConfig.createConfigInt(config, CommonConfig.CATEGORY_RADIATION, "7.03_digammaY", "Y Coordinate of the digamma diagnostic gui (y=0 is on the bottom)", 18);
-        radTickRate = CommonConfig.createConfigInt(config, CommonConfig.CATEGORY_RADIATION, "7.99_CE_01_radTickRate", "How many ticks between each radiation system updates. 1 = once per tick", 1);
+        radTickRate = CommonConfig.createConfigInt(config, CommonConfig.CATEGORY_RADIATION, "7.99_CE_01_radTickRate", "How many ticks between each radiation system updates. 20 = once per second (EE parity)", 20);
         radHalfLifeSeconds = CommonConfig.createConfigDouble(config, CommonConfig.CATEGORY_RADIATION, "7.99_CE_02_radHalfLifeSeconds", "The half life of chunk radiation in seconds", 120);
         radDiffusivity = CommonConfig.createConfigDouble(config, CommonConfig.CATEGORY_RADIATION, "7.99_CE_03_radDiffusivity", "The diffusivity of chunk radiation.", 10.0);
 

@@ -275,6 +275,35 @@ public class ExplosionChaos {
         });
     }
 
+	public static void plasma(World world, int x, int y, int z, int radius) {
+		if (!CompatibilityConfig.isWarDim(world)) {
+			return;
+		}
+		MutableBlockPos pos = new BlockPos.MutableBlockPos();
+		int r2 = radius * radius;
+		int r22 = r2 / 2;
+		for (int xx = -radius; xx < radius; xx++) {
+			int X = xx + x;
+			int XX = xx * xx;
+			for (int yy = -radius; yy < radius; yy++) {
+				int Y = yy + y;
+				int YY = XX + yy * yy;
+				for (int zz = -radius; zz < radius; zz++) {
+					int Z = zz + z;
+					int ZZ = YY + zz * zz;
+					if (ZZ < r22 + world.rand.nextInt(Math.max(1, r22 / 2))) {
+						pos.setPos(X, Y, Z);
+						Block block = world.getBlockState(pos).getBlock();
+						if (block.getExplosionResistance(null) > 0.1F) continue;
+						if (block != Blocks.BEDROCK) {
+							world.setBlockState(pos, ModBlocks.fwatz_plasma.getDefaultState());
+						}
+					}
+				}
+			}
+		}
+	}
+
 	public static void spawnChlorine(World world, double x, double y, double z, int count, double speed, int type) {
         if(!CompatibilityConfig.isWarDim(world)) return;
         EntityModFXShadow.Type shadowType = switch (type) {
@@ -868,27 +897,27 @@ public class ExplosionChaos {
 			world.setBlockState(pos, ModBlocks.block_lead.getDefaultState());
 		}
 
-		else if(bblock == ModBlocks.sellafield && random.nextInt(10) == 0) {
-			world.setBlockState(pos, ModBlocks.sellafield.getDefaultState().withProperty(BlockMeta.META, 4));
+		else if(bblock == ModBlocks.sellafield_core && random.nextInt(10) == 0) {
+			world.setBlockState(pos, ModBlocks.sellafield_4.getStateFromMeta(world.rand.nextInt(4)));
 		}
 
-		else if(bblock == ModBlocks.sellafield.getDefaultState().withProperty(BlockMeta.META, 4) && random.nextInt(5) == 0) {
-			world.setBlockState(pos, ModBlocks.sellafield.getDefaultState().withProperty(BlockMeta.META, 3));
+		else if(bblock == ModBlocks.sellafield_4 && random.nextInt(5) == 0) {
+			world.setBlockState(pos, ModBlocks.sellafield_3.getStateFromMeta(world.rand.nextInt(4)));
 		}
 
-		else if(bblock == ModBlocks.sellafield.getDefaultState().withProperty(BlockMeta.META, 3) && random.nextInt(5) == 0) {
-			world.setBlockState(pos, ModBlocks.sellafield.getDefaultState().withProperty(BlockMeta.META, 2));
+		else if(bblock == ModBlocks.sellafield_3 && random.nextInt(5) == 0) {
+			world.setBlockState(pos, ModBlocks.sellafield_2.getStateFromMeta(world.rand.nextInt(4)));
 		}
 
-		else if(bblock == ModBlocks.sellafield.getDefaultState().withProperty(BlockMeta.META, 2) && random.nextInt(5) == 0) {
-			world.setBlockState(pos, ModBlocks.sellafield.getDefaultState().withProperty(BlockMeta.META, 1));
+		else if(bblock == ModBlocks.sellafield_2 && random.nextInt(5) == 0) {
+			world.setBlockState(pos, ModBlocks.sellafield_1.getStateFromMeta(world.rand.nextInt(4)));
 		}
 
-		else if(bblock == ModBlocks.sellafield.getDefaultState().withProperty(BlockMeta.META, 1) && random.nextInt(5) == 0) {
-			world.setBlockState(pos, ModBlocks.sellafield.getDefaultState().withProperty(BlockMeta.META, 0));
+		else if(bblock == ModBlocks.sellafield_1 && random.nextInt(5) == 0) {
+			world.setBlockState(pos, ModBlocks.sellafield_0.getStateFromMeta(world.rand.nextInt(4)));
 		}
 
-		else if(bblock == ModBlocks.sellafield.getDefaultState().withProperty(BlockMeta.META, 0) && random.nextInt(5) == 0) {
+		else if(bblock == ModBlocks.sellafield_0 && random.nextInt(5) == 0) {
 			world.setBlockState(pos, ModBlocks.sellafield_slaked.getStateFromMeta(world.rand.nextInt(4)));
 		}
 

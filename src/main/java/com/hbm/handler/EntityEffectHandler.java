@@ -67,12 +67,13 @@ import java.util.List;
 import java.util.Random;
 
 public class EntityEffectHandler {
+
 	public static void onUpdate(EntityLivingBase entity) {
         //mlbv: placed at top to prevent getting transient radiation from code below
         handleRadiationEffect(entity);
 
         if(!entity.world.isRemote) {
-			
+
 			if(entity.ticksExisted % 20 == 0) {
 				HbmLivingProps.setRadBuf(entity, HbmLivingProps.getRadEnv(entity));
 				HbmLivingProps.setRadEnv(entity, 0);
@@ -164,6 +165,9 @@ public class EntityEffectHandler {
 
             BlockPos pos = new BlockPos(ix, iy, iz);
             double offset = ChunkRadiationManager.proxy.getRadiation(world, pos);
+			if (iy < 255) {
+				offset = Math.max(offset, ChunkRadiationManager.proxy.getRadiation(world, pos.up()));
+			}
 
 			Object v = CompatibilityConfig.dimensionRad.get(world.provider.getDimension());
             float background = (v instanceof Number) ? ((Number) v).floatValue() : 0f;

@@ -35,6 +35,7 @@ import org.lwjgl.input.Keyboard;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class ItemScraps extends ItemAutogen {
 
     public ItemScraps(String s) {
@@ -53,9 +54,19 @@ public class ItemScraps extends ItemAutogen {
         }
     }
     @Override
+    public String getTexturePath(NTMMaterial mat) {
+        return ScrapTextureResolver.getTexturePath(mat);
+    }
+
+    @Override
     @SideOnly(Side.CLIENT)
     public void registerSprite(TextureMap map) {
-        super.registerSprite(map);
+        for (NTMMaterial mat : Mats.orderedList) {
+            if (mat.smeltable == NTMMaterial.SmeltingBehavior.SMELTABLE
+                    || mat.smeltable == NTMMaterial.SmeltingBehavior.ADDITIVE) {
+                ScrapTextureResolver.registerSprite(map, mat);
+            }
+        }
         map.registerSprite(new ResourceLocation(Tags.MODID, "items/scraps_liquid"));
         map.registerSprite(new ResourceLocation(Tags.MODID, "items/scraps_additive"));
     }

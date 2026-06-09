@@ -2,6 +2,7 @@ package com.hbm.hazard.transformer;
 
 import com.hbm.capability.NTMFluidCapabilityHandler;
 import com.hbm.hazard.HazardEntry;
+import com.hbm.items.ModItems;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.item.ItemStack;
@@ -21,9 +22,15 @@ public class HazardTransformerForgeFluid implements IHazardTransformer {
     public void transformPre(ItemStack stack, List<HazardEntry> entries) {
     }
 
+    public static boolean isHazardSafeFluidContainer(ItemStack stack) {
+        if (stack.isEmpty()) return false;
+        return stack.getItem() == ModItems.fluid_tank_lead_full || stack.getItem() == ModItems.fluid_tank_lead_v2;
+    }
+
     @Override
     public void transformPost(ItemStack stack, List<HazardEntry> entries) {
         if (FLUID_HAZARDS.isEmpty()) return;
+        if (isHazardSafeFluidContainer(stack)) return;
         if (!applyToNTMContainer && NTMFluidCapabilityHandler.isNtmFluidContainer(stack.getItem())) return;
         if (!stack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) return;
         final IFluidHandlerItem handler = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
