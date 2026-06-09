@@ -32,4 +32,4 @@ blowdryerSetup {
 }
 
 include 'processor'
-rootProject.name = rootProject.projectDir.getName()
+rootProject.name = 'HBM-NTM-Reforged'
