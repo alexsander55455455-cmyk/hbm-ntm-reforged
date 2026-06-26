@@ -1,17 +1,16 @@
 package com.hbm.creativetabs;
 
 import com.hbm.blocks.ModBlocks;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class BlockTab extends CreativeTabs {
+public class BlockTab extends HBMCreativeTab {
 
 	public BlockTab(int index, String label) {
-		super(index, label);
+		super(index, label, "blockTab");
 	}
 
 	@Override

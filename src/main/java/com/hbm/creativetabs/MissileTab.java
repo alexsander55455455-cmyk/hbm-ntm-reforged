@@ -2,7 +2,6 @@ package com.hbm.creativetabs;
 
 import com.hbm.items.ModItems;
 import com.hbm.items.weapon.ItemCustomMissile;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -10,10 +9,10 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class MissileTab extends CreativeTabs {
+public class MissileTab extends HBMCreativeTab {
 
 	public MissileTab(int index, String label) {
-		super(index, label);
+		super(index, label, "missileTab");
 	}
 
 	@Override
@@ -27,8 +26,7 @@ public class MissileTab extends CreativeTabs {
 
 	@Override
     @SideOnly(Side.CLIENT)
-	public void displayAllRelevantItems(NonNullList<ItemStack> list) {
-		super.displayAllRelevantItems(list);
+	protected void appendTabExtras(NonNullList<ItemStack> list) {
 		
 		list.add(ItemCustomMissile.buildMissile(
 				ModItems.mp_chip_3,
