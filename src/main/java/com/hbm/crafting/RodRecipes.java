@@ -154,6 +154,8 @@ public class RodRecipes {
         CraftingManager.addRecipeAuto(DictFrame.fromOne(ModItems.pwr_fuel, ItemPWRFuel.EnumPWRFuel.BFB_PU241), "NFN", "NIN", "NBN", 'F', PU241.billet(), 'I', ModItems.plate_polymer, 'B', BI.billet(), 'N', ModItems.nugget_uranium_fuel );
 
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.icf_pellet_empty), "ZLZ", "L L", "ZLZ", 'Z', ZR.wireFine(), 'L', PB.wireFine() );
+
+        LegacyRodRecipes.register();
     }
     // TODO ? ids are not correct, resulting in NPE
     public static void registerInit() {
