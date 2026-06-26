@@ -31,7 +31,7 @@ public class ConsumableRecipes {
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.bomb_caller, 1, 0),"TTT", "TRT", "TTT", 'T', Blocks.TNT, 'R', ModItems.rangefinder );
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.bomb_caller, 1, 1),"TTT", "TRT", "TTT", 'T', new ItemStack(ModItems.grenade_filling, 1, EnumGrenadeFilling.INC.ordinal()), 'R', ModItems.rangefinder );
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.bomb_caller, 1, 2),"TTT", "TRT", "TTT", 'T', ModItems.pellet_gas, 'R', ModItems.rangefinder );
-        CraftingManager.addRecipeAuto(new ItemStack(ModItems.bomb_caller, 1, 4),"TRC", 'T', OreDictManager.DictFrame.fromOne(ModItems.ammo_standard, GunFactory.EnumAmmo.NUKE_HIGH), 'R', ModItems.rangefinder, 'C', OreDictManager.DictFrame.fromOne(ModItems.circuit, EnumCircuitType.CONTROLLER) );
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.bomb_caller, 1, 4),"TRC", 'T', new ItemStack(ModItems.ammo_nuke_high), 'R', ModItems.rangefinder, 'C', OreDictManager.DictFrame.fromOne(ModItems.circuit, EnumCircuitType.CONTROLLER) );
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.bomb_caller, 1, ItemBombCaller.EnumCallerType.NAPALM.ordinal()), "TTT", "TRT", "TTT", 'T', ModItems.grenade_gascan, 'R', ModItems.detonator_laser);
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.bomb_caller, 1, ItemBombCaller.EnumCallerType.ORANGE.ordinal()), "TRT", 'T', ModItems.grenade_cloud, 'R', ModItems.detonator_laser);
 
@@ -154,20 +154,26 @@ public class ConsumableRecipes {
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.cladding_rubber, 1),"RCR", "CDC", "RCR", 'R', ANY_RUBBER.ingot(), 'C', COAL.dust(), 'D', ModItems.ducttape );
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.cladding_lead, 1),"DPD", "PRP", "DPD", 'R', ModItems.cladding_rubber, 'P', PB.plate(), 'D', ModItems.ducttape );
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.cladding_desh, 1),"DPD", "PRP", "DPD", 'R', ModItems.cladding_lead, 'P', ModItems.plate_desh, 'D', ModItems.ducttape );
-        CraftingManager.addRecipeAuto(new ItemStack(ModItems.cladding_ghiorsium, 1),"DPD", "PRP", "DPD", 'R', ModItems.cladding_desh, 'P', ModItems.ingot_gh336, 'D', ModItems.ducttape );
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.cladding_paa, 1),"DPD", "PRP", "DPD", 'R', ModItems.cladding_desh, 'P', ModItems.plate_paa, 'D', ModItems.ducttape );
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.cladding_ghiorsium, 1),"DPD", "PRP", "DPD", 'R', ModItems.cladding_paa, 'P', ModItems.ingot_gh336, 'D', ModItems.ducttape );
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.cladding_euphemium, 1),"DPD", "PRP", "DPD", 'R', ModItems.cladding_ghiorsium, 'P', ModItems.plate_euphemium, 'D', ModItems.ducttape );
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.cladding_di, 1),"DPD", "PRP", "DPD", 'R', ModItems.cladding_euphemium, 'P', ModItems.plate_dineutronium, 'D', ModItems.ducttape );
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.cladding_electronium, 1),"DPD", "PRP", "DPD", 'R', ModItems.cladding_di, 'P', ModItems.ingot_electronium, 'D', ModItems.ducttape );
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.cladding_obsidian, 1),"OOO", "PDP", "OOO", 'O', Blocks.OBSIDIAN, 'P', STEEL.plate(), 'D', ModItems.ducttape );
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.cladding_iron, 1),"OOO", "PDP", "OOO", 'O', IRON.plate(), 'P', ModItems.plate_polymer, 'D', ModItems.ducttape );
 
         //Inserts
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.insert_steel, 1),"DPD", "PSP", "DPD", 'D', ModItems.ducttape, 'P', IRON.plate(), 'S', STEEL.block() );
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.insert_du, 1),"DPD", "PSP", "DPD", 'D', ModItems.ducttape, 'P', IRON.plate(), 'S', U238.block() );
-        CraftingManager.addRecipeAuto(new ItemStack(ModItems.insert_ghiorsium, 1),"DPD", "PSP", "DPD", 'D', ModItems.ducttape, 'P', GH336.ingot(), 'S', U238.ingot() );
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.insert_ferrouranium, 1),"PIP", "IDI", "PIP", 'D', ModItems.insert_kevlar, 'P', ModItems.ducttape, 'I', FERRO.ingot() );
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.insert_ghiorsium, 1),"PKP", "KSK", "PKP", 'P', ModItems.ducttape, 'K', GH336.ingot(), 'S', ModItems.insert_kevlar );
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.insert_di, 1),"PKP", "KSK", "PKP", 'P', ModItems.ducttape, 'K', ModItems.plate_dineutronium, 'S', ModItems.insert_ghiorsium );
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.insert_polonium, 1),"DPD", "PSP", "DPD", 'D', ModItems.ducttape, 'P', IRON.plate(), 'S', PO210.block() );
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.insert_era, 1),"DPD", "PSP", "DPD", 'D', ModItems.ducttape, 'P', IRON.plate(), 'S', ModItems.ingot_semtex );
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.insert_kevlar, 1),"KIK", "IDI", "KIK", 'K', ModItems.plate_kevlar, 'I', ANY_RUBBER.ingot(), 'D', ModItems.ducttape );
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.insert_sapi, 1),"PKP", "DPD", "PKP", 'P', ANY_PLASTIC.ingot(), 'K', ModItems.insert_kevlar, 'D', ModItems.ducttape );
-        CraftingManager.addRecipeAuto(new ItemStack(ModItems.insert_esapi, 1),"PKP", "DSD", "PKP", 'P', ANY_PLASTIC.ingot(), 'K', ModItems.insert_sapi, 'D', ModItems.ducttape, 'S', WEAPONSTEEL.plate() );
-        CraftingManager.addRecipeAuto(new ItemStack(ModItems.insert_xsapi, 1),"PKP", "DSD", "PKP", 'P', ASBESTOS.ingot(), 'K', ModItems.insert_esapi, 'D', ModItems.ducttape, 'S', BIGMT.plate() );
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.insert_esapi, 1),"PKP", "DSD", "PKP", 'P', ANY_PLASTIC.ingot(), 'K', ModItems.insert_sapi, 'D', ModItems.ducttape, 'S', BIGMT.plate() );
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.insert_xsapi, 1),"PKP", "DSD", "PKP", 'P', ASBESTOS.ingot(), 'K', ModItems.insert_esapi, 'D', ModItems.ducttape, 'S', ModItems.ingot_meteorite_forged );
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.insert_yharonite, 1),"YIY", "IYI", "YIY", 'Y', ModItems.billet_yharonite, 'I', ModItems.insert_du );
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.australium_iii, 1),"WSW", "PAP", "SPS", 'S', STEEL.plateWelded(), 'P', ANY_PLASTIC.ingot(), 'A', AUSTRALIUM.ingot(), 'W', GOLD.wireDense() );
 
@@ -185,18 +191,20 @@ public class ConsumableRecipes {
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.pads_static, 1),"CDC", "ISI", "CDC", 'C', CU.ingot(), 'D', ModItems.ducttape, 'I', ANY_RUBBER.ingot(), 'S', ModItems.pads_slime );
 
         //Batteries
-        CraftingManager.addRecipeAuto(new ItemStack(ModItems.armor_battery, 1),"PCP", "PCP", "PCP", 'P', STEEL.plate(), 'C', ModBlocks.capacitor_gold );
-        CraftingManager.addRecipeAuto(new ItemStack(ModItems.armor_battery_mk2, 1),"PCP", "PCP", "PCP", 'P', ANY_PLASTIC.ingot(), 'C', ModBlocks.capacitor_niobium );
-        CraftingManager.addRecipeAuto(new ItemStack(ModItems.armor_battery_mk3, 1),"PCP", "PCP", "PCP", 'P', GOLD.plate(), 'C', ModBlocks.capacitor_tantalium );
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.armor_battery, 1),"W W", "PCP", "PCP", 'W', GOLD.wireFine(), 'P', AL.plateCast(), 'C', ModBlocks.machine_desh_battery );
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.armor_battery_mk2, 1),"W W", "PCP", "PCP", 'W', GOLD.wireFine(), 'P', STEEL.plateCast(), 'C', ModBlocks.machine_saturnite_battery );
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.armor_battery_mk3, 1),"W W", "PCP", "PCP", 'W', GOLD.wireFine(), 'P', GOLD.plateCast(), 'C', ModBlocks.machine_schrabidium_battery );
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.armor_battery_mk4, 1),"W W", "PCP", "PCP", 'W', GOLD.wireFine(), 'P', ModItems.plate_euphemium, 'C', ModBlocks.machine_euphemium_battery );
 
         //Special Mods
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.horseshoe_magnet, 1),"L L", "I I", "ILI", 'L', ModItems.lodestone, 'I', IRON.ingot() );
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.industrial_magnet, 1),"SMS", " B ", "SMS", 'S', STEEL.ingot(), 'M', ModItems.horseshoe_magnet, 'B', new ItemStack(ModBlocks.hadron_coil_alloy, 1, 0) );
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.heart_container, 1),"HAH", "ACA", "HAH", 'H', ModItems.heart_piece, 'A', AL.ingot(), 'C', ModItems.coin_creeper );
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.heart_booster, 1),"GHG", "MCM", "GHG", 'G', GOLD.ingot(), 'H', ModItems.heart_container, 'M', ModItems.morning_glory, 'C', ModItems.coin_maskman );
-        CraftingManager.addRecipeAuto(new ItemStack(ModItems.heart_fab, 1),"GHG", "MCM", "GHG", 'G', PO210.billet(), 'H', ModItems.heart_booster, 'M', ANY_COKE.gem(), 'C', ModItems.coin_worm );
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.heart_fab, 1),"GHG", "MCM", "GHG", 'G', PO210.billet(), 'H', ModItems.heart_booster, 'M', ModItems.ingot_euphemium, 'C', ModItems.coin_worm );
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.ink, 1),"FPF", "PIP", "FPF", 'F', new ItemStack(Blocks.RED_FLOWER, 1, OreDictionary.WILDCARD_VALUE), 'P', ModItems.armor_polish, 'I', KEY_BLACK );
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.bathwater_mk2, 1),"MWM", "WBW", "MWM", 'M', ModItems.bottle_mercury, 'W', ModItems.nuclear_waste, 'B', ModItems.bathwater );
+        CraftingManager.addRecipeAuto(new ItemStack(ModItems.bathwater_mk3, 1), "MWM", "WBW", "MWM", 'M', ModBlocks.block_corium_cobble, 'W', ModItems.powder_radspice, 'B', ModItems.bathwater_mk2);
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.back_tesla, 1),"DGD", "GTG", "DGD", 'D', ModItems.ducttape, 'G', GOLD.wireFine(), 'T', ModBlocks.tesla );
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.medal_liquidator, 1),"GBG", "BFB", "GBG", 'G', AU198.nugget(), 'B', B.ingot(), 'F', ModItems.debris_fuel );
         CraftingManager.addShapelessAuto(new ItemStack(ModItems.injector_5htp, 1),ModItems.five_htp, DictFrame.fromOne(ModItems.circuit, EnumCircuitType.BASIC), BIGMT.plate() );

@@ -44,6 +44,8 @@ public class SmeltingRecipes {
         GameRegistry.addSmelting(OreDictManager.DictFrame.fromOne(ModBlocks.ore_meteor, EnumMeteorType.ALUMINIUM), OreDictManager.DictFrame.fromOne(ModItems.chunk_ore, ItemEnums.EnumChunkType.CRYOLITE, 16), 10.0F);
         GameRegistry.addSmelting(OreDictManager.DictFrame.fromOne(ModBlocks.ore_meteor, EnumMeteorType.RAREEARTH), OreDictManager.DictFrame.fromOne(ModItems.chunk_ore, ItemEnums.EnumChunkType.RARE, 16), 10.0F);
         GameRegistry.addSmelting(OreDictManager.DictFrame.fromOne(ModBlocks.ore_meteor, EnumMeteorType.COBALT), new ItemStack(ModItems.ingot_cobalt, 4), 10.0F);
+        GameRegistry.addSmelting(OreDictManager.DictFrame.fromOne(ModBlocks.ore_meteor, EnumMeteorType.URANIUM), new ItemStack(ModItems.ingot_uranium, 2), 12.0F);
+        GameRegistry.addSmelting(OreDictManager.DictFrame.fromOne(ModBlocks.ore_meteor, EnumMeteorType.THORIUM), new ItemStack(ModItems.ingot_th232, 2), 6.0F);
 
         GameRegistry.addSmelting(Item.getItemFromBlock(ModBlocks.ore_gneiss_iron), new ItemStack(Items.IRON_INGOT), 5.0F);
         GameRegistry.addSmelting(Item.getItemFromBlock(ModBlocks.ore_gneiss_gold), new ItemStack(Items.GOLD_INGOT), 5.0F);
@@ -169,6 +171,12 @@ public class SmeltingRecipes {
 
         for(int i = 0; i < 10; i++)
             GameRegistry.addSmelting(new ItemStack(ModItems.ingot_steel_dusted, 1, i), ItemHot.heatUp(new ItemStack(ModItems.ingot_steel_dusted, 1, i)), 1.0F);
+
+        GameRegistry.addSmelting(ModItems.casing_357, new ItemStack(ModItems.ingot_copper), 0.1F);
+        GameRegistry.addSmelting(ModItems.casing_44, new ItemStack(ModItems.ingot_copper), 0.1F);
+        GameRegistry.addSmelting(ModItems.casing_9, new ItemStack(ModItems.ingot_copper), 0.1F);
+        GameRegistry.addSmelting(ModItems.casing_50, new ItemStack(ModItems.ingot_copper), 0.1F);
+        GameRegistry.addSmelting(ModItems.casing_buckshot, new ItemStack(ModItems.ingot_copper), 0.1F);
     }
 
 }

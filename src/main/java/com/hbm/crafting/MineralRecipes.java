@@ -380,6 +380,7 @@ public class MineralRecipes {
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.powder_niobium_tiny, 9), "#", '#', ModItems.powder_niobium );
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.powder_cerium, 1), "###", "###", "###", '#', ModItems.powder_cerium_tiny );
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.powder_cerium_tiny, 9), "#", '#', ModItems.powder_cerium );
+        add1To9Pair(ModItems.fragment_cerium, ModItems.ingot_cerium);
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.powder_lanthanium, 1), "###", "###", "###", '#', ModItems.powder_lanthanium_tiny );
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.powder_lanthanium_tiny, 9), "#", '#', ModItems.powder_lanthanium );
         CraftingManager.addRecipeAuto(new ItemStack(ModItems.powder_actinium, 1), "###", "###", "###", '#', ModItems.powder_actinium_tiny );
