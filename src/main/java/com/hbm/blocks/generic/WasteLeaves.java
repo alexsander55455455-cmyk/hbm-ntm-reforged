@@ -1,8 +1,12 @@
 package com.hbm.blocks.generic;
 
 import com.hbm.blocks.ModBlocks;
+import com.hbm.items.ModItems;
+import net.minecraft.block.BlockLeaves;
+import net.minecraft.block.BlockNewLeaf;
 import net.minecraft.block.BlockOldLeaf;
 import net.minecraft.block.BlockPlanks;
+import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
@@ -21,90 +25,100 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.Random;
 
-public class WasteLeaves extends BlockOldLeaf {
+public class WasteLeaves extends BlockLeaves {
+
+	public static final PropertyEnum<BlockPlanks.EnumType> VARIANT = PropertyEnum.create("variant", BlockPlanks.EnumType.class);
 
 	public WasteLeaves(String s) {
 		this.setTranslationKey(s);
 		this.setRegistryName(s);
-		this.setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, BlockPlanks.EnumType.OAK).withProperty(CHECK_DECAY, Boolean.valueOf(false)).withProperty(DECAYABLE, Boolean.valueOf(false)));
+		this.setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, BlockPlanks.EnumType.OAK));
 		this.setTickRandomly(false);
 		ModBlocks.ALL_BLOCKS.add(this);
 	}
 
 	@Override
-	protected BlockStateContainer createBlockState(){
-		return new BlockStateContainer(this, VARIANT, CHECK_DECAY, DECAYABLE);
+	protected BlockStateContainer createBlockState() {
+		return new BlockStateContainer(this, VARIANT);
 	}
 
 	@Override
-	public int getMetaFromState(IBlockState state) {
-		int i = 0;
-
-		if (!state.getValue(DECAYABLE)) {
-			i |= 4;
-		}
-
-		if (state.getValue(CHECK_DECAY)) {
-			i |= 8;
-		}
-
-		return i;
+	public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand) {
 	}
 
-    @Override
-    public IBlockState getStateFromMeta(int meta) {
-        return this.getDefaultState().withProperty(DECAYABLE, (meta & 4) == 0).withProperty(CHECK_DECAY, (meta & 8) > 0);
-    }
-
-    @Override
-    public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand){
-    	return;
-    }
-
-    @Override
-    public void randomTick(World worldIn, BlockPos pos, IBlockState state, Random random){
-    	return;
-    }
+	@Override
+	public void randomTick(World worldIn, BlockPos pos, IBlockState state, Random random) {
+	}
 
 	@Override
-	public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune){
-		if(RANDOM.nextInt(4) == 0)
+	public void beginLeavesDecay(IBlockState state, World world, BlockPos pos) {
+	}
+
+	@Override
+	public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+		if (RANDOM.nextInt(4) == 0)
 			drops.add(new ItemStack(Item.getItemFromBlock(Blocks.DEADBUSH)));
-		if(RANDOM.nextInt(3) == 0)
+		if (RANDOM.nextInt(3) == 0)
 			drops.add(new ItemStack(Items.STICK));
 	}
 
 	@Override
-	public Item getItemDropped(IBlockState state, Random rand, int fortune){
-		if(rand.nextInt(4) == 0)
+	public Item getItemDropped(IBlockState state, Random rand, int fortune) {
+		if (rand.nextInt(4) == 0)
 			return Item.getItemFromBlock(Blocks.DEADBUSH);
-		return null;
-	}
-
-	public NonNullList<ItemStack> onSheared(ItemStack item, IBlockAccess world, BlockPos pos, int fortune){
-		NonNullList<ItemStack> output = NonNullList.create();
-		output.add(new ItemStack(ModBlocks.waste_leaves, fortune+1));
-		return output;
+		return Items.AIR;
 	}
 
 	@Override
-	protected int getSaplingDropChance(IBlockState state){
+	protected int getSaplingDropChance(IBlockState state) {
 		return 0;
 	}
 
 	@Override
-	public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune){
-		return;
+	public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune) {
 	}
 
 	@Override
-	protected void dropApple(World worldIn, BlockPos pos, IBlockState state, int chance){
-		return;
+	protected void dropApple(World worldIn, BlockPos pos, IBlockState state, int chance) {
+		if (worldIn.rand.nextInt(chance) == 0) {
+			spawnAsEntity(worldIn, pos, new ItemStack(ModItems.nuclear_waste_tiny));
+		}
 	}
 
 	@Override
-	public BlockPlanks.EnumType getWoodType(int meta){
-		return BlockPlanks.EnumType.OAK;
+	public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
+		for (BlockPlanks.EnumType type : BlockPlanks.EnumType.values()) {
+			items.add(new ItemStack(this, 1, type.getMetadata()));
+		}
+	}
+
+	@Override
+	public IBlockState getStateFromMeta(int meta) {
+		return this.getDefaultState().withProperty(VARIANT, this.getWoodType(meta));
+	}
+
+	@Override
+	public int getMetaFromState(IBlockState state) {
+		return state.getValue(VARIANT).getMetadata();
+	}
+
+	@Override
+	public BlockPlanks.EnumType getWoodType(int meta) {
+		return BlockPlanks.EnumType.byMetadata(meta);
+	}
+
+	@Override
+	public int damageDropped(IBlockState state) {
+		return state.getValue(VARIANT).getMetadata();
+	}
+
+	public IBlockState getBaseLeafState(IBlockState b) {
+		int meta = getMetaFromState(b);
+		if (meta < 4) {
+			return Blocks.LEAVES.getDefaultState().withProperty(BlockOldLeaf.VARIANT, getWoodType(meta));
+		} else {
+			return Blocks.LEAVES.getDefaultState().withProperty(BlockNewLeaf.VARIANT, getWoodType(meta));
+		}
 	}
 
 	@Override
@@ -119,13 +133,13 @@ public class WasteLeaves extends BlockOldLeaf {
 	}
 
 	@Override
-  	public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
+	public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
 		this.leavesFancy = !Blocks.LEAVES.isOpaqueCube(blockState);
 		return super.shouldSideBeRendered(blockState, blockAccess, pos, side);
 	}
 
 	@Override
-	public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items){
-		return;
+	public NonNullList<ItemStack> onSheared(ItemStack item, IBlockAccess world, BlockPos pos, int fortune) {
+		return NonNullList.withSize(1, new ItemStack(this, 1, world.getBlockState(pos).getValue(VARIANT).getMetadata()));
 	}
 }
