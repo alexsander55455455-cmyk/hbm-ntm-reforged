@@ -1,5 +1,6 @@
 package com.hbmspace.enums;
 
+import com.hbm.inventory.material.MaterialShapes;
 import com.hbm.inventory.material.NTMMaterial;
 import com.hbm.items.special.ItemBedrockOreNew;
 import com.hbm.items.special.ItemBedrockOreNew.BedrockOreOutput;
@@ -133,9 +134,37 @@ public class EnumAddonBedrockOreTypes {
             }
         }
 
+        ensureFragmentAutogen(spaceTypes);
+
         // Overrides the standard VALUES array with only the Space ones.
         // SubItems, Model Generation, Sprites, and Recipes will automatically ignore the base types!
         EnumAddonTypes.setStaticField(BedrockOreType.class, "VALUES", spaceTypes.toArray(new BedrockOreType[0]));
+    }
+
+    private static void ensureFragmentAutogen(List<BedrockOreType> spaceTypes) {
+        Set<NTMMaterial> mats = new HashSet<>();
+        for (BedrockOreType type : spaceTypes) {
+            collectBedrockMat(mats, type.primary1);
+            collectBedrockMat(mats, type.primary2);
+            collectBedrockMat(mats, type.byproductAcid1);
+            collectBedrockMat(mats, type.byproductAcid2);
+            collectBedrockMat(mats, type.byproductAcid3);
+            collectBedrockMat(mats, type.byproductSolvent1);
+            collectBedrockMat(mats, type.byproductSolvent2);
+            collectBedrockMat(mats, type.byproductSolvent3);
+            collectBedrockMat(mats, type.byproductRad1);
+            collectBedrockMat(mats, type.byproductRad2);
+            collectBedrockMat(mats, type.byproductRad3);
+        }
+        for (NTMMaterial mat : mats) {
+            mat.setAutogen(MaterialShapes.FRAGMENT);
+        }
+    }
+
+    private static void collectBedrockMat(Set<NTMMaterial> mats, BedrockOreOutput output) {
+        if (output != null && output.mat != null) {
+            mats.add(output.mat);
+        }
     }
 
     private static BedrockOreOutput o(NTMMaterial mat, int amount) {

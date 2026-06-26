@@ -5,6 +5,7 @@ import com.hbm.inventory.fluid.FluidType;
 import com.hbmspace.inventory.fluid.Fluids;
 import com.hbm.inventory.recipes.GasCentrifugeRecipes;
 import com.hbm.items.ModItems;
+import com.hbmspace.items.ModItemsSpace;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -30,6 +31,6 @@ public abstract class MixinGasCentrifugeRecipes {
         }
 
         gasCent.put(new FluidStack(1000, Fluids.MINSOL),
-                new Object[] { new ItemStack[] { new ItemStack(ModItems.powder_iron, 1) }, false, 2 });
+                new Object[] { new ItemStack[] { new ItemStack(ModItems.powder_iron, 1), new ItemStack(ModItemsSpace.crystal_cleaned, 1) }, false, 2 });
     }
 }

@@ -6,6 +6,7 @@ import com.hbm.config.GeneralConfig;
 import com.hbm.crafting.MineralRecipes;
 import com.hbm.crafting.RodRecipes;
 import com.hbm.inventory.OreDictManager;
+import com.hbm.inventory.OreDictManager.DictFrame;
 import com.hbm.inventory.fluid.Fluids;
 import com.hbm.inventory.material.MaterialShapes;
 import com.hbm.items.ItemEnums;
@@ -13,6 +14,7 @@ import com.hbm.items.ModItems;
 import com.hbm.items.tool.ItemConveyorWand;
 import com.hbm.main.CraftingManager;
 import com.hbmspace.blocks.ModBlocksSpace;
+import com.hbmspace.enums.EnumAddonFlowerPlantTypes;
 import com.hbmspace.enums.EnumAddonWatzTypes;
 import com.hbmspace.items.ModItemsSpace;
 import com.hbmspace.items.enums.ItemEnumsSpace;
@@ -21,6 +23,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 
 import static com.hbm.crafting.MineralRecipes.addBilletToIngot;
 import static com.hbm.crafting.RodRecipes.addPellet;
@@ -31,6 +34,13 @@ public class CraftingManagerTweaker extends CraftingManager {
 
     public static void tweak() {
         SmeltingRecipesTweaker.init();
+
+        if (EnumAddonFlowerPlantTypes.MINT != null) {
+            addShapelessAuto(new ItemStack(ModItemsSpace.mint_leaves), DictFrame.fromOne(ModBlocks.plant_flower, EnumAddonFlowerPlantTypes.MINT));
+        }
+        if (EnumAddonFlowerPlantTypes.STRAWBERRY != null) {
+            addShapelessAuto(new ItemStack(ModItemsSpace.strawberry), DictFrame.fromOne(ModBlocks.plant_flower, EnumAddonFlowerPlantTypes.STRAWBERRY));
+        }
 
         /* ArmorRecipes */
 
@@ -158,7 +168,7 @@ public class CraftingManagerTweaker extends CraftingManager {
         RecipeUtil.replaceRecipeAuto(new ItemStack(ModBlocks.rad_absorber, 1, BlockAbsorber.EnumAbsorberTier.RED.ordinal()), hack, "ICI", "CPC", "ICI", 'I', TI.ingot(), 'C', ANY_COAL_COKE.dust(), 'P', ModBlocks.absorber);
         RecipeUtil.replaceRecipeAuto(new ItemStack(ModBlocks.refueler), hack, "SS", "HC", "SS", 'S', STAINLESS.plate(), 'H', DictFrame.fromOne(ModItems.part_generic, ItemEnums.EnumPartType.PISTON_HYDRAULIC), 'C', DictFrame.fromOne(ModItems.circuit, ItemEnums.EnumCircuitType.BASIC));
         RecipeUtil.replaceRecipeAuto(new ItemStack(ModBlocks.press_preheater), hack, "CCC", "SLS", "TST", 'C', CU.plate(), 'S', KEY_STONE, 'L', Fluids.LAVA.getDict(1000), 'T', W.ingot());
-        RecipeUtil.replaceRecipeAuto(new ItemStack(ModItems.laser_crystal_bale, 1), hack, "QDQ", "SBZ", "QDQ", 'Q', ModBlocks.glass_quartz, 'D', DNT.ingot(), 'B', ModItems.egg_balefire, 'S', ModItems.powder_spark_mix, 'Z', ModItemsSpace.powder_zinc);
+        RecipeUtil.replaceRecipeAuto(new ItemStack(ModItems.laser_crystal_bale, 1), hack, "QDQ", "SBZ", "QDQ", 'Q', ModBlocks.glass_quartz, 'D', DNT.ingot(), 'B', OreDictManager.KEY_BALEFIRE_LASER_CORE, 'S', ModItems.powder_spark_mix, 'Z', ModItemsSpace.powder_zinc);
 
         addRecipeAuto(DictFrame.fromOne(ModItemsSpace.circuit, ItemEnumsSpace.EnumCircuitType.CAPACITOR_LANTHANIUM), "I", "N", "W", 'I', ModItems.plate_polymer, 'N', LA.nugget(), 'W', AL.wireFine());
         addRecipeAuto(DictFrame.fromOne(ModItemsSpace.circuit, ItemEnumsSpace.EnumCircuitType.CAPACITOR_LANTHANIUM), "I", "N", "W", 'I', ModItems.plate_polymer, 'N', LA.nugget(), 'W', CU.wireFine());

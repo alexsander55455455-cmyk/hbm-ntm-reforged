@@ -46,6 +46,25 @@ public class AssemblyRecipesTweaker {
         recs.removeRecipeByName("ass.mpf1520kero");
         recs.removeRecipeByName("ass.mpf1520solid");
         recs.removeRecipeByName("ass.satellitelunarminer");
+        recs.removeRecipeByName("ass.mpt10kero");
+        recs.removeRecipeByName("ass.mpt10solid");
+        recs.removeRecipeByName("ass.mpt10xenon");
+        recs.removeRecipeByName("ass.mpt15kero");
+        recs.removeRecipeByName("ass.mpt15kerodual");
+        recs.removeRecipeByName("ass.mpt15kerotriple");
+        recs.removeRecipeByName("ass.mpt15solid");
+        recs.removeRecipeByName("ass.mpt15solid16");
+        recs.removeRecipeByName("ass.mpt15hydro");
+        recs.removeRecipeByName("ass.mpt15hydrodual");
+        recs.removeRecipeByName("ass.mpt15bfshort");
+        recs.removeRecipeByName("ass.mpt15bf");
+        recs.removeRecipeByName("ass.mpt15bflarge");
+        recs.removeRecipeByName("ass.mpt20kero");
+        recs.removeRecipeByName("ass.mpt20kerodual");
+        recs.removeRecipeByName("ass.mpt20kerotriple");
+        recs.removeRecipeByName("ass.mpt20solid");
+        recs.removeRecipeByName("ass.mpt20solidmulti");
+        recs.removeRecipeByName("ass.mpt20solidmultier");
 
         /// BENT FORK ///
 
@@ -391,6 +410,8 @@ public class AssemblyRecipesTweaker {
                 .inputItems(new RecipesCommon.ComparableStack(ModItems.seg_15, 2), new RecipesCommon.ComparableStack(ModBlocks.steel_scaffold, 12), new RecipesCommon.OreDictStack(TI.plate(), 48), new RecipesCommon.OreDictStack(AL.plate(), 1)));
         recs.register(new GenericRecipe("ass.mp_fuselage_15_hydrogen").setup(400, 100).outputItems(new ItemStack(ModItems.mp_fuselage_15_hydrogen, 1))
                 .inputItems(new RecipesCommon.ComparableStack(ModItems.seg_15, 2), new RecipesCommon.ComparableStack(ModBlocks.steel_scaffold, 12), new RecipesCommon.OreDictStack(TI.plate(), 48), new RecipesCommon.OreDictStack(IRON.plate(), 1)));
+        recs.register(new GenericRecipe("ass.mp_fuselage_15_balefire").setup(400, 100).outputItems(new ItemStack(ModItems.mp_fuselage_15_balefire, 1))
+                .inputItems(new RecipesCommon.ComparableStack(ModItems.seg_15, 2), new RecipesCommon.ComparableStack(ModBlocks.steel_scaffold, 12), new RecipesCommon.OreDictStack(TI.plate(), 48), new RecipesCommon.OreDictStack(BIGMT.plate(), 12)));
         recs.register(new GenericRecipe("ass.mp_fuselage_15_20_kerosene").setup(400, 100).outputItems(new ItemStack(ModItems.mp_fuselage_15_20_kerosene, 1))
                 .inputItems(new RecipesCommon.ComparableStack(ModItems.seg_15, 1), new RecipesCommon.ComparableStack(ModItems.seg_20, 1), new RecipesCommon.ComparableStack(ModBlocks.steel_scaffold, 16), new RecipesCommon.OreDictStack(TI.plate(), 64), new RecipesCommon.OreDictStack(STEEL.plate(), 1)));
         recs.register(new GenericRecipe("ass.mp_fuselage_15_20_solid").setup(400, 100).outputItems(new ItemStack(ModItems.mp_fuselage_15_20_solid, 1))

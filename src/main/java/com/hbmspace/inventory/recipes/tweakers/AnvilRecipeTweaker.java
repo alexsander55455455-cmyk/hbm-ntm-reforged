@@ -58,7 +58,7 @@ public class AnvilRecipeTweaker implements IRecipeRegisterListener {
         constructionRecipes.add(new AnvilRecipes.AnvilConstructionRecipe(new RecipesCommon.OreDictStack(COALCOKE.dust()), new AnvilRecipes.AnvilOutput(new ItemStack(ModItems.coke, 1, ItemEnums.EnumCokeType.COAL.ordinal()))).setTier(3));
         constructionRecipes.add(new AnvilRecipes.AnvilConstructionRecipe(new RecipesCommon.OreDictStack(LIGCOKE.dust()), new AnvilRecipes.AnvilOutput(new ItemStack(ModItems.coke, 1, ItemEnums.EnumCokeType.LIGNITE.ordinal()))).setTier(3));
         constructionRecipes.add(new AnvilRecipes.AnvilConstructionRecipe(new RecipesCommon.OreDictStack(PETCOKE.dust()), new AnvilRecipes.AnvilOutput(new ItemStack(ModItems.coke, 1, ItemEnums.EnumCokeType.PETROLEUM.ordinal()))).setTier(3));
-        constructionRecipes.add(new AnvilRecipes.AnvilConstructionRecipe(new RecipesCommon.OreDictStack(STAINLESS.ingot(), 1), new AnvilRecipes.AnvilOutput(new ItemStack(ModBlocksSpace.deco_stainless, 4))).setTier(1).setOverlay(AnvilRecipes.OverlayType.CONSTRUCTION));
+        constructionRecipes.add(new AnvilRecipes.AnvilConstructionRecipe(new RecipesCommon.OreDictStack(STAINLESS.ingot(), 1), new AnvilRecipes.AnvilOutput(new ItemStack(ModBlocksSpace.deco_stainless, 1))).setTier(1).setOverlay(AnvilRecipes.OverlayType.CONSTRUCTION));
         constructionRecipes.add(new AnvilRecipes.AnvilConstructionRecipe(
                 new RecipesCommon.AStack[]{
                         new RecipesCommon.OreDictStack(KEY_PLANKS, 6),

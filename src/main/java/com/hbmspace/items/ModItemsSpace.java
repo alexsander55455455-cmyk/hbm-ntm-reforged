@@ -79,7 +79,7 @@ public class ModItemsSpace {
     public static final Item flesh_wafer = new ItemLemonSpace(5, 0.6F, false, "flesh_wafer", "blood_wafer").setCreativeTab(MainRegistry.partsTab);
     public static final Item grilled_flesh = new ItemLemonSpace(6, 0.8F, false, "grilled_flesh", "blood_patty").setCreativeTab(MainRegistry.partsTab);
     public static final Item flesh_burger = new ItemLemonSpace(7, 1.0F, false, "flesh_burger", "blood_burger").setCreativeTab(MainRegistry.partsTab);
-    public static final Item ingot_magma = new ItemBakedSpace("ingot_magma").setCreativeTab(MainRegistry.partsTab);
+    public static final Item ingot_magma = new ItemCustomLoreSpace("ingot_magma").setCreativeTab(MainRegistry.partsTab);
     public static final Item crystal_nickel = new ItemBakedSpace("crystal_nickel").setCreativeTab(MainRegistry.partsTab);
     public static final Item crystal_zinc = new ItemBakedSpace("crystal_zinc").setCreativeTab(MainRegistry.partsTab);
     public static final Item crystal_niobium = new ItemBakedSpace("crystal_niobium").setCreativeTab(MainRegistry.partsTab);

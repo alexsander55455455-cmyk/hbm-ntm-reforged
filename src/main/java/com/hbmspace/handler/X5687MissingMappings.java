@@ -32,6 +32,7 @@ public final class X5687MissingMappings {
 
         addHbmBlockAlias("ore_cinnebar", "ore_cinnabar");
         addHbmBlockAlias("ore_depth_cinnebar", "ore_depth_cinnabar");
+        addHbmBlockAlias("sliding_blast_door_legacy", "sliding_blast_door");
 
         addHbmItemAlias("cinnebar", "cinnabar");
         addHbmItemAlias("crystal_cinnebar", "crystal_cinnabar");
