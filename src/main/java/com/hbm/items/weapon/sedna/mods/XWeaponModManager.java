@@ -91,7 +91,6 @@ public class XWeaponModManager {
         Item[] bigmtGuns = new Item[] {
                 ModItems.gun_laser_pistol, ModItems.gun_laser_pistol_pew_pew,
                 ModItems.gun_stg77,
-                ModItems.gun_fatman,
                 ModItems.gun_tau };
         Item[] bronzeGuns = new Item[] {
                 ModItems.gun_lasrifle };
@@ -399,7 +398,7 @@ public class XWeaponModManager {
         public WeaponModDefinition addMod(RecipesCommon.ComparableStack gun, IWeaponMod mod) {
             modByGun.put(gun, mod);
             modToStack.put(mod, stack);
-            if(gun != null) {
+            if(gun != null && gun.item instanceof ItemGunBaseNT) {
                 ItemGunBaseNT nt = (ItemGunBaseNT) gun.item;
                 RecipesCommon.ComparableStack comp = new RecipesCommon.ComparableStack(stack);
                 if(!nt.recognizedMods.contains(comp)) nt.recognizedMods.add(comp);

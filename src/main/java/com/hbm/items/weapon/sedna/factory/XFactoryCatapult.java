@@ -152,17 +152,6 @@ public class XFactoryCatapult {
         nuke_tots = new BulletConfig().setItem(GunFactory.EnumAmmo.NUKE_TOTS).setProjectiles(8).setLife(300).setVel(3F).setGrav(0.025F).setSpread(0.1F).setDamage(0.35F).setOnImpact(LAMBDA_NUKE_TINYTOT);
         nuke_hive = new BulletConfig().setItem(GunFactory.EnumAmmo.NUKE_HIVE).setProjectiles(12).setLife(300).setVel(1F).setGrav(0.025F).setSpread(0.15F).setDamage(0.25F).setOnImpact(LAMBDA_NUKE_HIVE);
         nuke_balefire = new BulletConfig().setItem(GunFactory.EnumAmmo.NUKE_BALEFIRE).setDamage(2.5F).setLife(300).setVel(3F).setGrav(0.025F).setOnImpact(LAMBDA_NUKE_BALEFIRE);
-
-        ModItems.gun_fatman = new ItemGunBaseNT(ItemGunBaseNT.WeaponQuality.A_SIDE, "gun_fatman", new GunConfig()
-                .dura(300).draw(20).inspect(30).reloadChangeType(true).crosshair(Crosshair.L_CIRCUMFLEX).hideCrosshair(false)
-                .rec(new Receiver(0)
-                        .dmg(100F).spreadHipfire(0F).delay(10).reload(57).jam(40).sound(HBMSoundHandler.fireFatman, 1.0F, 1.0F)
-                        .mag(new MagazineSingleReload(0, 1).addConfigs(nuke_standard, nuke_demo, nuke_high, nuke_tots, nuke_hive, nuke_balefire))
-                        .offset(1, -0.0625 * 1.5, -0.1875D).offsetScoped(1, -0.0625 * 1.5, -0.125D)
-                        .setupStandardFire().recoil(LAMBDA_RECOIL_FATMAN))
-                .setupStandardConfiguration()
-                .anim(LAMBDA_FATMAN_ANIMS).orchestra(Orchestras.ORCHESTRA_FATMAN)
-        ).setDefaultAmmoExpensive(GunFactory.EnumAmmo.NUKE_STANDARD, 1);
     }
 
     public static BiConsumer<ItemStack, ItemGunBaseNT.LambdaContext> LAMBDA_RECOIL_FATMAN = (stack, ctx) -> { };
