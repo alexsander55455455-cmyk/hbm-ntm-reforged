@@ -119,6 +119,14 @@ public class HadronRecipes {
 				));
 		recipes.add(new HadronRecipe(
 				new ItemStack(ModItems.particle_sparkticle),
+				new ItemStack(ModItems.black_hole),
+				750000,
+				new ItemStack(ModItems.particle_empty),
+				new ItemStack(ModItems.tiny_singularity_spark),
+				true
+				));
+		recipes.add(new HadronRecipe(
+				new ItemStack(ModItems.particle_sparkticle),
 				new ItemStack(ModItems.particle_higgs),
 				1000000,
 				new ItemStack(ModItems.particle_digamma),

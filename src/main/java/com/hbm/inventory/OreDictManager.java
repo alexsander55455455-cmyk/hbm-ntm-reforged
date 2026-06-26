@@ -84,6 +84,9 @@ public class OreDictManager {
     public static final String KEY_TOOL_TORCH = "ntmtorch";
 
     public static final String KEY_GLYPHID_MEAT = "glyphidMeat";
+    public static final String KEY_BALEFIRE_LASER_CORE = "ntmbalefirelasercore";
+    public static final String KEY_ELEC_BATTERY_LITHIUM = "ntmelecbatterylithium";
+    public static final String KEY_ELEC_BATTERY_ANY = "ntmelecbatteryany";
     /*
      * MATERIALS
      */
@@ -427,11 +430,11 @@ public class OreDictManager {
         /*
          * RADIOACTIVE
          */
-        U.rad(HazardRegistry.u).nugget(nugget_uranium).billet(billet_uranium).crystal(crystal_uranium).ingot(ingot_uranium).dust(powder_uranium).block(block_uranium).ore(ore_uranium, ore_uranium_scorched, ore_gneiss_uranium, ore_gneiss_uranium_scorched, ore_nether_uranium, ore_nether_uranium_scorched, ore_sellafield_uranium_scorched).oreNether(ore_nether_uranium, ore_nether_uranium_scorched);
+        U.rad(HazardRegistry.u).nugget(nugget_uranium).billet(billet_uranium).crystal(crystal_uranium).ingot(ingot_uranium).dust(powder_uranium).block(block_uranium).ore(ore_uranium, ore_uranium_scorched, ore_gneiss_uranium, ore_gneiss_uranium_scorched, ore_nether_uranium, ore_nether_uranium_scorched, ore_sellafield_uranium_scorched, DictFrame.fromOne(ModBlocks.ore_meteor, com.hbm.blocks.BlockEnums.EnumMeteorType.URANIUM)).oreNether(ore_nether_uranium, ore_nether_uranium_scorched);
         U233.rad(HazardRegistry.u233).nugget(nugget_u233).billet(billet_u233).ingot(ingot_u233).block(block_u233);
         U235.rad(HazardRegistry.u235).nugget(nugget_u235).billet(billet_u235).ingot(ingot_u235).block(block_u235);
         U238.rad(HazardRegistry.u238).nugget(nugget_u238).billet(billet_u238).ingot(ingot_u238).block(block_u238);
-        TH232.rad(HazardRegistry.th232).nugget(nugget_th232).billet(billet_th232).crystal(crystal_thorium).ingot(ingot_th232).dust(powder_thorium).block(block_thorium).ore(ore_thorium);
+        TH232.rad(HazardRegistry.th232).nugget(nugget_th232).billet(billet_th232).crystal(crystal_thorium).ingot(ingot_th232).dust(powder_thorium).block(block_thorium).ore(ore_thorium, DictFrame.fromOne(ModBlocks.ore_meteor, com.hbm.blocks.BlockEnums.EnumMeteorType.THORIUM));
         PU.rad(HazardRegistry.pu).nugget(nugget_plutonium).billet(billet_plutonium).crystal(crystal_plutonium).ingot(ingot_plutonium).dust(powder_plutonium).block(block_plutonium).ore(ore_nether_plutonium).oreNether(ore_nether_plutonium);
         PURG.rad(HazardRegistry.purg).nugget(nugget_pu_mix).billet(billet_pu_mix).ingot(ingot_pu_mix).block(block_pu_mix);
         PU238.rad(HazardRegistry.pu238).hot(3F).nugget(nugget_pu238).billet(billet_pu238).ingot(ingot_pu238).block(block_pu238);
@@ -562,7 +565,7 @@ public class OreDictManager {
         LA.nugget(fragment_lanthanium).ingot(ingot_lanthanium).dustSmall(powder_lanthanium_tiny).dust(powder_lanthanium).block(block_lanthanium);
         ZR.nugget(nugget_zirconium).ingot(ingot_zirconium).billet(billet_zirconium).dust(powder_zirconium).block(block_zirconium).ore(ore_depth_zirconium);
         ND.nugget(fragment_neodymium).dustSmall(powder_neodymium_tiny).dust(powder_neodymium).ore(ore_depth_nether_neodymium).oreNether(ore_depth_nether_neodymium);
-        CE.nugget(fragment_cerium).dustSmall(powder_cerium_tiny).dust(powder_cerium);
+        CE.nugget(fragment_cerium).ingot(ingot_cerium).dustSmall(powder_cerium_tiny).dust(powder_cerium);
 
         /*
          * NITAN
@@ -572,7 +575,7 @@ public class OreDictManager {
         CS.ingot(ingot_caesium).dust(powder_caesium);
 //        SR.ingot(ingot_strontium).dust(powder_strontium);
         BR.toxic(5F).ingot(ingot_bromine).dust(powder_bromine);
-        TS.ingot(ingot_tennessine).dust(powder_tennessine);
+        TS.rad(HazardRegistry.ts).ingot(ingot_tennessine).dust(powder_tennessine);
 
         /*
          * FISSION FRAGMENTS
@@ -636,6 +639,17 @@ public class OreDictManager {
          */
         OreDictionary.registerOre(KEY_GLYPHID_MEAT, new ItemStack(glyphid_meat));
         OreDictionary.registerOre(KEY_GLYPHID_MEAT, new ItemStack(glyphid_meat_grilled));
+
+        OreDictionary.registerOre(KEY_BALEFIRE_LASER_CORE, new ItemStack(rbmk_pellet_balefire, 1, OreDictionary.WILDCARD_VALUE));
+        OreDictionary.registerOre(KEY_BALEFIRE_LASER_CORE, new ItemStack(rbmk_pellet_balefire_gold, 1, OreDictionary.WILDCARD_VALUE));
+        OreDictionary.registerOre(KEY_BALEFIRE_LASER_CORE, new ItemStack(egg_balefire));
+
+        OreDictionary.registerOre(KEY_ELEC_BATTERY_LITHIUM, new ItemStack(battery_pack, 1, com.hbm.items.machine.ItemBatteryPack.EnumBatteryPack.BATTERY_LITHIUM.ordinal()));
+        OreDictionary.registerOre(KEY_ELEC_BATTERY_LITHIUM, new ItemStack(battery_lithium));
+
+        OreDictionary.registerOre(KEY_ELEC_BATTERY_ANY, new ItemStack(battery_pack, 1, com.hbm.items.machine.ItemBatteryPack.EnumBatteryPack.BATTERY_LEAD.ordinal()));
+        OreDictionary.registerOre(KEY_ELEC_BATTERY_ANY, new ItemStack(battery_pack, 1, com.hbm.items.machine.ItemBatteryPack.EnumBatteryPack.BATTERY_LITHIUM.ordinal()));
+        OreDictionary.registerOre(KEY_ELEC_BATTERY_ANY, new ItemStack(battery_lithium));
 
         for (NTMMaterial mat : Mats.orderedList) {
             if (mat.smeltable == NTMMaterial.SmeltingBehavior.SMELTABLE) {

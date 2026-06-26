@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonWriter;
 import com.hbm.blocks.ModBlocks;
+import com.hbm.blocks.PlantEnums;
 import com.hbm.inventory.RecipesCommon;
 import com.hbm.inventory.fluid.FluidStack;
 import com.hbm.inventory.fluid.Fluids;
@@ -54,8 +55,13 @@ public class LiquefactionRecipes extends SerializableRecipe {
         recipes.put(new RecipesCommon.ComparableStack(ModBlocks.ore_oil_sand),	new FluidStack(100, Fluids.BITUMEN));
 
         recipes.put(new RecipesCommon.ComparableStack(Items.SUGAR),				new FluidStack(100, Fluids.ETHANOL));
-        recipes.put(new RecipesCommon.ComparableStack(ModBlocks.plant_flower, 1, 3),	new FluidStack(150, Fluids.ETHANOL));
-        recipes.put(new RecipesCommon.ComparableStack(ModBlocks.plant_flower, 1, 4),	new FluidStack(50, Fluids.ETHANOL));
+        recipes.put(new RecipesCommon.ComparableStack(ModBlocks.plant_flower, 1, PlantEnums.EnumFlowerPlantType.HEMP.ordinal()), new FluidStack(150, Fluids.ETHANOL));
+        recipes.put(new RecipesCommon.ComparableStack(ModBlocks.plant_flower, 1, PlantEnums.EnumFlowerPlantType.MUSTARD_WILLOW_0.ordinal()), new FluidStack(50, Fluids.ETHANOL));
+        recipes.put(new RecipesCommon.ComparableStack(ModBlocks.plant_flower, 1, PlantEnums.EnumFlowerPlantType.MUSTARD_WILLOW_1.ordinal()), new FluidStack(50, Fluids.ETHANOL));
+        for(PlantEnums.EnumTallPlantType type : PlantEnums.EnumTallPlantType.VALUES) {
+            if(type.name().startsWith("MUSTARD_WILLOW"))
+                recipes.put(new RecipesCommon.ComparableStack(ModBlocks.plant_tall, 1, type.ordinal()), new FluidStack(50, Fluids.ETHANOL));
+        }
         recipes.put(MUD.ingot(),													new FluidStack(16000, Fluids.WATZ));
         recipes.put(new RecipesCommon.ComparableStack(ModBlocks.sellafield_core),	new FluidStack(500, Fluids.TOXIC));
         recipes.put(new RecipesCommon.ComparableStack(ModItems.biomass),			new FluidStack(125, Fluids.BIOGAS));

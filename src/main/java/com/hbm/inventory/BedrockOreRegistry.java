@@ -3,6 +3,7 @@ package com.hbm.inventory;
 import com.hbm.config.BedrockOreJsonConfig;
 import com.hbm.config.CompatibilityConfig;
 import com.hbm.interfaces.Spaghetti;
+import com.hbm.items.ModItems;
 import com.hbm.inventory.fluid.FluidStack;
 import com.hbm.inventory.fluid.Fluids;
 import com.hbm.lib.Library;
@@ -96,6 +97,19 @@ public class BedrockOreRegistry {
 				}
 			}
 		}
+	}
+
+	public static ItemStack getNugget(String oreName) {
+		if(oreName.equals("oreLead") || oreName.equals("oreCopper")) return new ItemStack(ModItems.nugget_cadmium, 1);
+		if(oreName.equals("oreGold") || oreName.equals("oreTungsten")) return new ItemStack(ModItems.nugget_bismuth, 1);
+		if(oreName.equals("oreUranium")) return new ItemStack(ModItems.nugget_ra226, 1);
+		if(oreName.equals("oreThorium")) return new ItemStack(ModItems.nugget_technetium, 1);
+		if(oreName.equals("oreStarmetal")) return new ItemStack(ModItems.powder_meteorite_tiny, 1);
+		if(oreName.equals("oreRedstone")) return new ItemStack(ModItems.nugget_mercury, 1);
+		if(oreName.equals("oreRedPhosphorus")) return new ItemStack(ModItems.nugget_arsenic, 1);
+		if(oreName.equals("oreNeodymium")) return new ItemStack(ModItems.nugget_tantalium, 1);
+		if(oreName.equals("oreCertusQuartz")) return new ItemStack(ModItems.nugget_silicon, 1);
+		return new ItemStack(ModItems.dust, 1);
 	}
 
 	public static int getOreIndex(String ore){

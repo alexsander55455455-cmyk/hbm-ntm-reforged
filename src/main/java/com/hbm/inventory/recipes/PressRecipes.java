@@ -96,6 +96,24 @@ public class PressRecipes extends SerializableRecipe {
 
 		makeRecipe(ItemStamp.StampType.CIRCUIT, new OreDictStack(SI.billet()),						DictFrame.fromOne(ModItems.circuit, ItemEnums.EnumCircuitType.SILICON));
 
+		// EE assembly -> final ammo (NTM Extended PressRecipes)
+		makeRecipe(ItemStamp.StampType.C357, new ComparableStack(ModItems.assembly_iron), new ItemStack(ModItems.gun_revolver_iron_ammo));
+		makeRecipe(ItemStamp.StampType.C357, new ComparableStack(ModItems.assembly_steel), new ItemStack(ModItems.gun_revolver_ammo));
+		makeRecipe(ItemStamp.StampType.C357, new ComparableStack(ModItems.assembly_lead), new ItemStack(ModItems.gun_revolver_lead_ammo));
+		makeRecipe(ItemStamp.StampType.C357, new ComparableStack(ModItems.assembly_gold), new ItemStack(ModItems.gun_revolver_gold_ammo));
+		makeRecipe(ItemStamp.StampType.C357, new ComparableStack(ModItems.assembly_schrabidium), new ItemStack(ModItems.gun_revolver_schrabidium_ammo));
+		makeRecipe(ItemStamp.StampType.C357, new ComparableStack(ModItems.assembly_nightmare), new ItemStack(ModItems.gun_revolver_nightmare_ammo));
+		makeRecipe(ItemStamp.StampType.C357, new ComparableStack(ModItems.assembly_desh), new ItemStack(ModItems.ammo_357_desh));
+		makeRecipe(ItemStamp.StampType.C357, new OreDictStack(STEEL.ingot()), new ItemStack(ModItems.gun_revolver_cursed_ammo));
+		makeRecipe(ItemStamp.StampType.C44, new ComparableStack(ModItems.assembly_nopip), new ItemStack(ModItems.ammo_44));
+		makeRecipe(ItemStamp.StampType.C9, new ComparableStack(ModItems.assembly_smg), new ItemStack(ModItems.ammo_9mm));
+		makeRecipe(ItemStamp.StampType.C9, new ComparableStack(ModItems.assembly_uzi), new ItemStack(ModItems.ammo_22lr));
+		makeRecipe(ItemStamp.StampType.C9, new ComparableStack(ModItems.assembly_lacunae), new ItemStack(ModItems.ammo_5mm));
+		makeRecipe(ItemStamp.StampType.C9, new ComparableStack(ModItems.assembly_556), new ItemStack(ModItems.ammo_556));
+		makeRecipe(ItemStamp.StampType.C9, new OreDictStack(GOLD.ingot()), new ItemStack(ModItems.ammo_566_gold));
+		makeRecipe(ItemStamp.StampType.C50, new ComparableStack(ModItems.assembly_calamity), new ItemStack(ModItems.ammo_50bmg));
+		makeRecipe(ItemStamp.StampType.C50, new ComparableStack(ModItems.assembly_actionexpress), new ItemStack(ModItems.ammo_50ae));
+
 		makeRecipe(ItemStamp.StampType.PRINTING1, new ComparableStack(Items.PAPER), DictFrame.fromOne(ModItems.page_of_, ItemEnums.EnumPages.PAGE1));
 		makeRecipe(ItemStamp.StampType.PRINTING2, new ComparableStack(Items.PAPER), DictFrame.fromOne(ModItems.page_of_, ItemEnums.EnumPages.PAGE2));
 		makeRecipe(ItemStamp.StampType.PRINTING3, new ComparableStack(Items.PAPER), DictFrame.fromOne(ModItems.page_of_, ItemEnums.EnumPages.PAGE3));

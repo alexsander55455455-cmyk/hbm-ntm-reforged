@@ -52,7 +52,7 @@ public class PlasmaForgeRecipes extends GenericRecipes<PlasmaForgeRecipe> {
                 .inputItems(new OreDictStack(DNT.ingot(), 4), new ComparableStack(ModItems.powder_spark_mix, 2), new OreDictStack(DESH.ingot(), 1)));
 
         this.register((PlasmaForgeRecipe) new PlasmaForgeRecipe("plsm.hde").setInputEnergy(10_000_000).setup(600, 25_000_000L)
-                .outputItems(DictFrame.fromOne(ModItems.part_generic, EnumPartType.HDE))
+                .outputItems(new ItemStack(ModItems.heavy_duty_element, 1))
                 .inputItems(new OreDictStack(ANY_BISMOIDBRONZE.plateCast(), 2), new OreDictStack(CMB.plateWelded(), 1), new ComparableStack(ModItems.ingot_cft))
                 .inputFluids(new FluidStack(Fluids.STELLAR_FLUX, 4_000)));
 
@@ -205,10 +205,10 @@ public class PlasmaForgeRecipes extends GenericRecipes<PlasmaForgeRecipe> {
                         new OreDictStack(BSCCO.wireDense(), 64),
                         new OreDictStack(BSCCO.wireDense(), 64),
                         new ComparableStack(ModBlocks.det_nuke, 64),
-                        new ComparableStack(ModItems.part_generic, 64, EnumPartType.HDE),
-                        new ComparableStack(ModItems.part_generic, 64, EnumPartType.HDE),
-                        new ComparableStack(ModItems.part_generic, 64, EnumPartType.HDE),
-                        new ComparableStack(ModItems.part_generic, 64, EnumPartType.HDE),
+                        new ComparableStack(ModItems.heavy_duty_element, 64),
+                        new ComparableStack(ModItems.heavy_duty_element, 64),
+                        new ComparableStack(ModItems.heavy_duty_element, 64),
+                        new ComparableStack(ModItems.heavy_duty_element, 64),
                         new ComparableStack(ModItems.circuit, 64, EnumCircuitType.CONTROLLER_QUANTUM),
                         new ComparableStack(ModItems.coin_ufo, 1))
                 .inputItemsEx(new OreDictStack(SBD.plateCast(), 64),
@@ -217,9 +217,9 @@ public class PlasmaForgeRecipes extends GenericRecipes<PlasmaForgeRecipe> {
                         new ComparableStack(ModItems.item_expensive, 64, EnumExpensiveType.BRONZE_TUBES),
                         new ComparableStack(ModItems.item_expensive, 64, EnumExpensiveType.BRONZE_TUBES),
                         new ComparableStack(ModItems.item_expensive, 64, EnumExpensiveType.BRONZE_TUBES),
-                        new ComparableStack(ModItems.part_generic, 64, EnumPartType.HDE),
-                        new ComparableStack(ModItems.part_generic, 64, EnumPartType.HDE),
-                        new ComparableStack(ModItems.part_generic, 64, EnumPartType.HDE),
+                        new ComparableStack(ModItems.heavy_duty_element, 64),
+                        new ComparableStack(ModItems.heavy_duty_element, 64),
+                        new ComparableStack(ModItems.heavy_duty_element, 64),
                         new ComparableStack(ModItems.circuit, 64, EnumCircuitType.CONTROLLER_QUANTUM),
                         new ComparableStack(ModItems.item_expensive, 64, EnumExpensiveType.COMPUTER),
                         new ComparableStack(ModItems.coin_ufo, 1))

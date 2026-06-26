@@ -10,9 +10,13 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+
+import static com.hbm.inventory.OreDictManager.*;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -25,8 +29,63 @@ public class DFCRecipes {
     public static List<DFCRecipe> jeiDFCRecipes = null;
 
     public static void register() {
-        DFCRecipes.setRecipe(10000000L, ModItems.billet_polonium, new ItemStack(ModItems.billet_yharonite));
-        DFCRecipes.setRecipe(100000000000L, ModItems.meteorite_sword_warped, new ItemStack(ModItems.meteorite_sword_demonic));
+        jeiDFCRecipes = null;
+        dfcRecipes.clear();
+
+        DFCRecipes.setRecipe(100_000L, ModItems.marshmallow, new ItemStack(ModItems.marshmallow_roasted));
+
+        DFCRecipes.setRecipe(2_000_000L, REDSTONE.dust(), new ItemStack(ModItems.nugget_mercury));
+        DFCRecipes.setRecipe(2_000_000L, REDSTONE.block(), new ItemStack(ModItems.bottle_mercury));
+
+        DFCRecipes.setRecipe(10_000_000L, W.dust(), new ItemStack(ModItems.powder_magnetized_tungsten));
+        DFCRecipes.setRecipe(10_000_000L, W.ingot(), new ItemStack(ModItems.ingot_magnetized_tungsten));
+
+        DFCRecipes.setRecipe(60_000_000L, MAGTUNG.dust(), new ItemStack(ModItems.powder_chlorophyte));
+        DFCRecipes.setRecipe(60_000_000L, MAGTUNG.ingot(), new ItemStack(ModItems.powder_chlorophyte));
+
+        DFCRecipes.setRecipe(200_000_000L, ModItems.powder_chlorophyte, new ItemStack(ModItems.powder_balefire));
+
+        DFCRecipes.setRecipe(600_000_000L, ModItems.powder_balefire, new ItemStack(ModItems.egg_balefire_shard));
+
+        DFCRecipes.setRecipe(800_000_000L, ModItems.billet_thorium_fuel, new ItemStack(ModItems.billet_zfb_bismuth));
+
+        DFCRecipes.setRecipe(1_200_000_000L, Items.STICK, new ItemStack(Blocks.LOG));
+        DFCRecipes.setRecipe(1_200_000_000L, Blocks.STONE, new ItemStack(Blocks.IRON_ORE));
+        DFCRecipes.setRecipe(1_200_000_000L, Blocks.GRAVEL, new ItemStack(Blocks.COAL_ORE));
+        DFCRecipes.setRecipe(1_200_000_000L, Blocks.NETHERRACK, new ItemStack(Blocks.QUARTZ_ORE));
+
+        DFCRecipes.setRecipe(1_500_000_000L, ModItems.nugget_unobtainium_lesser, new ItemStack(ModItems.nugget_unobtainium_greater));
+
+        DFCRecipes.setRecipe(2_000_000_000L, U.nugget(), new ItemStack(ModItems.nugget_schrabidium));
+        DFCRecipes.setRecipe(2_000_000_000L, U.ingot(), new ItemStack(ModItems.ingot_schrabidium));
+        DFCRecipes.setRecipe(2_000_000_000L, U.dust(), new ItemStack(ModItems.powder_schrabidium));
+
+        DFCRecipes.setRecipe(2_500_000_000L, ModItems.powder_nitan_mix, new ItemStack(ModItems.powder_spark_mix));
+        DFCRecipes.setRecipe(5_000_000_000L, ModItems.particle_hydrogen, new ItemStack(ModItems.particle_amat));
+
+        DFCRecipes.setRecipe(20_000_000_000L, PU.nugget(), new ItemStack(ModItems.nugget_euphemium));
+        DFCRecipes.setRecipe(20_000_000_000L, PU.ingot(), new ItemStack(ModItems.ingot_euphemium));
+        DFCRecipes.setRecipe(20_000_000_000L, PU.dust(), new ItemStack(ModItems.powder_euphemium));
+
+        DFCRecipes.setRecipe(30_000_000_000L, ModItems.particle_amat, new ItemStack(ModItems.particle_aschrab));
+
+        DFCRecipes.setRecipe(40_000_000_000L, ModItems.nugget_verticium, new ItemStack(ModItems.nugget_radspice));
+        DFCRecipes.setRecipe(40_000_000_000L, ModItems.ingot_verticium, new ItemStack(ModItems.ingot_radspice));
+        DFCRecipes.setRecipe(40_000_000_000L, ModItems.powder_verticium, new ItemStack(ModItems.powder_radspice));
+
+        DFCRecipes.setRecipe(50_000_000_000L, ModItems.billet_polonium, new ItemStack(ModItems.billet_yharonite));
+
+        DFCRecipes.setRecipe(100_000_000_000L, ModItems.meteorite_sword_warped, new ItemStack(ModItems.meteorite_sword_demonic));
+
+        DFCRecipes.setRecipe(200_000_000_000L, SBD.dust(), new ItemStack(ModItems.powder_dineutronium));
+        DFCRecipes.setRecipe(200_000_000_000L, SBD.ingot(), new ItemStack(ModItems.ingot_dineutronium));
+
+        DFCRecipes.setRecipe(400_000_000_000L, U238.ingot(), new ItemStack(ModItems.ingot_u238m2));
+        DFCRecipes.setRecipe(420_000_000_000L, U238.nugget(), new ItemStack(ModItems.nugget_u238m2));
+        DFCRecipes.setRecipe(690_000_000_000L, ModItems.gun_uboinik, new ItemStack(ModItems.gun_supershotgun));
+
+        DFCRecipes.setRecipe(8_000_000_000_000L, ModItems.undefined, new ItemStack(ModItems.glitch));
+        DFCRecipes.setRecipe(69_000_000_000_000L, Items.WRITABLE_BOOK, new ItemStack(ModItems.book_of_));
     }
 
     public static void setRecipe(long requiredFlux, ItemStack in, ItemStack out) {

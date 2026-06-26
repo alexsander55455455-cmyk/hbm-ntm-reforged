@@ -73,7 +73,7 @@ public class ArcWelderRecipes extends SerializableRecipe {
             new OreDictStack(ANY_HARDPLASTIC.ingot())));
     recipes.add(
         new ArcWelderRecipe(
-            DictFrame.fromOne(ModItems.part_generic, EnumPartType.HDE),
+            new ItemStack(ModItems.heavy_duty_element, 1),
             600,
             25_000_000L,
             new FluidStack(Fluids.STELLAR_FLUX, 4_000),

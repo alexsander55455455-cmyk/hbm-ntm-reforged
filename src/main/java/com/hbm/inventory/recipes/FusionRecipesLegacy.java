@@ -16,6 +16,7 @@ public class FusionRecipesLegacy {
         delays.put(Fluids.PLASMA_HD, 1200);
         delays.put(Fluids.PLASMA_HT, 900);
         delays.put(Fluids.PLASMA_XM, 1200);
+        delays.put(Fluids.PLASMA_PUT, 1000);
         delays.put(Fluids.PLASMA_BF, 150);
     }
 
@@ -31,6 +32,7 @@ public class FusionRecipesLegacy {
         levels.put(Fluids.PLASMA_HD, 1000);
         levels.put(Fluids.PLASMA_HT, 1000);
         levels.put(Fluids.PLASMA_XM, 3000);
+        levels.put(Fluids.PLASMA_PUT, 4000);
         levels.put(Fluids.PLASMA_BF, 4000);
     }
 
@@ -46,6 +48,7 @@ public class FusionRecipesLegacy {
         byproducts.put(Fluids.PLASMA_HD, new ItemStack(ModItems.pellet_charged));
         byproducts.put(Fluids.PLASMA_HT, new ItemStack(ModItems.pellet_charged));
         byproducts.put(Fluids.PLASMA_XM, new ItemStack(ModItems.powder_chlorophyte));
+        byproducts.put(Fluids.PLASMA_PUT, new ItemStack(ModItems.powder_xe135));
         byproducts.put(Fluids.PLASMA_BF, new ItemStack(ModItems.powder_balefire));
     }
 
@@ -61,6 +64,7 @@ public class FusionRecipesLegacy {
         steamprod.put(Fluids.PLASMA_HD, 20);
         steamprod.put(Fluids.PLASMA_HT, 25);
         steamprod.put(Fluids.PLASMA_XM, 60);
+        steamprod.put(Fluids.PLASMA_PUT, 60);
         steamprod.put(Fluids.PLASMA_BF, 160);
     }
 

@@ -30,6 +30,12 @@ public class WasteDrumRecipes extends SerializableRecipe {
 
     @Override
 	public void registerDefaults() {
+		addRecipe(new ComparableStack(ModItems.waste_uranium_hot), new ItemStack(ModItems.waste_uranium));
+		addRecipe(new ComparableStack(ModItems.waste_thorium_hot), new ItemStack(ModItems.waste_thorium));
+		addRecipe(new ComparableStack(ModItems.waste_plutonium_hot), new ItemStack(ModItems.waste_plutonium));
+		addRecipe(new ComparableStack(ModItems.waste_mox_hot), new ItemStack(ModItems.waste_mox));
+		addRecipe(new ComparableStack(ModItems.waste_schrabidium_hot), new ItemStack(ModItems.waste_schrabidium));
+
 		addRecipe(new ComparableStack(ModItems.waste_natural_uranium, 1, 1), new ItemStack(ModItems.waste_natural_uranium));
 		addRecipe(new ComparableStack(ModItems.waste_uranium, 1, 1), new ItemStack(ModItems.waste_uranium));
 		addRecipe(new ComparableStack(ModItems.waste_thorium, 1, 1), new ItemStack(ModItems.waste_thorium));
