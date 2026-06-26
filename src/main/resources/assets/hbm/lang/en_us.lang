@@ -2963,6 +2963,7 @@ item.assembly_schrabidium.name=Schrabidium Bullet Assembly
 item.assembly_smg.name=9mm Assembly
 item.assembly_steel.name=Lead Bullet Assembly
 item.assembly_template.name=Assembly Template:
+item.assembly_template.desc=Legacy EE item. Use blueprints in the assembly machine instead.
 item.assembly_uzi.name=.22 LR Assembly
 item.attachment_mask.name=Gas Mask Attachable
 item.attachment_mask_mono.name=Half Mask Attachable
