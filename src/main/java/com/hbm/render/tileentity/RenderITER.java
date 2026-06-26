@@ -114,8 +114,10 @@ public class RenderITER extends TileEntitySpecialRenderer<TileEntityITER>
       return 0xEB3FFF;
     } else if (type == Fluids.PLASMA_HT.getFF()) {
       return 0x9F3FFF;
-      //		} else if(type == Fluids.plasma_put){
-      //			return 0x3F99FF;
+    } else if (type == Fluids.PLASMA_DH3.getFF()) {
+      return 0xFF83AA;
+    } else if (type == Fluids.PLASMA_PUT.getFF()) {
+      return 0x3F99FF;
     } else if (type == Fluids.PLASMA_XM.getFF()) {
       return 0x3FFFFF;
     } else if (type == Fluids.PLASMA_BF.getFF()) {

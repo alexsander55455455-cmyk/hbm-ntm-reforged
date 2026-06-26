@@ -144,26 +144,22 @@ public class MachineITER extends BlockDummyable {
 		
 		super.onBlockPlacedBy(world, pos, state, player, itemStack);
 	}
-    //had to comment this out due to half of these blocks being non-existent now - SilentYeti
-    /*
 	@Override
 	public void breakBlock(@NotNull World world, @NotNull BlockPos pos, IBlockState state) {
 		int i = state.getValue(META);
-		if(i >= 12 && drop) {
+		if (i >= 12 && drop) {
+			for (int l = 0; l < 4; l++)
+				world.spawnEntity(new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, new ItemStack(ModBlocks.fusion_conductor, 64)));
 
-            for(int l = 0; l < 4; l++)
-            	world.spawnEntity(new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, new ItemStack(ModBlocks.fusion_conductor, 64)));
-
-        	world.spawnEntity(new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, new ItemStack(ModBlocks.fusion_conductor, 36)));
-        	world.spawnEntity(new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, new ItemStack(ModBlocks.fusion_center, 64)));
-        	world.spawnEntity(new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, new ItemStack(ModBlocks.fusion_motor, 4)));
-        	world.spawnEntity(new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, new ItemStack(ModBlocks.reinforced_glass, 8)));
-        	world.spawnEntity(new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, new ItemStack(ModBlocks.struct_iter_core, 1)));
-    	}
+			world.spawnEntity(new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, new ItemStack(ModBlocks.fusion_conductor, 36)));
+			world.spawnEntity(new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, new ItemStack(ModBlocks.fusion_center, 64)));
+			world.spawnEntity(new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, new ItemStack(ModBlocks.fusion_motor, 4)));
+			world.spawnEntity(new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, new ItemStack(ModBlocks.reinforced_glass, 8)));
+			world.spawnEntity(new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, new ItemStack(ModBlocks.struct_iter_core, 1)));
+		}
 
 		super.breakBlock(world, pos, state);
 	}
-	*/
 
 	@Override
 	public boolean checkRequirement(World world, int x, int y, int z, ForgeDirection dir, int o) {

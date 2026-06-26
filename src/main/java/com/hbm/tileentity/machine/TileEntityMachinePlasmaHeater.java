@@ -193,6 +193,14 @@ public class TileEntityMachinePlasmaHeater extends TileEntityMachineBase impleme
 			plasma.setTankType(Fluids.PLASMA_HT);
 			return;
 		}
+		if(types.contains(Fluids.XENON) && types.contains(Fluids.MERCURY)) {
+			plasma.setTankType(Fluids.PLASMA_XM);
+			return;
+		}
+		if(types.contains(Fluids.PUF6) && types.contains(Fluids.TRITIUM)) {
+			plasma.setTankType(Fluids.PLASMA_PUT);
+			return;
+		}
 		if(types.contains(Fluids.HELIUM4) && types.contains(Fluids.OXYGEN)) {
 			plasma.setTankType(Fluids.PLASMA_XM);
 			return;

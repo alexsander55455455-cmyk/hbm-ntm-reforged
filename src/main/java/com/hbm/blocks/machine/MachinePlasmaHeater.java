@@ -1,6 +1,7 @@
 package com.hbm.blocks.machine;
 
 import com.hbm.blocks.BlockDummyable;
+import com.hbm.blocks.ModBlocks;
 import com.hbm.handler.MultiblockHandlerXR;
 import com.hbm.lib.ForgeDirection;
 import com.hbm.main.MainRegistry;
@@ -8,9 +9,11 @@ import com.hbm.tileentity.TileEntityProxyCombo;
 import com.hbm.tileentity.machine.TileEntityMachinePlasmaHeater;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -105,6 +108,18 @@ public class MachinePlasmaHeater extends BlockDummyable {
 		} else {
 			return false;
 		}
+	}
+
+	@Override
+	public void breakBlock(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState state) {
+		int i = state.getValue(META);
+		if(i >= 12) {
+			for(int l = 0; l < 2; l++)
+				world.spawnEntity(new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, new ItemStack(ModBlocks.fusion_heater, 64)));
+			world.spawnEntity(new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, new ItemStack(ModBlocks.fusion_heater, 7)));
+			world.spawnEntity(new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, new ItemStack(ModBlocks.struct_plasma_core, 1)));
+		}
+		super.breakBlock(world, pos, state);
 	}
 
 	@Override

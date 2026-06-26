@@ -4,6 +4,7 @@ import com.hbm.api.energymk2.IEnergyReceiverMK2;
 import com.hbm.api.fluid.IFluidStandardTransceiver;
 import com.hbm.api.redstoneoverradio.IRORInteractive;
 import com.hbm.api.redstoneoverradio.IRORValueProvider;
+import com.hbm.blocks.ModBlocks;
 import com.hbm.blocks.machine.MachineITER;
 import com.hbm.explosion.ExplosionLarge;
 import com.hbm.explosion.ExplosionNT;
@@ -44,6 +45,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -417,13 +419,10 @@ public class TileEntityITER extends TileEntityMachineBase implements ITickable, 
                     int b = layout[ly][x][z];
 
                     switch (b) {
-                        /*
-					case 1: world.setBlockState(new BlockPos(pos.getX() - width + x, pos.getY() + y - 2, pos.getZ() - width + z), ModBlocks.fusion_conductor.getDefaultState());break;
-					case 2: world.setBlockState(new BlockPos(pos.getX() - width + x, pos.getY() + y - 2, pos.getZ() - width + z), ModBlocks.fusion_center.getDefaultState());break;
-					case 3: world.setBlockState(new BlockPos(pos.getX() - width + x, pos.getY() + y - 2, pos.getZ() - width + z), ModBlocks.fusion_motor.getDefaultState());break;
-					case 4: world.setBlockState(new BlockPos(pos.getX() - width + x, pos.getY() + y - 2, pos.getZ() - width + z), ModBlocks.reinforced_glass.getDefaultState());break;
-
-                         */
+                        case 1: world.setBlockState(new BlockPos(pos.getX() - width + x, pos.getY() + y - 2, pos.getZ() - width + z), ModBlocks.fusion_conductor.getDefaultState()); break;
+                        case 2: world.setBlockState(new BlockPos(pos.getX() - width + x, pos.getY() + y - 2, pos.getZ() - width + z), ModBlocks.fusion_center.getDefaultState()); break;
+                        case 3: world.setBlockState(new BlockPos(pos.getX() - width + x, pos.getY() + y - 2, pos.getZ() - width + z), ModBlocks.fusion_motor.getDefaultState()); break;
+                        case 4: world.setBlockState(new BlockPos(pos.getX() - width + x, pos.getY() + y - 2, pos.getZ() - width + z), ModBlocks.reinforced_glass.getDefaultState()); break;
                     }
                 }
             }
