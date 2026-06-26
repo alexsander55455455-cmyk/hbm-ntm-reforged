@@ -1,0 +1,23 @@
+target,stat,change
+brick_asbestos_double_slab,resistance,20.0F -> 500.0F
+brick_compound_double_slab,resistance,200.0F -> 5000.0F
+brick_concrete_broken_double_slab,resistance,22.0F -> 750.0F
+brick_concrete_cracked_double_slab,resistance,30.0F -> 1000.0F
+brick_concrete_double_slab,resistance,70.0F -> 3000.0F
+brick_concrete_mossy_double_slab,resistance,70.0F -> 3000.0F
+brick_ducrete,resistance,750.0F -> 12000.0F
+brick_fire_double_slab,resistance,35.0F -> 50.0F
+brick_light_double_slab,resistance,20.0F -> 500.0F
+brick_obsidian_double_slab,resistance,60.0F -> 4000.0F
+cmb_brick_reinforced_double_slab,resistance,25000.0F -> 30000.0F
+concrete_asbestos_double_slab,resistance,70.0F -> 2000.0F
+concrete_double_slab,resistance,70.0F -> 2000.0F
+concrete_smooth_double_slab,resistance,70.0F -> 2000.0F
+ducrete_brick_double_slab,resistance,375.0F -> 6000.0F
+ducrete_double_slab,resistance,250.0F -> 4000.0F
+ducrete_reinforced_double_slab,resistance,500.0F -> 12000.0F
+ducrete_smooth_double_slab,resistance,250.0F -> 4000.0F
+reinforced_brick_double_slab,resistance,150.0F -> 4000.0F
+reinforced_ducrete,resistance,1000.0F -> 24000.0F
+reinforced_sand_double_slab,resistance,20.0F -> 200.0F
+reinforced_stone_double_slab,resistance,60.0F -> 1500.0F

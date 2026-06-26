@@ -1,0 +1,15 @@
+block,hardness,resistance,source
+OBSIDIAN,50.0F,1200.0F,VanillaBlockPatcher / EE in-game reference
+ANVIL,5.0F,1200.0F,VanillaBlockPatcher / EE in-game reference
+ENCHANTING_TABLE,5.0F,1200.0F,VanillaBlockPatcher / EE in-game reference
+ENDER_CHEST,22.5F,1200.0F,VanillaBlockPatcher / EE in-game reference
+MOB_SPAWNER,5.0F,25.0F,VanillaBlockPatcher / EE in-game reference
+BEDROCK,-1.0F,3600000.0F,VanillaBlockPatcher / EE in-game reference
+BARRIER,-1.0F,3600000.0F,VanillaBlockPatcher / EE in-game reference
+COMMAND_BLOCK,-1.0F,3600000.0F,VanillaBlockPatcher / EE in-game reference
+CHAIN_COMMAND_BLOCK,-1.0F,3600000.0F,VanillaBlockPatcher / EE in-game reference
+REPEATING_COMMAND_BLOCK,-1.0F,3600000.0F,VanillaBlockPatcher / EE in-game reference
+STRUCTURE_BLOCK,-1.0F,3600000.0F,VanillaBlockPatcher / EE in-game reference
+END_PORTAL_FRAME,-1.0F,18000000.0F,VanillaBlockPatcher / EE in-game reference
+END_PORTAL,-1.0F,18000000.0F,VanillaBlockPatcher / EE in-game reference
+NETHER_PORTAL,-1.0F,0.0F,VanillaBlockPatcher / EE in-game reference

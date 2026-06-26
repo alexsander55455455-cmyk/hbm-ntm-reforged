@@ -1,0 +1,3 @@
+port_field,port_registry,ee_source,port_hardness,ee_hardness,port_resistance,ee_resistance
+brick_fire_double_slab,brick_fire_double_slab,brick_fire_slab,15.0F,,50.0F,50.0F
+brick_light_double_slab,brick_light_double_slab,brick_light_slab,15.0F,,500.0F,500.0F

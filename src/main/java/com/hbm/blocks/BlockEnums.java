@@ -25,7 +25,9 @@ public class BlockEnums {
 		COPPER,
 		ALUMINIUM,
 		RAREEARTH,
-		COBALT;
+		COBALT,
+		URANIUM,
+		THORIUM;
 
 		public static final EnumMeteorType[] VALUES = values();
 	}

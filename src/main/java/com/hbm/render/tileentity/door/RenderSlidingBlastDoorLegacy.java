@@ -8,6 +8,8 @@ import com.hbm.blocks.ModBlocks;
 import com.hbm.interfaces.AutoRegister;
 import com.hbm.interfaces.IDoor;
 import com.hbm.main.ResourceManager;
+import com.hbm.render.item.ItemRenderBase;
+import com.hbm.render.tileentity.IItemRendererProvider;
 import com.hbm.tileentity.machine.TileEntitySlidingBlastDoor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
@@ -15,14 +17,18 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import java.nio.DoubleBuffer;
+
 @AutoRegister
-public class RenderSlidingBlastDoorLegacy extends TileEntitySpecialRenderer<TileEntitySlidingBlastDoor> {
+public class RenderSlidingBlastDoorLegacy extends TileEntitySpecialRenderer<TileEntitySlidingBlastDoor>
+		implements IItemRendererProvider {
 
     private static DoubleBuffer buf = null;
+
     @Override
     public void render(TileEntitySlidingBlastDoor te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         GlStateManager.pushMatrix();
@@ -67,13 +73,14 @@ public class RenderSlidingBlastDoorLegacy extends TileEntitySpecialRenderer<Tile
             w.reverse();
         }
         w.onEnd(new EndResult(EndType.STAY, null));
-        if(te.getBlockType() == ModBlocks.sliding_blast_door_legacy){
-            ResourceLocation tex = switch (te.texture) {
-                case 0 -> ResourceManager.sliding_blast_door_tex;
-                case 1 -> ResourceManager.sliding_blast_door_variant1_tex;
-                case 2 -> ResourceManager.sliding_blast_door_variant2_tex;
-                default -> null;
-            };
+        if(te.getBlockType() == ModBlocks.sliding_blast_door){
+            ResourceLocation tex;
+            switch (te.texture) {
+                case 0: tex = ResourceManager.sliding_blast_door_tex; break;
+                case 1: tex = ResourceManager.sliding_blast_door_variant1_tex; break;
+                case 2: tex = ResourceManager.sliding_blast_door_variant2_tex; break;
+                default: tex = ResourceManager.sliding_blast_door_tex; break;
+            }
             Minecraft.getMinecraft().getTextureManager().bindTexture(tex);
             ResourceManager.door0.controller.setAnim(w);
             ResourceManager.door0.renderAnimated(time);
@@ -89,4 +96,65 @@ public class RenderSlidingBlastDoorLegacy extends TileEntitySpecialRenderer<Tile
         GlStateManager.disableBlend();
         GlStateManager.popMatrix();
     }
+
+	@Override
+	public Item getItemForRenderer() {
+		return Item.getItemFromBlock(ModBlocks.sliding_blast_door);
+	}
+
+	@Override
+	public Item[] getItemsForRenderer() {
+		return new Item[] {
+				Item.getItemFromBlock(ModBlocks.sliding_blast_door),
+				Item.getItemFromBlock(ModBlocks.sliding_blast_door_2),
+				Item.getItemFromBlock(ModBlocks.sliding_blast_door_keypad),
+		};
+	}
+
+	@Override
+	public ItemRenderBase getRenderer(Item item) {
+		if (item == Item.getItemFromBlock(ModBlocks.sliding_blast_door_2) || item == Item.getItemFromBlock(ModBlocks.sliding_blast_door_keypad)) {
+			return new ItemRenderBase() {
+				@Override
+				public void renderInventory() {
+					GlStateManager.translate(0, -2.75, 0);
+					GlStateManager.scale(2.5, 2.5, 2.5);
+				}
+
+				@Override
+				public void renderCommon() {
+					bindTexture(ResourceManager.sliding_blast_door_keypad_tex);
+					GL11.glShadeModel(GL11.GL_SMOOTH);
+					long time = System.currentTimeMillis();
+					AnimationWrapper w = new AnimationWrapper(time, ResourceManager.door0_open);
+					w.reverse();
+					w.onEnd(new EndResult(EndType.STAY, null));
+					ResourceManager.door0_1.controller.setAnim(w);
+					ResourceManager.door0_1.renderAnimated(time);
+					GL11.glShadeModel(GL11.GL_FLAT);
+				}
+			};
+		}
+
+		return new ItemRenderBase() {
+			@Override
+			public void renderInventory() {
+				GlStateManager.translate(0, -2.75, 0);
+				GlStateManager.scale(2.5, 2.5, 2.5);
+			}
+
+			@Override
+			public void renderCommon() {
+				bindTexture(ResourceManager.sliding_blast_door_tex);
+				GL11.glShadeModel(GL11.GL_SMOOTH);
+				long time = System.currentTimeMillis();
+				AnimationWrapper w = new AnimationWrapper(time, ResourceManager.door0_open);
+				w.reverse();
+				w.onEnd(new EndResult(EndType.STAY, null));
+				ResourceManager.door0.controller.setAnim(w);
+				ResourceManager.door0.renderAnimated(time);
+				GL11.glShadeModel(GL11.GL_FLAT);
+			}
+		};
+	}
 }

@@ -2,6 +2,7 @@ package com.hbm.tileentity;
 
 import com.hbm.blocks.BlockDummyable;
 import com.hbm.blocks.generic.BlockDoorGeneric;
+import com.hbm.blocks.machine.BlockSlidingBlastDoor;
 import com.hbm.handler.radiation.RadiationSystemNT;
 import com.hbm.interfaces.AutoRegister;
 import com.hbm.interfaces.IAnimatedDoor;
@@ -15,6 +16,7 @@ import com.hbm.main.MainRegistry;
 import com.hbm.render.anim.sedna.HbmAnimationsSedna.Animation;
 import com.hbm.sound.AudioWrapper;
 import com.hbm.tileentity.machine.TileEntityLockableBase;
+import com.hbm.tileentity.machine.TileEntitySlidingBlastDoor;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.longs.LongIterable;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
@@ -65,7 +67,8 @@ public class TileEntityDoorGeneric extends TileEntityLockableBase implements ITi
 
     @Override
     public void update() {
-        if (getDoorType() == null && this.getBlockType() instanceof BlockDoorGeneric)
+        if (!(this.getBlockType() instanceof BlockDoorGeneric)) return;
+        if (getDoorType() == null)
             setDoorType(((BlockDoorGeneric) this.getBlockType()).type);
         try {
             Consumer<TileEntityDoorGeneric> update = getDoorType().onDoorUpdate();
@@ -186,7 +189,41 @@ public class TileEntityDoorGeneric extends TileEntityLockableBase implements ITi
 
     @Override
     public void onLoad() {
-        if(!(this.getBlockType() instanceof BlockAir)) setDoorType(((BlockDoorGeneric) this.getBlockType()).type);
+        if (this.getBlockType() instanceof BlockAir) return;
+        if (this.getBlockType() instanceof BlockDoorGeneric) {
+            setDoorType(((BlockDoorGeneric) this.getBlockType()).type);
+            return;
+        }
+        if (this.getBlockType() instanceof BlockSlidingBlastDoor) {
+            if (!world.isRemote) {
+                migrateToSlidingBlastDoor();
+            } else {
+                invalidate();
+            }
+        }
+    }
+
+    private void migrateToSlidingBlastDoor() {
+        if (world.getTileEntity(pos) != this) return;
+
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setByte("state", (byte) this.state.ordinal());
+        tag.setBoolean("shouldUseBB", this.shouldUseBB);
+        tag.setBoolean("wasPowered", this.wasPowered);
+        tag.setBoolean("redstoneOnly", this.redstoneOnly);
+        tag.setByte("texture", this.skinIndex);
+        tag.setInteger("lock", this.getPins());
+        tag.setBoolean("isLocked", this.isLocked());
+        tag.setDouble("lockMod", this.getMod());
+
+        TileEntitySlidingBlastDoor door = new TileEntitySlidingBlastDoor();
+        door.readFromNBT(tag);
+        door.setWorld(world);
+        door.setPos(pos);
+
+        world.setTileEntity(pos, door);
+        door.markDirty();
+        invalidate();
     }
 
     public boolean tryToggle(EntityPlayer player) {

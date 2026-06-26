@@ -3,7 +3,9 @@ package com.hbm.blocks.machine;
 import com.hbm.api.block.IToolable.ToolType;
 import com.hbm.blocks.BlockDummyable;
 import com.hbm.blocks.ModBlocks;
+import com.hbm.handler.MultiblockHandlerXR;
 import com.hbm.handler.radiation.RadiationSystemNT;
+import com.hbm.lib.InventoryHelper;
 import com.hbm.interfaces.IDoor;
 import com.hbm.interfaces.IKeypadHandler;
 import com.hbm.interfaces.IRadResistantBlock;
@@ -18,23 +20,29 @@ import micdoodle8.mods.galacticraft.api.block.IPartialSealableBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Random;
 
 @Optional.InterfaceList({@Optional.Interface(iface = "micdoodle8.mods.galacticraft.api.block.IPartialSealableBlock", modid = "galacticraftcore")})
 public class BlockSlidingBlastDoor extends BlockDummyable implements IRadResistantBlock, IPartialSealableBlock {
@@ -45,7 +53,7 @@ public class BlockSlidingBlastDoor extends BlockDummyable implements IRadResista
 
 	@Override
 	protected boolean isSameMultiblock(Block other) {
-		return other == ModBlocks.sliding_blast_door_legacy
+		return other == ModBlocks.sliding_blast_door
 			|| other == ModBlocks.sliding_blast_door_2
 			|| other == ModBlocks.sliding_blast_door_keypad;
 	}
@@ -82,7 +90,7 @@ public class BlockSlidingBlastDoor extends BlockDummyable implements IRadResista
 		if(hardness > 50){
 			tooltip.add("§6" + I18nUtil.resolveKey("trait.blastres", hardness));
 		}
-		if(this == ModBlocks.sliding_blast_door_legacy){
+		if(this == ModBlocks.sliding_blast_door){
 			tooltip.add(I18nUtil.resolveKey("desc.varwin"));
 		} else if(this == ModBlocks.sliding_blast_door_2){
 			tooltip.add(I18nUtil.resolveKey("desc.varkey"));
@@ -209,14 +217,130 @@ public class BlockSlidingBlastDoor extends BlockDummyable implements IRadResista
 	}
 
 	@Override
+	public void onBlockPlacedBy(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState state, @NotNull EntityLivingBase placer, @NotNull ItemStack stack) {
+		if (this == ModBlocks.sliding_blast_door_keypad) {
+			if (!world.isRemote) {
+				world.setBlockToAir(pos);
+				if (placer instanceof EntityPlayer player && !player.capabilities.isCreativeMode) {
+					ItemStack refund = stack.copy();
+					refund.setCount(1);
+					if (!player.inventory.addItemStackToInventory(refund)) {
+						player.dropItem(refund.getItem(), refund.getCount());
+					}
+				}
+			}
+			return;
+		}
+		super.onBlockPlacedBy(world, pos, state, placer, stack);
+	}
+
+	@Override
+	public Item getItemDropped(IBlockState state, Random rand, int fortune) {
+		if (state.getBlock() == ModBlocks.sliding_blast_door_keypad) {
+			return Item.getItemFromBlock(ModBlocks.sliding_blast_door_2);
+		}
+		return super.getItemDropped(state, rand, fortune);
+	}
+
+	@Override
+	public @NotNull ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+		if (state.getBlock() == ModBlocks.sliding_blast_door_keypad) {
+			return new ItemStack(ModBlocks.sliding_blast_door_2);
+		}
+		return super.getPickBlock(state, target, world, pos, player);
+	}
+
+	@Override
 	public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
 		RadiationSystemNT.markSectionForRebuild(worldIn, pos);
 		super.onBlockAdded(worldIn, pos, state);
 	}
 	
+	private boolean isDoor2Part(Block block) {
+		return block == ModBlocks.sliding_blast_door_2 || block == ModBlocks.sliding_blast_door_keypad;
+	}
+
+	private void clearDoorBlock(World world, BlockPos p) {
+		Block block = world.getBlockState(p).getBlock();
+		if (!isDoor2Part(block)) {
+			return;
+		}
+		InventoryHelper.dropInventoryItems(world, p, world.getTileEntity(p));
+		world.setBlockState(p, Blocks.AIR.getDefaultState(), 3);
+	}
+
+	@Nullable
+	private int[] findSlidingBlastDoor2Core(World world, BlockPos pos) {
+		int[] core = findCore(world, pos.getX(), pos.getY(), pos.getZ());
+		if (core != null) {
+			BlockPos corePos = new BlockPos(core[0], core[1], core[2]);
+			IBlockState coreState = world.getBlockState(corePos);
+			if (coreState.getBlock() == ModBlocks.sliding_blast_door_2 && coreState.getValue(META) >= 12) {
+				return core;
+			}
+		}
+
+		for (int dx = -3; dx <= 3; dx++) {
+			for (int dy = -1; dy <= 3; dy++) {
+				for (int dz = -3; dz <= 3; dz++) {
+					BlockPos scan = pos.add(dx, dy, dz);
+					IBlockState scanState = world.getBlockState(scan);
+					if (scanState.getBlock() == ModBlocks.sliding_blast_door_2 && scanState.getValue(META) >= 12) {
+						return new int[] { scan.getX(), scan.getY(), scan.getZ() };
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	private void removeSideColumnBlocks(World world, int coreX, int coreY, int coreZ, ForgeDirection dir) {
+		EnumFacing facing = dir.toEnumFacing();
+		BlockPos side1 = new BlockPos(coreX, coreY, coreZ).offset(facing.rotateY(), 3);
+		BlockPos side2 = new BlockPos(coreX, coreY, coreZ).offset(facing.rotateYCCW(), 3);
+		for (int dy = 0; dy <= 3; dy++) {
+			clearDoorBlock(world, side1.up(dy));
+			clearDoorBlock(world, side2.up(dy));
+		}
+	}
+
+	private void destroySlidingBlastDoor2(World world, int coreX, int coreY, int coreZ) {
+		BlockPos core = new BlockPos(coreX, coreY, coreZ);
+		IBlockState coreState = world.getBlockState(core);
+		if (coreState.getBlock() != ModBlocks.sliding_blast_door_2 || coreState.getValue(META) < 12) {
+			return;
+		}
+
+		ForgeDirection dir = ForgeDirection.getOrientation(coreState.getValue(META) - offset);
+
+		safeRem = true;
+		InventoryHelper.dropInventoryItems(world, core, world.getTileEntity(core));
+
+		int[] rot = MultiblockHandlerXR.rotate(getDimensions(), dir.toEnumFacing());
+		for (int a = coreX - rot[4]; a <= coreX + rot[5]; a++) {
+			for (int b = coreY - rot[1]; b <= coreY + rot[0]; b++) {
+				for (int c = coreZ - rot[2]; c <= coreZ + rot[3]; c++) {
+					clearDoorBlock(world, new BlockPos(a, b, c));
+				}
+			}
+		}
+
+		removeSideColumnBlocks(world, coreX, coreY, coreZ, dir);
+		safeRem = false;
+	}
+
 	@Override
 	public void breakBlock(@NotNull World worldIn, @NotNull BlockPos pos, IBlockState state) {
 		RadiationSystemNT.markSectionForRebuild(worldIn, pos);
+
+		if (!worldIn.isRemote && !safeRem && isDoor2Part(state.getBlock())) {
+			int[] corePos = findSlidingBlastDoor2Core(worldIn, pos);
+			if (corePos != null) {
+				destroySlidingBlastDoor2(worldIn, corePos[0], corePos[1], corePos[2]);
+				return;
+			}
+		}
+
 		super.breakBlock(worldIn, pos, state);
 	}
 
