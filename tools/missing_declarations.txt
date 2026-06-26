@@ -283,18 +283,7 @@
     public static final Item digamma_know = new ItemBase("digamma_know").setCreativeTab(MainRegistry.partsTab);
     public static final Item digamma_see = new ItemBase("digamma_see").setCreativeTab(MainRegistry.partsTab);
     public static final Item digamma_up_on_top = new ItemBase("digamma_up_on_top").setCreativeTab(MainRegistry.partsTab);
-    public static final Item drillbit_desh = new ItemBase("drillbit_desh").setCreativeTab(MainRegistry.controlTab);
-    public static final Item drillbit_desh_diamond = new ItemBase("drillbit_desh_diamond").setCreativeTab(MainRegistry.controlTab);
-    public static final Item drillbit_dnt = new ItemBase("drillbit_dnt").setCreativeTab(MainRegistry.controlTab);
-    public static final Item drillbit_dnt_diamond = new ItemBase("drillbit_dnt_diamond").setCreativeTab(MainRegistry.controlTab);
-    public static final Item drillbit_ferro = new ItemBase("drillbit_ferro").setCreativeTab(MainRegistry.controlTab);
-    public static final Item drillbit_ferro_diamond = new ItemBase("drillbit_ferro_diamond").setCreativeTab(MainRegistry.controlTab);
-    public static final Item drillbit_hss = new ItemBase("drillbit_hss").setCreativeTab(MainRegistry.controlTab);
-    public static final Item drillbit_hss_diamond = new ItemBase("drillbit_hss_diamond").setCreativeTab(MainRegistry.controlTab);
-    public static final Item drillbit_steel = new ItemBase("drillbit_steel").setCreativeTab(MainRegistry.controlTab);
-    public static final Item drillbit_steel_diamond = new ItemBase("drillbit_steel_diamond").setCreativeTab(MainRegistry.controlTab);
-    public static final Item drillbit_tcalloy = new ItemBase("drillbit_tcalloy").setCreativeTab(MainRegistry.controlTab);
-    public static final Item drillbit_tcalloy_diamond = new ItemBase("drillbit_tcalloy_diamond").setCreativeTab(MainRegistry.controlTab);
+
     public static final Item elec_shield = new ItemBase("elec_shield").setCreativeTab(MainRegistry.weaponTab);
     public static final Item energy_ball = new ItemBase("energy_ball").setCreativeTab(MainRegistry.partsTab);
     public static final Item factory_core_advanced = new ItemCustomLore("factory_core_advanced").setCreativeTab(MainRegistry.partsTab);

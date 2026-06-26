@@ -70,10 +70,15 @@ public class ItemMold extends Item implements IModelRegister, IClaimedModelLocat
                 Mats.MAT_TITANIUM, (Supplier<ItemStack>) () -> new ItemStack(ModItems.blade_titanium),
                 Mats.MAT_TUNGSTEN, (Supplier<ItemStack>) () -> new ItemStack(ModItems.blade_tungsten)));
 
-        registerMold(new MoldMulti(6, S, "blades", MaterialShapes.INGOT.q(4),
+        registerMold(new MoldMulti(6, S, "blades", MaterialShapes.INGOT.q(5),
+                Mats.MAT_ALUMINIUM,     (Supplier<ItemStack>) () -> new ItemStack(ModItems.blades_aluminum),
+                Mats.MAT_GOLD,          (Supplier<ItemStack>) () -> new ItemStack(ModItems.blades_gold),
+                Mats.MAT_IRON,          (Supplier<ItemStack>) () -> new ItemStack(ModItems.blades_iron),
                 Mats.MAT_STEEL,         (Supplier<ItemStack>) () -> new ItemStack(ModItems.blades_steel),
                 Mats.MAT_TITANIUM,      (Supplier<ItemStack>) () -> new ItemStack(ModItems.blades_titanium),
-                Mats.MAT_ALLOY,         (Supplier<ItemStack>) () -> new ItemStack(ModItems.blades_advanced_alloy)));
+                Mats.MAT_ALLOY,         (Supplier<ItemStack>) () -> new ItemStack(ModItems.blades_advanced_alloy),
+                Mats.MAT_CMB,           (Supplier<ItemStack>) () -> new ItemStack(ModItems.blades_combine_steel),
+                Mats.MAT_SCHRABIDIUM,   (Supplier<ItemStack>) () -> new ItemStack(ModItems.blades_schrabidium)));
 
         registerMold(new MoldMulti(7, S, "stamp", MaterialShapes.INGOT.q(4),
                 Mats.MAT_STONE,         (Supplier<ItemStack>) () -> new ItemStack(ModItems.stamp_stone_flat),

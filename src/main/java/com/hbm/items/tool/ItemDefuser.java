@@ -44,7 +44,7 @@ public class ItemDefuser extends ItemTooling {
 
                 ConfettiUtil.gib(john);
 
-                john.entityDropItem(DictFrame.fromOne(ModItems.ammo_standard, EnumAmmo.NUKE_DEMO), 1.5F);
+                john.entityDropItem(new ItemStack(ModItems.ammo_nuke), 1.5F);
             }
 
             return true;

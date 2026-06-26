@@ -1,46 +1,100 @@
 package com.hbm.items.machine;
 
+import com.hbm.items.ItemBase;
 import com.hbm.items.ModItems;
-import net.minecraft.item.Item;
+import com.hbm.lib.Library;
+import com.hbm.util.I18nUtil;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 
-public class ItemFuelRod extends Item {
+import java.util.List;
 
-	public int lifeTime;
+public class ItemFuelRod extends ItemBase {
 
-	public ItemFuelRod(int life, String s) {
-		this.setTranslationKey(s);
-		this.setRegistryName(s);
-		this.lifeTime = life;
-		this.canRepair = false;
+    protected final int lifeTime;
+    protected final int heat;
 
-		ModItems.ALL_ITEMS.add(this);
-	}
+    public ItemFuelRod(int life, String s) {
+        this(life, 0, s);
+    }
 
-	public static void setLifeTime(ItemStack stack, int time) {
+    public ItemFuelRod(int life, int heat, String s) {
+        super(s);
+        this.lifeTime = life;
+        this.heat = heat;
+        this.setMaxStackSize(1);
+        this.canRepair = false;
+    }
 
-		if(!stack.hasTagCompound())
-			stack.setTagCompound(new NBTTagCompound());
+    @Override
+    public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flagIn) {
+        tooltip.add(TextFormatting.GOLD + "[" + I18nUtil.resolveKey("trait.reactorrod") + "]");
+        tooltip.add(TextFormatting.DARK_AQUA + "  " + I18nUtil.resolveKey("desc.generates") + " " + heat + " " + I18nUtil.resolveKey("desc.heatpt"));
+        tooltip.add(TextFormatting.DARK_AQUA + "  " + I18nUtil.resolveKey("desc.lasts") + " " + Library.getShortNumber(lifeTime) + " " + I18nUtil.resolveKey("desc.ticks"));
+    }
 
-		stack.getTagCompound().setInteger("life", time);
-	}
+    public static void setLifeTime(ItemStack stack, int time) {
+        if (!stack.hasTagCompound())
+            stack.setTagCompound(new NBTTagCompound());
+        stack.getTagCompound().setInteger("life", time);
+    }
 
-	public static int getLifeTime(ItemStack stack) {
+    public static void incrementTime(ItemStack stack, int time) {
+        int life = time;
+        if (!stack.hasTagCompound())
+            stack.setTagCompound(new NBTTagCompound());
+        else
+            life += stack.getTagCompound().getInteger("life");
+        stack.getTagCompound().setInteger("life", life);
+    }
 
-		if(!stack.hasTagCompound()) {
-			stack.setTagCompound(new NBTTagCompound());
-			return 0;
-		}
+    public static int getLifeTime(ItemStack stack) {
+        if (!stack.hasTagCompound())
+            return 0;
+        return stack.getTagCompound().getInteger("life");
+    }
 
-		return stack.getTagCompound().getInteger("life");
-	}
+    public int getMaxLifeTime() {
+        return lifeTime;
+    }
 
-	public boolean showDurabilityBar(ItemStack stack) {
-		return getDurabilityForDisplay(stack) > 0D;
-	}
+    public int getHeatPerTick() {
+        return heat;
+    }
 
-	public double getDurabilityForDisplay(ItemStack stack) {
-		return (double)getLifeTime(stack) / (double)((ItemFuelRod)stack.getItem()).lifeTime;
-	}
+    @Override
+    public boolean showDurabilityBar(ItemStack stack) {
+        return true;
+    }
+
+    @Override
+    public double getDurabilityForDisplay(ItemStack stack) {
+        return (double) getLifeTime(stack) / (double) lifeTime;
+    }
+
+    public ItemStack getUncrafting() {
+        if (this == ModItems.rod_uranium_fuel) return new ItemStack(ModItems.billet_uranium_fuel);
+        if (this == ModItems.rod_dual_uranium_fuel) return new ItemStack(ModItems.billet_uranium_fuel, 2);
+        if (this == ModItems.rod_quad_uranium_fuel) return new ItemStack(ModItems.billet_uranium_fuel, 4);
+
+        if (this == ModItems.rod_thorium_fuel) return new ItemStack(ModItems.billet_thorium_fuel);
+        if (this == ModItems.rod_dual_thorium_fuel) return new ItemStack(ModItems.billet_thorium_fuel, 2);
+        if (this == ModItems.rod_quad_thorium_fuel) return new ItemStack(ModItems.billet_thorium_fuel, 4);
+
+        if (this == ModItems.rod_plutonium_fuel) return new ItemStack(ModItems.billet_plutonium_fuel);
+        if (this == ModItems.rod_dual_plutonium_fuel) return new ItemStack(ModItems.billet_plutonium_fuel, 2);
+        if (this == ModItems.rod_quad_plutonium_fuel) return new ItemStack(ModItems.billet_plutonium_fuel, 4);
+
+        if (this == ModItems.rod_mox_fuel) return new ItemStack(ModItems.billet_mox_fuel);
+        if (this == ModItems.rod_dual_mox_fuel) return new ItemStack(ModItems.billet_mox_fuel, 2);
+        if (this == ModItems.rod_quad_mox_fuel) return new ItemStack(ModItems.billet_mox_fuel, 4);
+
+        if (this == ModItems.rod_schrabidium_fuel) return new ItemStack(ModItems.billet_schrabidium_fuel);
+        if (this == ModItems.rod_dual_schrabidium_fuel) return new ItemStack(ModItems.billet_schrabidium_fuel, 2);
+        if (this == ModItems.rod_quad_schrabidium_fuel) return new ItemStack(ModItems.billet_schrabidium_fuel, 4);
+        return ItemStack.EMPTY;
+    }
 }
