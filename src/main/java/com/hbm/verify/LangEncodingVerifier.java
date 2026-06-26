@@ -16,8 +16,9 @@ import java.util.regex.Pattern;
  */
 public final class LangEncodingVerifier {
 
-	private static final Pattern MOJIBAKE = Pattern.compile("РЈ|РЅ|СЃ|Рё|Р°");
-	private static final Pattern CYRILLIC = Pattern.compile("[а-яА-ЯёЁ]");
+	private static final Pattern MOJIBAKE = Pattern.compile("РЈ|РЅ|СЃ|Рё|Р°|╨|╤");
+	private static final Pattern CYRILLIC = Pattern.compile("[а-яА-ЯёЁіїєґІЇЄҐ]");
+	private static final Pattern DRILLBIT_KEY = Pattern.compile("^item\\.drillbit_.*\\.name=");
 	private static final byte[] URANIUM_UTF8 = "Урановый слиток".getBytes(StandardCharsets.UTF_8);
 
 	private LangEncodingVerifier() {
@@ -52,6 +53,7 @@ public final class LangEncodingVerifier {
 		sb.append("  bom=").append(report.bom).append('\n');
 		sb.append("  cyrillic=").append(report.cyrillicCount).append('\n');
 		sb.append("  mojibake=").append(report.mojibakeCount).append('\n');
+		sb.append("  drillbit_bad=").append(report.drillbitBad).append('\n');
 		sb.append("  sample_key=").append(report.sampleKey).append('\n');
 		sb.append("  sample_value=").append(report.sampleValue).append('\n');
 		sb.append("  sample_utf8=").append(Arrays.toString(report.sampleUtf8)).append('\n');
@@ -72,18 +74,25 @@ public final class LangEncodingVerifier {
 
 		int mojibakeCount = countMatches(MOJIBAKE, text);
 		int cyrillicCount = countMatches(CYRILLIC, text);
+		int drillbitBad = 0;
 		String sampleValue = null;
 		byte[] sampleUtf8 = new byte[0];
 		for (String line : text.split("\n")) {
 			if (line.startsWith(sampleKey + "=")) {
 				sampleValue = line.substring(sampleKey.length() + 1).trim();
 				sampleUtf8 = sampleValue.getBytes(StandardCharsets.UTF_8);
-				break;
+			}
+			if (file.equals("uk_ua.lang") && DRILLBIT_KEY.matcher(line).find()) {
+				String value = line.substring(line.indexOf('=') + 1).trim();
+				if (value.contains("╨") || value.contains("╤") || !CYRILLIC.matcher(value).find()) {
+					drillbitBad++;
+				}
 			}
 		}
 
 		boolean pass = !bom
 				&& mojibakeCount == 0
+				&& drillbitBad == 0
 				&& cyrillicCount > minCyrillic
 				&& sampleValue != null
 				&& sampleValue.contains(sampleNeedle)
@@ -97,6 +106,7 @@ public final class LangEncodingVerifier {
 		report.file = file;
 		report.bom = bom;
 		report.mojibakeCount = mojibakeCount;
+		report.drillbitBad = drillbitBad;
 		report.cyrillicCount = cyrillicCount;
 		report.sampleKey = sampleKey;
 		report.sampleValue = sampleValue;
@@ -128,6 +138,7 @@ public final class LangEncodingVerifier {
 		private String file;
 		private boolean bom;
 		private int mojibakeCount;
+		private int drillbitBad;
 		private int cyrillicCount;
 		private String sampleKey;
 		private String sampleValue;
