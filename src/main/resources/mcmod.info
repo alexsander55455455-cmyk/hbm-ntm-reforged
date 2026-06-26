@@ -22,8 +22,7 @@
     "screenshots": [],
     "dependencies": [
       "mod_MinecraftForge",
-      "mixinbooter",
-      "ctm"
+      "mixinbooter"
     ]
   },
   {

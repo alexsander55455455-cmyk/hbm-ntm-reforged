@@ -2161,3 +2161,25 @@ tasks.named('compilePatchedMcJava').configure {
 tasks.named('compileMcLauncherJava').configure {
     classpath += files('libs/launchwrapper-1.12.jar')
 }
+
+tasks.register('verifyCreativeTabSort', JavaExec) {
+    group = 'verification'
+    description = 'Run CreativeTabSortVerifier against shipped sort classes'
+    dependsOn 'classes'
+    classpath = sourceSets.main.runtimeClasspath + files('libs/launchwrapper-1.12.jar')
+    mainClass = 'com.hbm.creativetabs.CreativeTabSortVerifier'
+    environment 'GOAL_SCRATCH', System.getenv('GOAL_SCRATCH') ?: 'C:/Temp/grok-goal-52eec85734e0/implementer'
+    jvmArgs '--add-opens=java.base/jdk.internal.misc=ALL-UNNAMED'
+    jvmArgs '--add-opens=java.base/java.lang=ALL-UNNAMED'
+}
+
+tasks.register('verifyLangEncoding', JavaExec) {
+    group = 'verification'
+    description = 'Load ru/uk lang from mod classpath and verify UTF-8 Cyrillic encoding'
+    dependsOn 'classes'
+    classpath = sourceSets.main.runtimeClasspath + files('libs/launchwrapper-1.12.jar')
+    mainClass = 'com.hbm.verify.LangEncodingVerifier'
+    environment 'GOAL_SCRATCH', System.getenv('GOAL_SCRATCH') ?: 'C:/Temp/grok-goal-52eec85734e0/implementer'
+    jvmArgs '--add-opens=java.base/jdk.internal.misc=ALL-UNNAMED'
+    jvmArgs '--add-opens=java.base/java.lang=ALL-UNNAMED'
+}
