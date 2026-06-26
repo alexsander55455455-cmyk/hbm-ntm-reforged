@@ -56,9 +56,15 @@ public class ItemFluidTankV2 extends ItemBakedBase {
 		this.setHasSubtypes(true);
 		this.setMaxDamage(0);
 		name = name.replace("_v2", "");
+		boolean leadTank = name.contains("fluid_tank_lead");
 
-		this.baseTextureLocation = new ResourceLocation(Tags.MODID, ROOT_PATH + name);
-		this.overlayTextureLocation = new ResourceLocation(Tags.MODID, ROOT_PATH + name + "_overlay");
+		if (leadTank) {
+			this.baseTextureLocation = new ResourceLocation(Tags.MODID, ROOT_PATH + "fluid_tank_lead_full");
+			this.overlayTextureLocation = null;
+		} else {
+			this.baseTextureLocation = new ResourceLocation(Tags.MODID, ROOT_PATH + name);
+			this.overlayTextureLocation = new ResourceLocation(Tags.MODID, ROOT_PATH + name + "_overlay");
+		}
 		this.modelLocation = new ModelResourceLocation(this.baseTextureLocation, "inventory");
 		this.cap = cap;
 	}
@@ -157,6 +163,9 @@ public class ItemFluidTankV2 extends ItemBakedBase {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public IItemColor getItemColorHandler() {
+		if (this.overlayTextureLocation == null) {
+			return null;
+		}
 		return (stack, tintIndex) -> {
 			if (tintIndex == 0) {
 				return 0xFFFFFF;

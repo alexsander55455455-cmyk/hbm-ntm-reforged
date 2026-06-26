@@ -130,6 +130,7 @@ public class Fluids {
     public static FluidType PLASMA_HT;
     public static FluidType PLASMA_DH3;
     public static FluidType PLASMA_XM;
+    public static FluidType PLASMA_PUT;
     public static FluidType PLASMA_BF;
     public static FluidType CARBONDIOXIDE;
     public static FluidType HELIUM3;
@@ -431,6 +432,7 @@ public class Fluids {
         CORIUM =				new FluidType(156, "CORIUM",				0x383838, 4, 0, 2, EnumSymbol.RADIATION).setFFNameOverride("corium_fluid").setGuiTint(0x383838).addContainers(new CD_Canister(0x383838)).addTraits(new FT_Corrosive(60), new FT_VentRadiation(10F), LIQUID, VISCOUS);
         VOLCANIC_LAVA =			new FluidType(157, "VOLCANIC_LAVA",		0xC42509, 4, 1, 1, EnumSymbol.NOWATER).setFFNameOverride("volcanic_lava_fluid").setGuiTint(0xC42509).addContainers(new CD_Canister(0xC42509)).setTemp(1300).addTraits(LIQUID, VISCOUS);
         RADWATER =				new FluidType(158, "RADWATER",			0x3F7A97, 2, 0, 0, EnumSymbol.RADIATION).setFFNameOverride("radwater_fluid").setGuiTint(0x3F7A97).addContainers(new CD_Canister(0x3F7A97)).addTraits(new FT_VentRadiation(0.04F), LIQUID);
+        PLASMA_PUT =			new FluidType(159, "PLASMA_PUT",			0x3F99FF, 2, 3, 1, EnumSymbol.RADIATION).setTemp(50273).addTraits(NOCON, NOID, PLASMA);
 
         // ^ ^ ^ ^ ^ ^ ^ ^
         //ADD NEW FLUIDS HERE
@@ -611,6 +613,7 @@ public class Fluids {
         metaOrder.add(PLASMA_HT);
         metaOrder.add(PLASMA_DH3);
         metaOrder.add(PLASMA_XM);
+        metaOrder.add(PLASMA_PUT);
         metaOrder.add(PLASMA_BF);
         //smoke
         metaOrder.add(SMOKE);
@@ -1087,38 +1090,36 @@ public class Fluids {
     public static void setupForgeFluidCompat(FluidType fluid) {
         if (alreadyRegistered(fluid)) return;
 
-        // Determine texture path based on fluid's stringId
-        String texturePath = Tags.MODID + ":/blocks/forgefluid" + fluid.getName().toLowerCase();
-        //Note: we are not using FF name since the old texture names seem to follow the NTMF naming schema
-        //TODO: Fix that
+        String baseName = fluid.getFFName().toLowerCase(java.util.Locale.US);
+        ResourceLocation textureStill = new ResourceLocation(Tags.MODID, "blocks/forgefluid/" + baseName + "_still");
+        ResourceLocation textureFlowing = new ResourceLocation(Tags.MODID, "blocks/forgefluid/" + baseName + "_flowing");
+        ResourceLocation textureSingle = new ResourceLocation(Tags.MODID, "blocks/forgefluid/" + baseName);
 
-        // Check if the custom texture exists
-        ResourceLocation textureStill = new ResourceLocation(texturePath + "_still");
-        ResourceLocation textureFlowing = new ResourceLocation(texturePath + "_flowing");
-
-        // Default texture if custom one is not found
         ResourceLocation defaultTexture = fluid.hasTrait(FT_Gaseous.class) ? new ResourceLocation(Tags.MODID, "blocks/forgefluid/gas_default") :
                 new ResourceLocation(Tags.MODID, "blocks/forgefluid/fluid_default_still");
         if (fluid.hasTrait(FT_Viscous.class))
             defaultTexture = new ResourceLocation(Tags.MODID, "blocks/forgefluid/fluid_viscous_default_still");
 
-        // Try loading the custom texture
         if(FMLCommonHandler.instance().getSide() == Side.CLIENT) {
             IResourceManager resourceManager = Minecraft.getMinecraft().getResourceManager();
-            try (IResource _ = resourceManager.getResource(textureStill)) {
-                // noop
-            } catch (IOException e) {
-                textureStill = defaultTexture;
-                MainRegistry.logger.info("[NTM Fluid<=>ForgeFluid Compat] Forge Fluid texture not found for: {}. Using default tinted",
-                        fluid.getName());
-            }
-            try (IResource _ = resourceManager.getResource(textureFlowing)) {
-                // noop
-            } catch (IOException e) {
-                textureFlowing = defaultTexture;
-            }
+            textureStill = resolveForgeFluidTexture(resourceManager, textureStill, textureSingle, defaultTexture, fluid.getName(), "still");
+            textureFlowing = resolveForgeFluidTexture(resourceManager, textureFlowing, textureSingle, defaultTexture, fluid.getName(), "flowing");
         }
         registerForgeFluidCompat(fluid, textureStill, textureFlowing, fluid.getColor());
+    }
+
+    private static ResourceLocation resolveForgeFluidTexture(IResourceManager resourceManager, ResourceLocation primary, ResourceLocation fallbackSingle, ResourceLocation defaultTexture, String fluidName, String suffix) {
+        try (IResource _ = resourceManager.getResource(primary)) {
+            return primary;
+        } catch (IOException e) {
+            try (IResource _ = resourceManager.getResource(fallbackSingle)) {
+                return fallbackSingle;
+            } catch (IOException ignored) {
+                MainRegistry.logger.info("[NTM Fluid<=>ForgeFluid Compat] Forge Fluid {} texture not found for: {}. Using default tinted",
+                        suffix, fluidName);
+                return defaultTexture;
+            }
+        }
     }
 
     public static void setupForgeFluidCompat(FluidType fluid, ResourceLocation textureStill, ResourceLocation textureFlowing) {
@@ -1153,7 +1154,7 @@ public class Fluids {
                 .setDensity(1000)
                 .setViscosity(fluid.hasTrait(FT_Viscous.class) ? 6000 : 1000);
 
-        if (fluid.hasTrait(FT_Gaseous.class)) {
+        if (fluid.hasTrait(FT_Gaseous.class) || fluid.hasTrait(FT_Plasma.class)) {
             compatFluid.setDensity(-1000);
             compatFluid.setGaseous(true);
         } else if (fluid.hasTrait(FT_Liquid.class) && fluid.hasTrait(FT_Viscous.class)) {

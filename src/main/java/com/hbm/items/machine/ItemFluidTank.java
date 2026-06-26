@@ -48,9 +48,15 @@ public class ItemFluidTank extends ItemBakedBase {
 		// since we have registry names like 'fluid_tank_full', we need to cut that '_full' part in order to get a 'fluid_tank' texture
 		// and we also have names like 'disperser_canister', that's why the check was made
 		String texName = name.endsWith("_full") ? name.substring(0, name.length() - 5) : name;
+		boolean leadTank = name.contains("fluid_tank_lead");
 
-		this.baseTextureLocation = new ResourceLocation(Tags.MODID, ROOT_PATH + texName);
-		this.overlayTextureLocation = new ResourceLocation(Tags.MODID, ROOT_PATH + texName + "_overlay");
+		if (leadTank) {
+			this.baseTextureLocation = new ResourceLocation(Tags.MODID, ROOT_PATH + "fluid_tank_lead_full");
+			this.overlayTextureLocation = null;
+		} else {
+			this.baseTextureLocation = new ResourceLocation(Tags.MODID, ROOT_PATH + texName);
+			this.overlayTextureLocation = new ResourceLocation(Tags.MODID, ROOT_PATH + texName + "_overlay");
+		}
 		this.modelLocation = new ModelResourceLocation(this.baseTextureLocation, "inventory");
 		this.cap = cap;
 	}
@@ -128,6 +134,9 @@ public class ItemFluidTank extends ItemBakedBase {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public IItemColor getItemColorHandler() {
+		if (this.overlayTextureLocation == null) {
+			return null;
+		}
 		return (stack, tintIndex) -> {
 			if (tintIndex == 0) {
 				return 0xFFFFFF;

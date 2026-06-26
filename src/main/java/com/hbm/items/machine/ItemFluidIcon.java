@@ -17,6 +17,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.Nullable;
@@ -123,6 +124,15 @@ public class ItemFluidIcon extends ItemBakedBase {
 			return null;
 		}
 		return Fluids.fromID(stack.getMetadata());
+	}
+
+	@Nullable
+	public static Fluid getFluid(ItemStack stack) {
+		FluidType type = getFluidType(stack);
+		if (type == null || type.getID() <= 0) {
+			return null;
+		}
+		return type.getFF();
 	}
 
 }
