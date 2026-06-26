@@ -625,6 +625,10 @@ public class JeiRecipes {
 		batteries.add(new ItemStack(ModItems.battery_schrabidium_cell));
 		batteries.add(new ItemStack(ModItems.battery_schrabidium_cell_2));
 		batteries.add(new ItemStack(ModItems.battery_schrabidium_cell_4));
+		batteries.add(new ItemStack(ModItems.battery_su));
+		batteries.add(new ItemStack(ModItems.battery_su_l));
+		batteries.add(new ItemStack(ModItems.battery_steam));
+		batteries.add(new ItemStack(ModItems.battery_steam_large));
 		batteries.add(new ItemStack(ModItems.battery_spark));
 		batteries.add(new ItemStack(ModItems.battery_spark_cell_6));
 		batteries.add(new ItemStack(ModItems.battery_spark_cell_25));

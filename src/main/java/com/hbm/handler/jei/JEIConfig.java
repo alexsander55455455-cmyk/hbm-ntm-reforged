@@ -18,6 +18,7 @@ import com.hbm.items.machine.ItemFELCrystal.EnumWavelengths;
 import com.hbm.items.machine.ItemFluidIcon;
 import com.hbm.items.special.ItemBedrockOreNew;
 import com.hbm.items.special.ItemBedrockOreNew.BedrockOreGrade;
+import com.hbm.items.special.ItemCustomLore;
 import com.hbm.items.weapon.ItemCustomMissile;
 import com.hbm.items.weapon.grenade.ItemGrenadeExtra.EnumGrenadeExtra;
 import com.hbm.items.weapon.grenade.ItemGrenadeShell.EnumGrenadeShell;
@@ -38,7 +39,10 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 import static com.hbm.handler.jei.transfer.HbmTransferInfo.range;
 
@@ -76,6 +80,7 @@ public class JEIConfig implements IModPlugin {
     public static final String FLUIDS = "hbm.fluids";
     public static final String FRACTIONING = "hbm.fracturing";
     public static final String FUSION_BYPRODUCT = "hbm.fusionbyproduct";
+    public static final String ITER_BYPRODUCT = "hbm.iter_byproduct";
     public static final String FUSION_BREEDER = "hbm.fusionbreeder";
     public static final String PLASMA_FORGE = "hbm.plasma_forge";
     public static final String GAS_CENT = "hbm.gas_centrifuge";
@@ -99,8 +104,11 @@ public class JEIConfig implements IModPlugin {
     public static final String SILEX_DIGAMMA = "hbm.silexdigamma";
     public static final String SILEX_GAMMA = "hbm.silexgamma";
     public static final String SILEX_IR = "hbm.silexir";
+    public static final String SILEX_MICRO = "hbm.silexmicro";
+    public static final String SILEX_RADIO = "hbm.silexradio";
     public static final String SILEX_UV = "hbm.silexuv";
     public static final String SILEX_VISIBLE = "hbm.silexvisible";
+    public static final String SILEX_XRAY = "hbm.silexray";
     public static final String SOLDERING_STATION = "hbm.soldering_station";
     public static final String SOLIDIFICATION = "hbm.solidification";
     public static final String STORAGEDRUM = "hbm.storage_drum";
@@ -141,6 +149,7 @@ public class JEIConfig implements IModPlugin {
     private FractioningRecipeHandler fractioningHandler;
     private FusionBreederRecipeHandler fusionBreederRecipeHandler;
     private FusionRecipeHandler fusionRecipeHandler;
+    private ITERFusionByproductHandler iterFusionByproductHandler;
     private PlasmaForgeRecipeHandler plasmaForgeRecipeHandler;
     private FuelPoolHandler fuelPoolHandler;
     private HydrotreatingHandler hydrotreatHandler;
@@ -237,15 +246,19 @@ public class JEIConfig implements IModPlugin {
         //This recipe catalyst doesn't work, since the book of is blacklisted.
         registry.addRecipeCatalyst(new ItemStack(ModItems.book_of_), BOOK);
         registry.addRecipeCatalyst(new ItemStack(ModBlocks.fusion_torus), FUSION_BYPRODUCT);
+        registry.addRecipeCatalyst(new ItemStack(ModBlocks.iter), ITER_BYPRODUCT);
         registry.addRecipeCatalyst(new ItemStack(ModBlocks.fusion_breeder), FUSION_BREEDER);
         registry.addRecipeCatalyst(new ItemStack(ModBlocks.fusion_plasma_forge), PLASMA_FORGE);
         registry.addRecipeCatalyst(new ItemStack(ModBlocks.hadron_core), HADRON);
         registry.addRecipeCatalyst(new ItemStack(ModBlocks.machine_silex), SILEX);
         registry.addRecipeCatalyst(new ItemStack(ModBlocks.machine_rtg_grey), RTG);
         registry.addRecipeCatalyst(new ItemStack(ModBlocks.machine_difurnace_rtg_off), RTG);
+        registry.addRecipeCatalyst(new ItemStack(ModItems.laser_crystal_nano), SILEX_RADIO);
+        registry.addRecipeCatalyst(new ItemStack(ModItems.laser_crystal_pentacene), SILEX_MICRO);
         registry.addRecipeCatalyst(new ItemStack(ModItems.laser_crystal_co2), SILEX_IR);
         registry.addRecipeCatalyst(new ItemStack(ModItems.laser_crystal_bismuth), SILEX_VISIBLE);
         registry.addRecipeCatalyst(new ItemStack(ModItems.laser_crystal_cmb), SILEX_UV);
+        registry.addRecipeCatalyst(new ItemStack(ModItems.laser_crystal_dem), SILEX_XRAY);
         registry.addRecipeCatalyst(new ItemStack(ModItems.laser_crystal_bale), SILEX_GAMMA);
         registry.addRecipeCatalyst(new ItemStack(ModItems.laser_crystal_digamma), SILEX_DIGAMMA);
         registry.addRecipeCatalyst(new ItemStack(ModBlocks.machine_vacuum_distill), VACUUM);
@@ -295,6 +308,7 @@ public class JEIConfig implements IModPlugin {
         registry.addRecipes(fractioningHandler.getRecipes(), FRACTIONING);
         registry.addRecipes(fusionBreederRecipeHandler.getRecipes(), FUSION_BREEDER);
         registry.addRecipes(fusionRecipeHandler.getRecipes(), FUSION_BYPRODUCT);
+        registry.addRecipes(iterFusionByproductHandler.getRecipes(), ITER_BYPRODUCT);
         registry.addRecipes(plasmaForgeRecipeHandler.getRecipes(), PLASMA_FORGE);
         registry.addRecipes(hydrotreatHandler.getRecipes(), HYDROTREATING);
         registry.addRecipes(liquefactHandler.getRecipes(), LIQUEFACTION);
@@ -321,9 +335,12 @@ public class JEIConfig implements IModPlugin {
         registry.addRecipes(JeiRecipes.getBreederRecipes(), BREEDER);
         registry.addRecipes(JeiRecipes.getHadronRecipes(), HADRON);
         registry.addRecipes(JeiRecipes.getSILEXRecipes(), SILEX);
+        registry.addRecipes(JeiRecipes.getSILEXRecipes(EnumWavelengths.RADIO), SILEX_RADIO);
+        registry.addRecipes(JeiRecipes.getSILEXRecipes(EnumWavelengths.MICRO), SILEX_MICRO);
         registry.addRecipes(JeiRecipes.getSILEXRecipes(EnumWavelengths.IR), SILEX_IR);
         registry.addRecipes(JeiRecipes.getSILEXRecipes(EnumWavelengths.VISIBLE), SILEX_VISIBLE);
         registry.addRecipes(JeiRecipes.getSILEXRecipes(EnumWavelengths.UV), SILEX_UV);
+        registry.addRecipes(JeiRecipes.getSILEXRecipes(EnumWavelengths.XRAY), SILEX_XRAY);
         registry.addRecipes(JeiRecipes.getSILEXRecipes(EnumWavelengths.GAMMA), SILEX_GAMMA);
         registry.addRecipes(JeiRecipes.getSILEXRecipes(EnumWavelengths.DRX), SILEX_DIGAMMA);
         registry.addRecipes(JeiRecipes.getRBMKFuelRecipes(), RBMKFUEL);
@@ -397,6 +414,7 @@ public class JEIConfig implements IModPlugin {
         registry.addRecipeClickArea(GUIFurnaceCombo.class, 54, 55, 17, 17, COMBINATION);
         registry.addRecipeClickArea(GUIFusionBreeder.class, 67, 49, 42, 9, FUSION_BREEDER);
         registry.addRecipeClickArea(GUIFusionTorus.class, 99, 39, 28, 10, FUSION_BYPRODUCT);
+        registry.addRecipeClickArea(GUIITER.class, 43, 17, 17, 45, ITER_BYPRODUCT);
         registry.addRecipeClickArea(GUIMachinePlasmaForge.class, 62, 81, 70, 16, PLASMA_FORGE);
 
         IRecipeTransferRegistry t = registry.getRecipeTransferRegistry();
@@ -476,6 +494,18 @@ public class JEIConfig implements IModPlugin {
             blacklist.addIngredientToBlacklist(new ItemStack(ModItems.book_secret));
             blacklist.addIngredientToBlacklist(new ItemStack(ModItems.ams_core_thingy));
         }
+        blacklist.addIngredientToBlacklist(new ItemStack(ModItems.ore_bedrock));
+        blacklist.addIngredientToBlacklist(new ItemStack(ModItems.ore_bedrock_centrifuged));
+        blacklist.addIngredientToBlacklist(new ItemStack(ModItems.ore_bedrock_cleaned));
+        blacklist.addIngredientToBlacklist(new ItemStack(ModItems.ore_bedrock_deepcleaned));
+        blacklist.addIngredientToBlacklist(new ItemStack(ModItems.ore_bedrock_enriched));
+        blacklist.addIngredientToBlacklist(new ItemStack(ModItems.ore_bedrock_exquisite));
+        blacklist.addIngredientToBlacklist(new ItemStack(ModItems.ore_bedrock_nitrated));
+        blacklist.addIngredientToBlacklist(new ItemStack(ModItems.ore_bedrock_nitrocrystalline));
+        blacklist.addIngredientToBlacklist(new ItemStack(ModItems.ore_bedrock_perfect));
+        blacklist.addIngredientToBlacklist(new ItemStack(ModItems.ore_bedrock_purified));
+        blacklist.addIngredientToBlacklist(new ItemStack(ModItems.ore_bedrock_seared));
+        blacklist.addIngredientToBlacklist(new ItemStack(ModItems.ore_bedrock_separated));
         blacklist.addIngredientToBlacklist(new ItemStack(ModItems.achievement_icon));
         blacklist.addIngredientToBlacklist(new ItemStack(ModBlocks.dummy_block_uf6));
         blacklist.addIngredientToBlacklist(new ItemStack(ModBlocks.dummy_block_puf6));
@@ -492,11 +522,35 @@ public class JEIConfig implements IModPlugin {
             blacklist.addIngredientToBlacklist(new ItemStack(ModItems.battery_sc, 1, i));
         }
 
+        hideLegacyBreedingRodDuplicates(blacklist);
+
         for (Item item : ModItems.ALL_ITEMS) {
             if (item instanceof EffectItem) {
                 blacklist.addIngredientToBlacklist(new ItemStack(item));
             }
         }
+    }
+
+    private static void hideLegacyBreedingRodDuplicates(IIngredientBlacklist blacklist) {
+        for (Item item : ModItems.ALL_ITEMS) {
+            if (item.getRegistryName() == null) {
+                continue;
+            }
+            String name = item.getRegistryName().getPath();
+            if (shouldHideLegacyRodDuplicate(name)) {
+                blacklist.addIngredientToBlacklist(new ItemStack(item));
+            }
+        }
+    }
+
+    private static boolean shouldHideLegacyRodDuplicate(String name) {
+        if (!name.startsWith("rod_") && !name.startsWith("rod_dual_") && !name.startsWith("rod_quad_")) {
+            return false;
+        }
+        if (name.endsWith("_fuel") || name.endsWith("_fuel_depleted")) {
+            return false;
+        }
+        return !name.equals("rod_australium");
     }
 
     @Override
@@ -536,6 +590,7 @@ public class JEIConfig implements IModPlugin {
                 fractioningHandler = new FractioningRecipeHandler(help),
                 fusionBreederRecipeHandler = new FusionBreederRecipeHandler(help),
                 fusionRecipeHandler = new FusionRecipeHandler(help),
+                iterFusionByproductHandler = new ITERFusionByproductHandler(help),
                 plasmaForgeRecipeHandler = new PlasmaForgeRecipeHandler(help),
                 fuelPoolHandler = new FuelPoolHandler(help),
                 hydrotreatHandler = new HydrotreatingHandler(help),
@@ -565,9 +620,12 @@ public class JEIConfig implements IModPlugin {
                 new StorageDrumRecipeHandler(help),
                 new FluidRecipeHandler(help),
                 new SILEXRecipeHandler(help),
+                new SILEXRadioRecipeHandler(help),
+                new SILEXMicroRecipeHandler(help),
                 new SILEXIrRecipeHandler(help),
                 new SILEXVisibleRecipeHandler(help),
                 new SILEXUVRecipeHandler(help),
+                new SILEXXRayRecipeHandler(help),
                 new SILEXGammaRecipeHandler(help),
                 new SILEXDigammaRecipeHandler(help),
                 new RBMKFuelRecipeHandler(help),
