@@ -1,13 +1,11 @@
 package com.hbm.render.tileentity;
 
 import com.hbm.Tags;
-import com.hbm.blocks.ModBlocks;
 import com.hbm.interfaces.AutoRegister;
 import com.hbm.render.loader.HFRWavefrontObject;
 import com.hbm.render.loader.IModelCustom;
 import com.hbm.render.amlfrom1710.Vec3;
 import com.hbm.render.NTMRenderHelper;
-import com.hbm.render.item.ItemRenderBase;
 import com.hbm.tileentity.machine.TileEntityFWatzCore;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -15,13 +13,12 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
 @AutoRegister
-public class RenderSAFECore extends TileEntitySpecialRenderer<TileEntityFWatzCore> implements IItemRendererProvider {
+public class RenderSAFECore extends TileEntitySpecialRenderer<TileEntityFWatzCore> {
 
     protected static final ResourceLocation objTesterModelRL = new ResourceLocation(Tags.MODID, "models/Sphere.obj");
     protected IModelCustom blastModel = new HFRWavefrontObject(objTesterModelRL);
@@ -374,17 +371,4 @@ public class RenderSAFECore extends TileEntitySpecialRenderer<TileEntityFWatzCor
         color[3] = 0;
     }
 
-	@Override
-	public Item getItemForRenderer() {
-		return Item.getItemFromBlock(ModBlocks.fwatz_core);
-	}
-
-	@Override
-	public ItemRenderBase getRenderer(Item item) {
-		return new ItemRenderBase() {
-			public double getScale() {
-				return 1.5;
-			}
-		};
-	}
 }

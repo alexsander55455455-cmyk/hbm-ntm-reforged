@@ -9,6 +9,7 @@ import com.hbm.inventory.RecipesCommon;
 import com.hbm.inventory.container.ContainerReactorResearch;
 import com.hbm.inventory.gui.GUIReactorResearch;
 import com.hbm.items.ModItems;
+import com.hbm.items.machine.ItemFuelRod;
 import com.hbm.items.machine.ItemPlateFuel;
 import com.hbm.lib.ForgeDirection;
 import com.hbm.tileentity.IGUIProvider;
@@ -21,6 +22,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.Container;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -60,6 +62,7 @@ public class TileEntityReactorResearch extends TileEntityMachineBase implements 
     }
 
     private static final HashMap<RecipesCommon.ComparableStack, ItemStack> fuelMap = new HashMap<RecipesCommon.ComparableStack, ItemStack>();
+    private static final HashMap<Item, Item> fuelRodMap = new HashMap<>();
     static {
         fuelMap.put(new RecipesCommon.ComparableStack(ModItems.plate_fuel_u233), new ItemStack(ModItems.waste_plate_u233, 1, 1));
         fuelMap.put(new RecipesCommon.ComparableStack(ModItems.plate_fuel_u235), new ItemStack(ModItems.waste_plate_u235, 1, 1));
@@ -68,6 +71,22 @@ public class TileEntityReactorResearch extends TileEntityMachineBase implements 
         fuelMap.put(new RecipesCommon.ComparableStack(ModItems.plate_fuel_sa326), new ItemStack(ModItems.waste_plate_sa326, 1, 1));
         fuelMap.put(new RecipesCommon.ComparableStack(ModItems.plate_fuel_ra226be), new ItemStack(ModItems.waste_plate_ra226be, 1, 1));
         fuelMap.put(new RecipesCommon.ComparableStack(ModItems.plate_fuel_pu238be), new ItemStack(ModItems.waste_plate_pu238be, 1, 1));
+
+        fuelRodMap.put(ModItems.rod_uranium_fuel, ModItems.rod_uranium_fuel_depleted);
+        fuelRodMap.put(ModItems.rod_thorium_fuel, ModItems.rod_thorium_fuel_depleted);
+        fuelRodMap.put(ModItems.rod_plutonium_fuel, ModItems.rod_plutonium_fuel_depleted);
+        fuelRodMap.put(ModItems.rod_mox_fuel, ModItems.rod_mox_fuel_depleted);
+        fuelRodMap.put(ModItems.rod_schrabidium_fuel, ModItems.rod_schrabidium_fuel_depleted);
+        fuelRodMap.put(ModItems.rod_dual_uranium_fuel, ModItems.rod_dual_uranium_fuel_depleted);
+        fuelRodMap.put(ModItems.rod_dual_thorium_fuel, ModItems.rod_dual_thorium_fuel_depleted);
+        fuelRodMap.put(ModItems.rod_dual_plutonium_fuel, ModItems.rod_dual_plutonium_fuel_depleted);
+        fuelRodMap.put(ModItems.rod_dual_mox_fuel, ModItems.rod_dual_mox_fuel_depleted);
+        fuelRodMap.put(ModItems.rod_dual_schrabidium_fuel, ModItems.rod_dual_schrabidium_fuel_depleted);
+        fuelRodMap.put(ModItems.rod_quad_uranium_fuel, ModItems.rod_quad_uranium_fuel_depleted);
+        fuelRodMap.put(ModItems.rod_quad_thorium_fuel, ModItems.rod_quad_thorium_fuel_depleted);
+        fuelRodMap.put(ModItems.rod_quad_plutonium_fuel, ModItems.rod_quad_plutonium_fuel_depleted);
+        fuelRodMap.put(ModItems.rod_quad_mox_fuel, ModItems.rod_quad_mox_fuel_depleted);
+        fuelRodMap.put(ModItems.rod_quad_schrabidium_fuel, ModItems.rod_quad_schrabidium_fuel_depleted);
     }
 
     public String getDefaultName() {
@@ -76,10 +95,9 @@ public class TileEntityReactorResearch extends TileEntityMachineBase implements 
 
     @Override
     public boolean isItemValidForSlot(int i, ItemStack itemStack) {
-        if(i < 12 && i <= 0)
-            if(itemStack.getItem().getClass() == ItemPlateFuel.class)
-                return true;
-        return false;
+        if (i < 0 || i >= 12 || itemStack.isEmpty()) return false;
+        if (itemStack.getItem() instanceof ItemPlateFuel) return true;
+        return itemStack.getItem() instanceof ItemFuelRod && fuelRodMap.containsKey(itemStack.getItem());
     }
 
     @Override
@@ -107,12 +125,9 @@ public class TileEntityReactorResearch extends TileEntityMachineBase implements 
 
     @Override
     public boolean canExtractItem(int i, ItemStack stack, int j) {
-        if(i < 12 && i >= 0)
-            if(fuelMap.containsValue(stack))
-                return true;
-
-        return false;
-
+        if (i < 0 || i >= 12) return false;
+        if (fuelMap.containsValue(stack)) return true;
+        return fuelRodMap.containsValue(stack.getItem());
     }
 
     @Override
@@ -280,12 +295,28 @@ public class TileEntityReactorResearch extends TileEntityMachineBase implements 
 
                 int[] neighborSlots = getNeighboringSlots(i);
 
-                if(ItemPlateFuel.getLifeTime(inventory.getStackInSlot(i)) > rod.lifeTime) {
+                if(ItemPlateFuel.getLifeTime(inventory.getStackInSlot(i)) > rod.getMaxLifeTime()) {
                     inventory.setStackInSlot(i, fuelMap.get(new RecipesCommon.ComparableStack(inventory.getStackInSlot(i))).copy());
                 }
 
                 for(byte j = 0; j < neighborSlots.length; j++) {
                     slotFlux[neighborSlots[j]] += (int) (outFlux * level);
+                }
+                continue;
+            }
+
+            if(inventory.getStackInSlot(i).getItem() instanceof ItemFuelRod && fuelRodMap.containsKey(inventory.getStackInSlot(i).getItem())) {
+                ItemFuelRod rod = (ItemFuelRod) inventory.getStackInSlot(i).getItem();
+                int outFlux = rod.getHeatPerTick();
+                this.heat += outFlux * 2;
+                slotFlux[i] = 0;
+                totalFlux += outFlux;
+                ItemFuelRod.incrementTime(inventory.getStackInSlot(i), 1);
+
+                if(ItemFuelRod.getLifeTime(inventory.getStackInSlot(i)) >= rod.getMaxLifeTime()) {
+                    Item depleted = fuelRodMap.get(rod);
+                    if(depleted != null)
+                        inventory.setStackInSlot(i, new ItemStack(depleted));
                 }
                 continue;
             }

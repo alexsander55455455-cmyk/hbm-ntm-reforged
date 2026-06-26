@@ -37,7 +37,8 @@ public class RenderLoot extends TileEntitySpecialRenderer<TileEntityLoot> {
             GlStateManager.pushMatrix();
             GlStateManager.translate(item.getX(), item.getY(), item.getZ());
 
-            if (stack.getItem() == ModItems.ammo_standard && stack.getItemDamage() >= EnumAmmo.NUKE_STANDARD.ordinal() && stack.getItemDamage() <= EnumAmmo.NUKE_HIVE.ordinal()) {
+            if (stack.getItem() == ModItems.ammo_nuke || stack.getItem() == ModItems.ammo_nuke_low || stack.getItem() == ModItems.ammo_nuke_high
+                    || stack.getItem() == ModItems.ammo_nuke_tots || stack.getItem() == ModItems.ammo_mirv || stack.getItem() == ModItems.ammo_mirv_high) {
                 renderNuke();
             } else if (stack.getItem() == ModItems.gun_maresleg) {
                 renderShotgun();

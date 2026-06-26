@@ -128,6 +128,7 @@ public class TileMappings {
         put(TileEntityMachineCyclotron.class, "tileentity_cyclotron");
         put(TileEntityMachineExposureChamber.class, "tileentity_exposure_chamber");
         put(TileEntityMachineRTG.class, "tileentity_machine_rtg");
+        put(TileEntityMachineGenerator.class, "tileentity_machine_generator");
         put(TileEntityMachineExcavator.class, "tileentity_ntm_excavator");
         put(TileEntityMachineOreSlopper.class, "tileentity_ore_slopper");
         put(TileEntityMachineDrain.class, "tileentity_fluid_drain");
@@ -203,6 +204,7 @@ public class TileMappings {
         put(TileEntityMachineFENSU.class, "tileentity_fensu");
         put(TileEntityTrappedBrick.class, "tileentity_trapped_brick");
         put(TileEntityWatzStruct.class, "tileentity_watz_struct");
+        put(TileEntityITERStruct.class, "tileentity_iter_struct");
         put(TileEntityICFStruct.class, "tileentity_icf_struct");
         put(TileEntityHadronDiode.class, "tileentity_hadron_diode");
         put(TileEntityHadronPower.class, "tileentity_hadron_power");
@@ -433,6 +435,7 @@ public class TileMappings {
 
     private static void putFusion() {
         put(TileEntityFusionTorusStruct.class, "tileentity_fusion_torus_struct");
+        put(TileEntityPlasmaStruct.class, "tileentity_plasma_struct");
         put(TileEntityFusionTorus.class, "tileentity_fusion_torus");
         put(TileEntityFusionKlystron.class, "tileentity_fusion_klystron");
         put(TileEntityFusionKlystronCreative.class, "tileentity_fusion_klystron_creative");
