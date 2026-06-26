@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.hbm.Tags;
 import com.hbm.blocks.BlockEnums;
 import com.hbm.blocks.ModBlocks;
+import com.hbm.blocks.VanillaBlockPatcher;
 import com.hbm.blocks.fluid.ModFluids;
 import com.hbm.blocks.generic.BlockCrate;
 import com.hbm.capability.HbmCapability;
@@ -300,9 +301,11 @@ public class MainRegistry {
         // even when the reload listener is registered too late due to load order
         // IMPORTANT: fluids have to load before recipes. weird shit happens if not.
         Fluids.reloadFluids();
+        VanillaBlockPatcher.apply();
         ModItems.postInit();
         DamageResistanceHandler.init();
         BlockCrate.setDrops();
+        BedrockOreRegistry.registerBedrockOres();
         ExplosionNukeGeneric.loadSoliniumFromFile();
         HadronRecipes.register();
         MagicRecipes.register();
@@ -420,7 +423,6 @@ public class MainRegistry {
         }
 
         EntityMappings.writeSpawns();
-        BedrockOreRegistry.registerBedrockOres();
         ModBlocks.initializeHazardsAndPlacables();
         if (evt.getSide() == Side.CLIENT) {
             BedrockOreRegistry.registerOreColors();
