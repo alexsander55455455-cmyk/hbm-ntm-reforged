@@ -105,9 +105,9 @@ public class ItemPoolsPile {
 
         new ItemPool(POOL_PILE_NUKE_STORAGE) {{
             this.pool = new WeightedRandomChestContentFrom1710[] {
-                    weighted(ModItems.ammo_standard, GunFactory.EnumAmmo.NUKE_STANDARD.ordinal(), 1, 1, 50),
-                    weighted(ModItems.ammo_standard, GunFactory.EnumAmmo.NUKE_HIGH.ordinal(), 1, 1, 10),
-                    weighted(ModItems.ammo_standard, GunFactory.EnumAmmo.NUKE_TOTS.ordinal(), 1, 1, 10),
+                    weighted(ModItems.ammo_nuke, 0, 1, 1, 50),
+                    weighted(ModItems.ammo_nuke_high, 0, 1, 1, 10),
+                    weighted(ModItems.ammo_nuke_tots, 0, 1, 1, 10),
 
             };
         }};

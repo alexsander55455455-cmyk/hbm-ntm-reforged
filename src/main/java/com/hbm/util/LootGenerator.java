@@ -87,7 +87,7 @@ public class LootGenerator {
         if(loot != null && loot.items.isEmpty()) {
 
             if(world.rand.nextInt(5) == 0)
-                loot.addItem(OreDictManager.DictFrame.fromOne(ModItems.ammo_standard, GunFactory.EnumAmmo.NUKE_STANDARD), -0.25, 0, -0.125);
+                loot.addItem(new ItemStack(ModItems.ammo_nuke), -0.25, 0, -0.125);
             else
                 loot.addItem(OreDictManager.DictFrame.fromOne(ModItems.ammo_standard, GunFactory.EnumAmmo.ROCKET_HEAT), -0.25, 0, -0.25);
 

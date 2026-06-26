@@ -67,7 +67,7 @@ public class ItemPoolsSingle {
                     weighted(ModItems.ingot_desh, 0, 2, 6, 1),
                     weighted(ModItems.powder_desh_mix, 0, 1, 5, 1),
                     weighted(Items.DIAMOND, 0, 3, 6, 1),
-                    weighted(ModItems.ammo_standard, GunFactory.EnumAmmo.NUKE_STANDARD.ordinal(), 1, 1, 1),
+                    weighted(ModItems.ammo_nuke, 0, 1, 1, 1),
                     weighted(ModItems.ammo_container, 0, 1, 1, 1),
                     weighted(ItemGrenadeUniversal.make(EnumGrenadeShell.NUKE, EnumGrenadeFilling.NUCLEAR, EnumGrenadeFuze.S7), 1, 1, 1),
                     weighted(ItemGrenadeUniversal.make(EnumGrenadeShell.TECH, EnumGrenadeFilling.EMP, EnumGrenadeFuze.S3), 1, 6, 1),
@@ -84,7 +84,7 @@ public class ItemPoolsSingle {
                     weighted(ModItems.powder_power, 0, 1, 5, 1),
                     weighted(ModItems.sat_chip, 0, 1, 1, 1),
                     weighted(Items.DIAMOND, 0, 5, 9, 1),
-                    weighted(ModItems.ammo_standard, GunFactory.EnumAmmo.NUKE_STANDARD.ordinal(), 1, 3, 1),
+                    weighted(ModItems.ammo_nuke, 0, 1, 3, 1),
                     weighted(ModItems.ammo_container, 0, 1, 4, 1),
                     weighted(ItemGrenadeUniversal.make(EnumGrenadeShell.NUKE, EnumGrenadeFilling.NUCLEAR, EnumGrenadeFuze.S7), 1, 2, 1),
                     weighted(ItemGrenadeUniversal.make(EnumGrenadeShell.STICK, EnumGrenadeFilling.HE, EnumGrenadeFuze.IMPACT, EnumGrenadeExtra.TRIPLEX), 1, 1, 1),
@@ -98,7 +98,7 @@ public class ItemPoolsSingle {
         new ItemPool(POOL_VAULT_UNBREAKABLE) {{
             this.pool = new WeightedRandomChestContentFrom1710[] {
                     weighted(ModItems.ammo_container, 0, 3, 6, 1),
-                    weighted(ModItems.ammo_standard, GunFactory.EnumAmmo.NUKE_DEMO.ordinal(), 2, 3, 1),
+                    weighted(ModItems.ammo_nuke, 0, 2, 3, 1),
                     weighted(ModItems.gun_carbine, 0, 1, 1, 1),
                     weighted(ModItems.ammo_standard, GunFactory.EnumAmmo.R762_DU.ordinal(), 16, 32, 1),
                     weighted(ModItems.gun_congolake, 0, 1, 1, 1),

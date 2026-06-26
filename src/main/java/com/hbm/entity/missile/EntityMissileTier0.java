@@ -54,7 +54,7 @@ public abstract class EntityMissileTier0 extends EntityMissileBaseNT {
 				ExplosionNukeSmall.explode(world, posX, posY + 0.5, posZ, ExplosionNukeSmall.PARAMS_HIGH);
 			}
 		}
-		@Override public ItemStack getDebrisRareDrop() { return OreDictManager.DictFrame.fromOne(ModItems.ammo_standard, GunFactory.EnumAmmo.NUKE_HIGH); }
+		@Override public ItemStack getDebrisRareDrop() { return new ItemStack(ModItems.ammo_nuke_high); }
 		@Override public ItemStack getMissileItemForInfo() { return new ItemStack(ModItems.missile_micro); }
 	}
 	@AutoRegister(name = "entity_missile_schrab", trackingRange = 1000)

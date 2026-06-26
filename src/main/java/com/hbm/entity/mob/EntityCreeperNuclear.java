@@ -5,9 +5,7 @@ import com.hbm.explosion.ExplosionNukeGeneric;
 import com.hbm.explosion.ExplosionNukeSmall;
 import com.hbm.handler.threading.PacketThreading;
 import com.hbm.interfaces.AutoRegister;
-import com.hbm.inventory.OreDictManager;
 import com.hbm.items.ModItems;
-import com.hbm.items.weapon.sedna.factory.GunFactory;
 import com.hbm.lib.HBMSoundHandler;
 import com.hbm.lib.ModDamageSource;
 import com.hbm.main.AdvancementManager;
@@ -22,6 +20,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
@@ -104,7 +103,7 @@ public class EntityCreeperNuclear extends EntityCreeper {
 			AdvancementManager.grantAchievement(player, AdvancementManager.bossCreeper);
 		}
 		if (cause.getTrueSource() instanceof EntitySkeleton || (cause.isProjectile() && cause.getImmediateSource() instanceof EntityArrow arrow && arrow.shootingEntity == null)) {
-            this.entityDropItem(OreDictManager.DictFrame.fromOne(ModItems.ammo_standard, GunFactory.EnumAmmo.NUKE_STANDARD), 1);
+            this.entityDropItem(new ItemStack(ModItems.ammo_nuke), 1);
 		}
 	}
 

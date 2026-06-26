@@ -148,7 +148,7 @@ public class HazardRegistry {
 	public static final float powder_mult = 3.0F;
 	public static final float powder = ingot * powder_mult;
 	public static final float powder_tiny = nugget * powder_mult;
-	public static final float ore = ingot;
+	public static final float ore = ingot * 0.05F;
 	public static final float block = 10.0F;
 	public static final float crystal = block;
 	public static final float billet = 0.5F;
@@ -211,6 +211,10 @@ public class HazardRegistry {
         HazardSystem.register(powder_balefire, makeData(RADIATION, bf * powder).addEntry(HOT, 6F).addEntry(CONTAMINATING, 500F));
         HazardSystem.register(egg_balefire_shard, makeData(RADIATION, bf * nugget));
         HazardSystem.register(egg_balefire, makeData(RADIATION, bf * ingot));
+
+		HazardSystem.register(powder_ice, makeData(COLD, 5F));
+		HazardSystem.register(thermo_unit_endo, makeData(COLD, 2F));
+		HazardSystem.register(thermo_unit_exo, makeData(HOT, 10F));
 
 		HazardSystem.register(solid_fuel_bf, makeData(RADIATION, 1000)); //roughly the amount of the balefire shard diluted in 250mB of rocket fuel
 		HazardSystem.register(solid_fuel_presto_bf, makeData(RADIATION, 2000));
@@ -308,7 +312,7 @@ public class HazardRegistry {
 		HazardSystem.register(volcano_core, makeData(HOT, 20F));
 		HazardSystem.register(block_meteor_molten, makeData(HOT, 4F));
 		HazardSystem.register(arc_electrode_burnt, makeData(HOT, 2F));
-		HazardSystem.register(ore_tikite, makeData(RADIATION, trx * ore));
+		HazardSystem.register(ore_tikite, makeData(RADIATION, trx * ore).addEntry(COLD, 1));
 
 		HazardSystem.register(insert_du, makeData(RADIATION, u238 * block));
 		HazardSystem.register(insert_ferrouranium, makeData(RADIATION, ferro * 4F));
@@ -325,6 +329,10 @@ public class HazardRegistry {
 		HazardSystem.register(apple_schrabidium, makeData(RADIATION, 12F));
 		HazardSystem.register(balefire_scrambled, makeData(RADIATION, radspice * powder + bf));
 		HazardSystem.register(balefire_and_ham, makeData(RADIATION, 2F * radspice * powder + bf));
+		HazardSystem.register(ingot_radspice, makeData(RADIATION, radspice * ingot).addEntry(HOT, 15F).addEntry(BLINDING, 50F));
+		HazardSystem.register(nugget_radspice, makeData(RADIATION, radspice * nugget).addEntry(HOT, 15F).addEntry(BLINDING, 50F));
+		HazardSystem.register(powder_radspice, makeData(RADIATION, radspice * powder).addEntry(HOT, 15F).addEntry(BLINDING, 50F));
+		HazardSystem.register(powder_radspice_tiny, makeData(RADIATION, radspice * powder_tiny).addEntry(HOT, 15F).addEntry(BLINDING, 50F));
 		HazardSystem.register(levitation_unit, makeData(RADIATION, sa326 * nugget * 2F));
 
 		HazardSystem.register(part_plutonium, makeData(RADIATION, pu * powder * 0.25F));
@@ -341,10 +349,6 @@ public class HazardRegistry {
 		HazardSystem.register(stamp_schrabidium_wire, makeData(RADIATION, sa326 * ingot * 3F));
 		HazardSystem.register(stamp_schrabidium_circuit, makeData(RADIATION, sa326 * ingot * 3F));
 
-		HazardSystem.register(drillbit_tcalloy, makeData(RADIATION, 20F * tcalloy));
-		HazardSystem.register(drillbit_tcalloy_diamond, makeData(RADIATION, 20F * tcalloy));
-		HazardSystem.register(drillbit_ferro, makeData(RADIATION, 24F * ferro));
-		HazardSystem.register(drillbit_ferro_diamond, makeData(RADIATION, 24F * ferro));
 		HazardSystem.register(anvil_ferrouranium, makeData(RADIATION, ferro * 10F));
 		HazardSystem.register(anvil_schrabidate, makeData(RADIATION, sb * 10F));
 		HazardSystem.register(hadron_coil_magtung, makeData(RADIATION, magt * 2F));
@@ -518,6 +522,41 @@ public class HazardRegistry {
 		registerBreedingRodRadiation(ItemBreedingRod.BreedingRodType.WASTE, wst);
 		registerBreedingRodRadiation(ItemBreedingRod.BreedingRodType.URANIUM, u);
 
+		registerLegacyRods(rod_th232, rod_dual_th232, rod_quad_th232, th232);
+		registerLegacyRods(rod_uranium, rod_dual_uranium, rod_quad_uranium, u);
+		registerLegacyRods(rod_u233, rod_dual_u233, rod_quad_u233, u233);
+		registerLegacyRods(rod_u235, rod_dual_u235, rod_quad_u235, u235);
+		registerLegacyRods(rod_u238, rod_dual_u238, rod_quad_u238, u238);
+		registerLegacyRods(rod_plutonium, rod_dual_plutonium, rod_quad_plutonium, pu);
+		registerLegacyRods(rod_pu238, rod_dual_pu238, rod_quad_pu238, pu238);
+		registerLegacyRods(rod_pu239, rod_dual_pu239, rod_quad_pu239, pu239);
+		registerLegacyRods(rod_pu240, rod_dual_pu240, rod_quad_pu240, pu240);
+		registerLegacyRods(rod_rgp, rod_dual_rgp, rod_quad_rgp, purg);
+		registerLegacyRods(rod_neptunium, rod_dual_neptunium, rod_quad_neptunium, np237);
+		registerLegacyRods(rod_polonium, rod_dual_polonium, rod_quad_polonium, po210);
+		registerLegacyRods(rod_schrabidium, rod_dual_schrabidium, rod_quad_schrabidium, sa326, 0, 50);
+		registerLegacyRods(rod_solinium, rod_dual_solinium, rod_quad_solinium, sa327, 0, 50);
+		registerLegacyRods(rod_balefire, rod_dual_balefire, rod_quad_balefire, bf);
+		registerLegacyRods(rod_balefire_blazing, rod_dual_balefire_blazing, rod_quad_balefire_blazing, bf * 2, 5, 0);
+
+		registerLegacyRods(rod_thorium_fuel, rod_dual_thorium_fuel, rod_quad_thorium_fuel, thf);
+		registerLegacyRods(rod_uranium_fuel, rod_dual_uranium_fuel, rod_quad_uranium_fuel, uf);
+		registerLegacyRods(rod_plutonium_fuel, rod_dual_plutonium_fuel, rod_quad_plutonium_fuel, puf);
+		registerLegacyRods(rod_mox_fuel, rod_dual_mox_fuel, rod_quad_mox_fuel, mox);
+		registerLegacyRods(rod_schrabidium_fuel, rod_dual_schrabidium_fuel, rod_quad_schrabidium_fuel, saf, 0, 50);
+
+		registerLegacyRods(rod_thorium_fuel_depleted, rod_dual_thorium_fuel_depleted, rod_quad_thorium_fuel_depleted, 12 * thf, 10, 0);
+		registerLegacyRods(rod_uranium_fuel_depleted, rod_dual_uranium_fuel_depleted, rod_quad_uranium_fuel_depleted, 12 * uf, 10, 0);
+		registerLegacyRods(rod_plutonium_fuel_depleted, rod_dual_plutonium_fuel_depleted, rod_quad_plutonium_fuel_depleted, 12 * puf, 10, 0);
+		registerLegacyRods(rod_mox_fuel_depleted, rod_dual_mox_fuel_depleted, rod_quad_mox_fuel_depleted, 12 * mox, 10, 0);
+		registerLegacyRods(rod_schrabidium_fuel_depleted, rod_dual_schrabidium_fuel_depleted, rod_quad_schrabidium_fuel_depleted, 12 * saf, 10, 50);
+
+		registerLegacyRods(rod_waste, rod_dual_waste, rod_quad_waste, wst);
+		registerLegacyRods(rod_tritium, rod_dual_tritium, rod_quad_tritium, 1);
+		registerLegacyRods(rod_ac227, rod_dual_ac227, rod_quad_ac227, ac227);
+		registerLegacyRods(rod_co60, rod_dual_co60, rod_quad_co60, co60);
+		registerLegacyRods(rod_ra226, rod_dual_ra226, rod_quad_ra226, ra226);
+
 		registerRBMKRod(rbmk_fuel_ueu, u * rod_rbmk, wst * rod_rbmk * 20F);
 		registerRBMKRod(rbmk_fuel_meu, uf * rod_rbmk, wst * rod_rbmk * 21.5F);
 		registerRBMKRod(rbmk_fuel_heu233, u233 * rod_rbmk, wst * rod_rbmk * 31F);
@@ -624,9 +663,14 @@ public class HazardRegistry {
 		HazardSystem.register(tile_lab_broken, makeData(ASBESTOS, 1F));
 		HazardSystem.register(powder_coltan_ore, makeData(ASBESTOS, 3F));
 
+		HazardSystem.register(frozen_grass, makeData(COLD, 3));
+		HazardSystem.register(frozen_log, makeData(COLD, 2));
+		HazardSystem.register(frozen_planks, makeData(COLD, 2));
+		HazardSystem.register(frozen_dirt, makeData(COLD, 1));
+
 		//crystals
 		HazardSystem.register(crystal_phosphorus, makeData(HOT, 2F * crystal));
-		HazardSystem.register(crystal_trixite, makeData(RADIATION, trx * crystal));
+		HazardSystem.register(crystal_trixite, makeData(RADIATION, trx * crystal).addEntry(COLD, 2));
 
 		//nuke parts
 		HazardSystem.register(boy_propellant, makeData(EXPLOSIVE, 2F));
@@ -651,8 +695,7 @@ public class HazardRegistry {
 		/*
 		 * Blacklist
 		 */
-		for(String ore : TH232.all(MaterialShapes.ORE)) HazardSystem.blacklist(ore);
-		for(String ore : U.all(MaterialShapes.ORE)) HazardSystem.blacklist(ore);
+		// EE parity: radioactive ores (uranium, thorium, planet analogues) keep ore-dict radiation from OreDictManager
 	}
 
 	public static void registerFluids() {
@@ -749,6 +792,23 @@ public class HazardRegistry {
 		HazardSystem.register(new ItemStack(ModItems.rod, 1, type.ordinal()), makeData(RADIATION, base));
 		HazardSystem.register(new ItemStack(ModItems.rod_dual, 1, type.ordinal()), makeData(RADIATION, base * rod_dual));
 		HazardSystem.register(new ItemStack(ModItems.rod_quad, 1, type.ordinal()), makeData(RADIATION, base * rod_quad));
+	}
+
+	private static void registerLegacyRods(Item single, Item dual, Item quad, float base) {
+		registerLegacyRods(single, dual, quad, base, 0, 0);
+	}
+
+	private static void registerLegacyRods(Item single, Item dual, Item quad, float base, float hot, float blind) {
+		registerLegacyRod(single, base * rod, hot * rod, blind * rod);
+		registerLegacyRod(dual, base * rod_dual, hot * rod_dual, blind * rod_dual);
+		registerLegacyRod(quad, base * rod_quad, hot * rod_quad, blind * rod_quad);
+	}
+
+	private static void registerLegacyRod(Item item, float rads, float hot, float blind) {
+		HazardData data = makeData(RADIATION, rads);
+		if (hot > 0) data.addEntry(HOT, hot);
+		if (blind > 0) data.addEntry(BLINDING, blind);
+		HazardSystem.register(item, data);
 	}
 
 	private static void registerOtherFuel(Item fuel, float base, float target, boolean blinding) {
